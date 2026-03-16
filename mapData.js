@@ -1,4 +1,4 @@
-const mapData = {
+var mapData = window.mapData = {
     managerColors: {
         "MR. RAJIV": "#f43f5e",
         "MR. NADER": "#10b981",
@@ -10,9 +10,10 @@ const mapData = {
         "SUJITHA": "#ec4899",
         "OPEN": "#ef4444"
     },
+
     countries: [
         // --- MR. RAJIV ---
-        { name: "Kenya", manager: "MR. RAJIV", coords: [-1.2863, 36.8172] }, 
+        { name: "Kenya", manager: "MR. RAJIV", coords: [-1.2863, 36.8172] },
         { name: "Papua New Guinea", manager: "MR. RAJIV", coords: [-6.3150, 143.9555] },
         { name: "Mozambique", manager: "MR. RAJIV", coords: [-18.6657, 35.5296] },
         { name: "Cambodia", manager: "MR. RAJIV", coords: [12.5657, 104.9910] },
@@ -32,8 +33,8 @@ const mapData = {
         { name: "Rwanda", manager: "MR. NADER", coords: [-1.9403, 29.8739] },
         { name: "Thailand", manager: "MR. NADER", coords: [15.8700, 100.9925] },
         { name: "Tanzania", manager: "MR. NADER", coords: [-6.3690, 34.8888] },
-        { name: "Saudi Arabia", manager: "MR. NADER", coords: [24.7136, 46.6753] }, // Shared
-        { name: "Iraq", manager: "MR. NADER", coords: [33.3152, 44.3661] }, // Shared
+        { name: "Saudi Arabia", manager: "MR. NADER", coords: [24.7136, 46.6753] },
+        { name: "Iraq", manager: "MR. NADER", coords: [33.3152, 44.3661] },
         { name: "Bangladesh", manager: "MR. NADER", coords: [23.6850, 90.3563] },
         { name: "Malaysia", manager: "MR. NADER", coords: [4.2105, 101.9758] },
 
@@ -43,7 +44,7 @@ const mapData = {
         { name: "Australia", manager: "MR. ROWAN", coords: [-25.2744, 133.7751] },
         { name: "South Africa", manager: "MR. ROWAN", coords: [-30.5595, 22.9375] },
         { name: "Nepal", manager: "MR. ROWAN", coords: [28.3949, 84.1240] },
-        { name: "European Countries", manager: "MR. ROWAN", coords: [48.5260, 15.2551] }, // Central EU point
+        { name: "European Countries", manager: "MR. ROWAN", coords: [48.5260, 15.2551] },
 
         // --- MR. LYES ---
         { name: "Ivory Coast", manager: "MR. LYES", coords: [7.5399, -5.5471] },
@@ -56,7 +57,7 @@ const mapData = {
         { name: "Niger", manager: "MR. LYES", coords: [17.6078, 8.0817] },
         { name: "Mauritania", manager: "MR. LYES", coords: [21.0079, -10.9408] },
         { name: "Mali", manager: "MR. LYES", coords: [17.5707, -3.9962] },
-        { name: "DR Congo", manager: "MR. LYES", coords: [-2.5, 23.5] }, // Offset slightly from Rajiv's DRC
+        { name: "DR Congo", manager: "MR. LYES", coords: [-2.5, 23.5] },
         { name: "Togo", manager: "MR. LYES", coords: [8.6195, 0.8248] },
         { name: "Senegal", manager: "MR. LYES", coords: [14.4974, -14.4524] },
 
@@ -97,14 +98,14 @@ const mapData = {
         { name: "Malta", manager: "MR. AZMI", coords: [35.9375, 14.3754] },
         { name: "Sri Lanka", manager: "MR. AZMI", coords: [7.8731, 80.7718] },
         { name: "Djibouti", manager: "MR. AZMI", coords: [11.8251, 42.5903] },
-        { name: "Saudi Arabia", manager: "MR. AZMI", coords: [23.8859, 45.0792] }, // Shared
-        { name: "Iraq", manager: "MR. AZMI", coords: [33.2232, 43.6793] }, // Shared
+        { name: "Saudi Arabia", manager: "MR. AZMI", coords: [23.8859, 45.0792] },
+        { name: "Iraq", manager: "MR. AZMI", coords: [33.2232, 43.6793] },
         { name: "Zimbabwe", manager: "MR. AZMI", coords: [-19.0154, 29.1549] },
         { name: "Turkmenistan", manager: "MR. AZMI", coords: [38.9697, 59.5563] },
         { name: "Ethiopia", manager: "MR. AZMI", coords: [9.1450, 40.4897] },
-        { name: "Haiti", manager: "MR. AZMI", coords: [18.9712, -72.2852] }, // Shared
+        { name: "Haiti", manager: "MR. AZMI", coords: [18.9712, -72.2852] },
         { name: "Canada", manager: "MR. AZMI", coords: [56.1304, -106.3468] },
-        { name: "Togo", manager: "MR. AZMI", coords: [8.6195, 0.8248] }, // Shared
+        { name: "Togo", manager: "MR. AZMI", coords: [8.6195, 0.8248] },
 
         // --- MR. MARCOS ---
         { name: "Spain", manager: "MR. MARCOS", coords: [40.4637, -3.7492] },
@@ -136,8 +137,9 @@ const mapData = {
         { name: "Turkey", manager: "OPEN", coords: [38.9637, 35.2433] },
         { name: "Botswana", manager: "OPEN", coords: [-22.3285, 24.6849] },
         { name: "Hong Kong", manager: "OPEN", coords: [22.3193, 114.1694] },
-        { name: "USA", manager: "OPEN", coords: [38.0000, -97.0000] } // General Open Lead
+        { name: "USA", manager: "OPEN", coords: [38.0000, -97.0000] }
     ],
+
     agencies: [
         // MR. RAJIV Agencies
         { name: "Alpine US", manager: "MR. RAJIV", coords: [40.7128, -74.0060] },
@@ -145,7 +147,7 @@ const mapData = {
         { name: "TGS", manager: "MR. RAJIV", coords: [43.6108, 3.8767] },
         { name: "UNICEF", manager: "MR. RAJIV", coords: [40.7505, -73.9671] },
         { name: "UNHCR", manager: "MR. RAJIV", coords: [46.2217, 6.1311] },
-        
+
         // MR. NADER Agencies
         { name: "ICRC Geneva", manager: "MR. NADER", coords: [46.2231, 6.1353] },
         { name: "Medecin Sans Frontier (MSF)", manager: "MR. NADER", coords: [46.2205, 6.1289] },
@@ -171,7 +173,7 @@ const mapData = {
         { name: "US Dept of State - DSS", manager: "MR. ROWAN", coords: [38.8943, -77.0451] },
         { name: "IDG Security (Malaysia)", manager: "MR. ROWAN", coords: [3.1390, 101.6869] },
         { name: "IOM Manila", manager: "MR. ROWAN", coords: [14.5547, 121.0244] },
-        { name: "UK Security Companies", manager: "MR. ROWAN", coords: [51.5098, -0.1180] }, // Generic UK point
+        { name: "UK Security Companies", manager: "MR. ROWAN", coords: [51.5098, -0.1180] },
 
         // MR. AZMI Agencies
         { name: "Syria - UN", manager: "MR. AZMI", coords: [33.5138, 36.2765] },
@@ -189,8 +191,8 @@ const mapData = {
         { name: "UNOPS LTA", manager: "SUJITHA", coords: [55.6761, 12.5683] },
         { name: "WFP DUBAI", manager: "OPEN", coords: [25.2048, 55.2708] }
     ],
-     corporates: [
-    // MR. RAJIV Agencies
-        { name: "Vallo Middle East", manager: "MR. RAJIV", coords: [25.0951, 55.1549] },
+
+    corporates: [
+        { name: "Vallo Middle East", manager: "MR. RAJIV", coords: [25.0951, 55.1549] }
     ]
 };
