@@ -1,0 +1,2696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEVA FY 2026 | Report Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-funnel"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Teko:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #E41837;
+            --primary-dark: #f46721;
+            --secondary-color: #000000;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --border-color: #e2e88f0;
+            --success-color: #1e8e3e;
+            --linkedin-blue: #0a66c2;
+
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.05);
+            --shadow-btn: 0 4px 14px 0 rgba(255, 80, 0, 0.39);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Teko', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0;
+        }
+
+        #onboarding-app {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+
+        #onboarding-app .page { display: none !important; }
+        #onboarding-app .page.active {
+            display: block !important;
+            animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .brand-header {
+            width: 100%;
+            background: var(--bg-card);
+            padding: 16px 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            box-sizing: border-box;
+            z-index: 10;
+        }
+
+        .brand-logo img { height: 50px; }
+        .partner-logo img { height: 38px; }
+
+        .filter-summary-bar {
+            width: 100%;
+            background: #fff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            font-size: 0.9rem;
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .main-card {
+            width: 1180px;
+            max-width: 92%;
+            background: var(--bg-card);
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            margin-top: 40px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-bar {
+            display: flex;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 24px;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .nav-item {
+            flex: 1;
+            min-width: 140px;
+            padding: 12px;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+            background: rgba(255, 80, 0, 0.08);
+        }
+
+        .content-area {
+            padding: 48px 64px;
+            min-height: 560px;
+            box-sizing: border-box;
+            flex-grow: 1;
+        }
+
+        h1 {
+            color: var(--secondary-color);
+            font-size: 3.2rem;
+            line-height: 1.1;
+            margin-bottom: 16px;
+        }
+
+        .upload-box {
+            background-color: var(--bg-body);
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 32px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-box:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(255, 80, 0, 0.02);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+        }
+
+        .bdm-selection-wrapper {
+            margin-top: 32px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .bdm-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .bdm-card {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #fff;
+        }
+
+        .bdm-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .bdm-card.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(255, 80, 0, 0.05);
+        }
+
+        .bdm-checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .bdm-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .config-section {
+            margin-top: 40px;
+            background: #f8fafc;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .date-range-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        .date-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .date-input-group label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .date-field {
+            height: 48px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0 14px;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            background: #fff;
+            color: var(--text-main);
+        }
+
+        .outline-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .outline-card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .outline-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .outline-card-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .outline-icon {
+            background: rgba(255, 80, 0, 0.1);
+            color: var(--primary-color);
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+        }
+
+        .outline-card-header h3 {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-transform: none;
+        }
+
+        .outline-total {
+            font-family: 'Teko', sans-serif;
+            font-size: 3.8rem;
+            line-height: 1;
+            color: var(--secondary-color);
+            margin-bottom: 24px;
+        }
+
+        .outline-breakdown {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .breakdown-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .bd-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .bd-val {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .progress-segment { height: 100%; transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .progress-segment.comp { background: var(--linkedin-blue); }
+        .progress-segment.self { background: var(--primary-color); }
+        .progress-segment.other { background: #94a3b8; }
+
+        .legend-row {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .legend-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        .summary-strip {
+            margin-top: 24px;
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 18px 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .mini-stat {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .mini-stat .label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .mini-stat .value {
+            font-size: 2rem;
+            font-family: 'Teko', sans-serif;
+            line-height: 1;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            max-height: 520px;
+            overflow-y: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .data-table thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .data-table th {
+            background: #f8fafc;
+            padding: 14px 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .data-table td {
+            padding: 14px 20px;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .data-table tbody tr:hover { background: rgba(255, 80, 0, 0.02); }
+        .data-table tbody tr:last-child td { border-bottom: none; }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .status-badge.yes { background: rgba(30, 142, 62, 0.1); color: var(--success-color); }
+        .status-badge.no { background: rgba(100, 116, 139, 0.1); color: var(--text-muted); }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: rgba(255,80,0,0.08);
+            color: var(--primary-color);
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        button.pill:hover {
+            border-color: var(--primary-color);
+            background: rgba(255,80,0,0.15);
+        }
+
+        .footer-actions {
+            padding: 20px 64px;
+            background: #fff;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: 8px;
+            border: none;
+            font-family: 'Teko';
+            font-size: 1.4rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-next {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .btn-next:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-btn);
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+
+        .final-note {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 900px) {
+            .content-area { padding: 24px 20px; }
+            h1 { font-size: 2.5rem; }
+            .date-range-grid,
+            .outline-grid,
+            .summary-strip { grid-template-columns: 1fr; }
+            .filter-summary-bar { flex-direction: column; gap: 12px; align-items: flex-start; padding: 16px 20px; }
+            .filter-summary-bar > div { flex-wrap: wrap; gap: 12px; }
+        }
+
+        .drill-link {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-weight: 800;
+    cursor: pointer;
+    padding: 0;
+    font-size: inherit;
+    text-decoration: underline;
+}
+
+.drill-link:hover {
+    opacity: 0.8;
+}
+    </style>
+</head>
+<body>
+
+<div id="onboarding-app">
+
+    <header class="brand-header">
+      <!--  <div class="brand-logo"><img src="idea.PNG" alt="Logo"></div> -->
+        <div class="partner-logo"><img src="mevalogo.png" alt="MEVA"></div>
+    </header>
+
+    <div class="filter-summary-bar" id="filterSummaryBar" style="display: none;">
+        <div style="display: flex; gap: 24px; align-items: center;">
+            <div class="filter-item">
+                <i class="ph ph-calendar-blank" style="color: var(--primary-color); font-size: 1.2rem;"></i>
+                <span id="displayDateRange" style="font-weight: 600; color: var(--text-main);"></span>
+            </div>
+            <div class="filter-item">
+                <i class="ph ph-users" style="color: var(--primary-color); font-size: 1.2rem;"></i>
+                <span id="displayBdms" style="font-weight: 600; color: var(--text-main);"></span>
+            </div>
+        </div>
+        <button class="pill" onclick="jumpToStep1()">
+            <i class="ph ph-pencil-simple" style="margin-right: 4px;"></i> Edit Config
+        </button>
+    </div>
+
+    <div class="main-card">
+        <nav class="nav-bar">
+            <div class="nav-item active" id="nav1" onclick="goToStep(1)"><i class="ph ph-database"></i><span>Report Setup</span></div>
+            <div class="nav-item" id="nav2" onclick="goToStep(2)"><i class="ph ph-chart-line-up"></i><span>Outline Analysis</span></div>
+            <div class="nav-item" id="nav3" onclick="goToStep(3)"><i class="ph ph-phone-call"></i><span>Follow-Ups</span></div>
+            <div class="nav-item" id="nav4" onclick="goToStep(4)"><i class="ph ph-users-three"></i><span>Performance</span></div>
+            <div class="nav-item" id="nav5" onclick="goToStep(5)"><i class="ph ph-file-pdf"></i><span>Monthly Trend</span></div>
+            <div class="nav-item" id="nav6" onclick="goToStep(6)"><i class="ph ph-car"></i><span>Vehicle Trend</span></div>
+            <div class="nav-item" id="nav7" onclick="goToStep(7)"><i class="ph ph-file-pdf"></i><span>Final Export</span></div>
+   
+            <div class="nav-item" id="nav8" onclick="goToStep(8)"><i class="ph ph-file-pdf"></i><span>Raw Data</span></div>
+
+</nav>
+
+        <main class="content-area">
+
+            <!-- PAGE 1 -->
+            <div id="page1" class="page active">
+                <div style="margin-bottom: 32px;">
+                    <h1>Dashboard <span style="color: var(--primary-color)">Initialization</span></h1>
+                    <p>Upload your raw data to identify active managers and define your reporting timeframe.</p>
+                </div>
+
+                <div class="upload-box" id="dropZone" onclick="document.getElementById('csvInput').click()">
+                    <input type="file" id="csvInput" accept=".csv" style="display: none;" onchange="handleFileUpload(this)">
+                    <div class="upload-icon"><i class="ph ph-file-csv"></i></div>
+                    <h3 id="fileNameText">Click to Upload Source CSV</h3>
+                    <p>The system will automatically process BDM names.</p>
+                </div>
+
+                <div class="bdm-selection-wrapper" id="bdmSection" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <div>
+                            <h2 style="margin: 0;">Manager Selection</h2>
+                        </div>
+                        <div style="display:flex; gap:12px;">
+                            <button onclick="selectAllBdms(true)" style="background:none; border:none; color:var(--primary-color); font-weight:700; cursor:pointer;">Select All</button>
+                            <button onclick="selectAllBdms(false)" style="background:none; border:none; color:var(--text-muted); font-weight:700; cursor:pointer;">Clear</button>
+                        </div>
+                    </div>
+                    <div class="bdm-grid" id="bdmGrid"></div>
+                </div>
+
+                <div class="config-section">
+                    <h2>Reporting Timeframe</h2>
+                    <p style="font-size: 0.85rem;">Defaulted to Financial Year 2025–26 (Apr 1, 2025 to Mar 31, 2026)</p>
+
+                    <div class="date-range-grid">
+                        <div class="date-input-group">
+                            <label>Start Date</label>
+                            <input type="date" id="startDate" class="date-field" value="2025-04-01">
+                        </div>
+                        <div class="date-input-group">
+                            <label>End Date</label>
+                            <input type="date" id="endDate" class="date-field" value="2026-03-31">
+                        </div>
+                    </div>
+                </div>
+                <div class="table-wrapper" style="max-height:none; display:none;" id="perfTableContainer">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>BDM</th>
+                                <th>Leads</th>
+                                <th>Opportunities</th>
+                                <th>Proposals</th>
+                                <th>Orders</th>
+                                <th>Opp Rate</th>
+                                <th>Proposal Rate</th>
+                                <th>Order Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody id="performanceTableBodyMain"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PAGE 2 -->
+            <div id="page2" class="page">
+                <div style="margin-bottom: 20px;">
+                    <h1>Outline <span style="color: var(--primary-color)">Analysis</span></h1>
+                    <p>A high-level snapshot of the filtered pipeline across leads, opportunities, proposals and orders.</p>
+                </div>
+
+                <div class="summary-strip">
+                    <div class="mini-stat">
+                        <div class="label">Selected Managers</div>
+                        <div class="value" id="selectedBdmCount">0</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="label">Filtered Records</div>
+                        <div class="value" id="filteredRecordCount">0</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="label">Proposal Rate</div>
+                        <div class="value" id="proposalRate">0%</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="label">Order Rate</div>
+                        <div class="value" id="orderRate">0%</div>
+                    </div>
+                </div>
+                <div class="outline-card" style="margin-top: 24px; padding: 24px;">
+    <h2 style="margin-bottom: 16px; color: var(--secondary-color);">Pipeline Volume by BDM</h2>
+<p style="margin: 0 0 12px 0; color: var(--text-muted); font-size: 0.95rem;">
+    Stacked comparison of leads, opportunities, proposals, and orders across selected BDMs.
+</p>
+    <div class="table-wrapper" style="padding: 20px; border: none; box-shadow: none;">
+        <canvas id="outlineFunnelChart" height="120"></canvas>
+    </div>
+</div>
+                <div class="outline-grid">
+                    <div class="outline-card">
+                        <div class="outline-card-header">
+                            <div class="outline-icon"><i class="ph ph-funnel"></i></div>
+                            <h3>Leads</h3>
+                        </div>
+                        <div class="outline-total" id="out-leads-total">0</div>
+                        <div class="outline-breakdown">
+                            <div class="breakdown-item"><span class="bd-label">Company</span><span class="bd-val" id="out-leads-comp">0</span></div>
+                            <div class="breakdown-item"><span class="bd-label">Self</span><span class="bd-val" id="out-leads-self">0</span></div>
+                            <div class="breakdown-item"><span class="bd-label">Other</span><span class="bd-val" id="out-leads-other">0</span></div>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-segment comp" id="bar-leads-comp" style="width:0%"></div>
+                            <div class="progress-segment self" id="bar-leads-self" style="width:0%"></div>
+                            <div class="progress-segment other" id="bar-leads-other" style="width:0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="outline-card">
+                        <div class="outline-card-header">
+                            <div class="outline-icon"><i class="ph ph-briefcase"></i></div>
+                            <h3>Opportunities</h3>
+                        </div>
+                        <div class="outline-total" id="out-opps-total">0</div>
+                        <div class="outline-breakdown">
+                            <div class="breakdown-item"><span class="bd-label">Company</span><span class="bd-val" id="out-opps-comp">0</span></div>
+                            <div class="breakdown-item"><span class="bd-label">Self</span><span class="bd-val" id="out-opps-self">0</span></div>
+                            <div class="breakdown-item"><span class="bd-label">Other</span><span class="bd-val" id="out-opps-other">0</span></div>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-segment comp" id="bar-opps-comp" style="width:0%"></div>
+                            <div class="progress-segment self" id="bar-opps-self" style="width:0%"></div>
+                            <div class="progress-segment other" id="bar-opps-other" style="width:0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="outline-card">
+                        <div class="outline-card-header">
+                            <div class="outline-icon"><i class="ph ph-file-text"></i></div>
+                            <h3>Proposals</h3>
+                        </div>
+                        <div class="outline-total" id="out-props-total">0</div>
+                        <div class="outline-breakdown">
+                            <div class="breakdown-item"><span class="bd-label">Company</span><span class="bd-val" id="out-props-comp">0</span></div>
+                            <div class="breakdown-item"><span class="bd-label">Self</span><span class="bd-val" id="out-props-self">0</span></div>
+                            <div class="breakdown-item"><span class="bd-label">Other</span><span class="bd-val" id="out-props-other">0</span></div>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-segment comp" id="bar-props-comp" style="width:0%"></div>
+                            <div class="progress-segment self" id="bar-props-self" style="width:0%"></div>
+                            <div class="progress-segment other" id="bar-props-other" style="width:0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="outline-card">
+                        <div class="outline-card-header">
+                            <div class="outline-icon"><i class="ph ph-seal-check"></i></div>
+                            <h3>Orders</h3>
+                        </div>
+                        <div class="outline-total" id="out-orders-total">0</div>
+                        <div class="outline-breakdown">
+                            <div class="breakdown-item"><span class="bd-label">Company</span><span class="bd-val" id="out-orders-comp">0</span></div>
+                            <div class="breakdown-item"><span class="bd-label">Self</span><span class="bd-val" id="out-orders-self">0</span></div>
+                            <div class="breakdown-item"><span class="bd-label">Other</span><span class="bd-val" id="out-orders-other">0</span></div>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-segment comp" id="bar-orders-comp" style="width:0%"></div>
+                            <div class="progress-segment self" id="bar-orders-self" style="width:0%"></div>
+                            <div class="progress-segment other" id="bar-orders-other" style="width:0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="legend-row">
+                    <span><span class="legend-indicator" style="background: var(--linkedin-blue);"></span>Company Provided</span>
+                    <span><span class="legend-indicator" style="background: var(--primary-color);"></span>Self Prospect</span>
+                    <span><span class="legend-indicator" style="background: #94a3b8;"></span>Other</span>
+                </div>
+
+                <div style="margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--border-color);">
+                    <div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px;">
+                        <div>
+                            <h2 style="margin-bottom: 8px; color: var(--secondary-color);">Data Explorer</h2>
+                            <p style="margin: 0; color: var(--text-muted); font-size: 0.95rem;">Detailed records for the filtered dataset, with a master status selector.</p>
+                        </div>
+                        <div id="tableCount" class="pill" style="cursor: default; border: none;"></div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+                        <label for="masterStageFilter" style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Master View</label>
+                        <select id="masterStageFilter" onchange="applyMasterFilter()" class="date-field" style="height: 44px; min-width: 260px;">
+                            <option value="all">All Records</option>
+                            <option value="leads_only">Leads Only</option>
+                            <option value="lead_to_opportunity">Leads - Opportunity</option>
+                            <option value="proposal_generated">Proposal Generated</option>
+                            <option value="order_confirmed">Order Confirmed</option>
+                        </select>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Manager</th>
+                                    <th>Date (GMT)</th>
+                                    <th>Company</th>
+                                    <th>Country</th>
+                                    <th>Source</th>
+                                    <th>Pipeline Stage</th>
+                                    <th style="text-align:center;">Opp</th>
+                                    <th style="text-align:center;">Prop</th>
+                                    <th style="text-align:center;">Order</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dataTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 3 -->
+            
+<div id="page3" class="page">
+    <div style="margin-bottom: 24px;">
+        <h1>Follow-up <span style="color: var(--primary-color)">Activities</span></h1>
+        <p>Follow-up discipline, pipeline velocity, and dead pipeline review for the filtered dataset.</p>
+    </div>
+
+    <div class="summary-strip" style="grid-template-columns: repeat(6, 1fr);">
+        <div class="mini-stat">
+            <div class="label">Records Requiring Action</div>
+            <div class="value" id="fuTotal">0</div>
+        </div>
+        <div class="mini-stat">
+            <div class="label">Overdue Follow-Ups</div>
+            <div class="value" id="fuOverdue" style="color:#ef4444;">0</div>
+        </div>
+        <div class="mini-stat">
+            <div class="label">No Follow-Up Logged</div>
+            <div class="value" id="fuNoAction">0</div>
+        </div>
+        <div class="mini-stat">
+            <div class="label">Avg Lead → Opp</div>
+            <div class="value" id="velLeadOpp">0d</div>
+        </div>
+        <div class="mini-stat">
+            <div class="label">Avg Opp → Proposal</div>
+            <div class="value" id="velOppProp">0d</div>
+        </div>
+        <div class="mini-stat">
+            <div class="label">Dead Pipeline</div>
+            <div class="value" id="deadPipeline" style="color:#ef4444;">0</div>
+        </div>
+    </div>
+
+    <div style="margin-top: 32px;">
+        <h2 style="margin-bottom: 12px;">Follow-Up Discipline</h2>
+        <div class="table-wrapper" style="max-height: 420px;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Manager</th>
+                        <th>Company</th>
+                        <th>Stage</th>
+                        <th>Total Follow-Ups</th>
+                        <th>Last Follow-Up</th>
+                        <th>Next Follow-Up</th>
+                        <th>Days Since Last</th>
+                        <th>Discipline Status</th>
+                    </tr>
+                </thead>
+                <tbody id="followUpTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div style="margin-top: 32px;">
+        <h2 style="margin-bottom: 12px;">Dead Pipeline Analysis</h2>
+        <div class="table-wrapper" style="max-height: 420px;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Manager</th>
+                        <th>Company</th>
+                        <th>Stage</th>
+                        <th>Reason</th>
+                        <th>Age / Delay</th>
+                        <th>Recommended Action</th>
+                    </tr>
+                </thead>
+                <tbody id="deadPipelineTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+            
+            <!-- PAGE 4 -->
+            <div id="page4" class="page">
+                <div style="margin-bottom: 24px;">
+                    <h1>Individual <span style="color: var(--primary-color)">Performance</span></h1>
+                    <p>BDM-level review for the selected period and selected managers.</p>
+                </div>
+
+                <div class="table-wrapper" style="max-height:none;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>BDM</th>
+                                <th>Leads</th>
+                                <th>Opportunities</th>
+                                <th>Proposals</th>
+                                <th>Orders</th>
+                                <th>Opp Rate</th>
+                                <th>Proposal Rate</th>
+                                <th>Order Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody id="performanceTableBody"></tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 32px;">
+    <h2 style="margin-bottom: 12px;">Order Confirmations</h2>
+    <p style="margin-bottom: 16px; color: var(--text-muted);">
+        Company-wise confirmed order details for the filtered dataset.
+    </p>
+
+    <div class="table-wrapper" style="max-height: 480px;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Company Name</th>
+                    <th>BDM</th>
+                    <th>Order ID</th>
+                    <th>Order Date</th>
+                    <th>Vehicle Brand</th>
+                    <th>Vehicle Type</th>
+                    <th>Qty</th>
+                    <th>Country</th>
+                </tr>
+            </thead>
+            <tbody id="orderConfirmationsTableBody"></tbody>
+        </table>
+    </div>
+</div>
+            </div>
+
+<!-- PAGE 5 -->
+<div id="page5" class="page">
+    <div style="margin-bottom: 24px;">
+        <h1>Entry <span style="color: var(--primary-color)">Trend</span></h1>
+        <p>Monthly trend of leads, opportunities, proposals, and orders for the selected filters.</p>
+    </div>
+
+    <div class="summary-strip" style="grid-template-columns: repeat(4, 1fr);">
+        <div class="mini-stat">
+            <div class="label">Months Covered</div>
+            <div class="value" id="trendMonths">0</div>
+        </div>
+        <div class="mini-stat">
+            <div class="label">Lead Entries</div>
+            <div class="value" id="trendLeadTotal">0</div>
+        </div>
+        <div class="mini-stat">
+            <div class="label">Proposal Entries</div>
+            <div class="value" id="trendProposalTotal">0</div>
+        </div>
+        <div class="mini-stat">
+            <div class="label">Order Entries</div>
+            <div class="value" id="trendOrderTotal">0</div>
+        </div>
+    </div>
+
+    <div class="table-wrapper" style="margin-top: 24px; max-height:none; padding: 20px;">
+        <canvas id="entryTrendChart" height="110"></canvas>
+    </div>
+
+    <div style="margin-top: 32px;">
+        <h2 style="margin-bottom: 12px;">Monthly Trend Table</h2>
+        <div class="table-wrapper" style="max-height: 420px;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Leads</th>
+                        <th>Opportunities</th>
+                        <th>Proposals</th>
+                        <th>Orders</th>
+                    </tr>
+                </thead>
+                <tbody id="entryTrendTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!--Page 6 -->
+<div id="page6" class="page">
+    <div style="margin-bottom: 24px;">
+        <h1>Vehicle <span style="color: var(--primary-color)">Trend</span></h1>
+        <p>Hierarchical vehicle analysis by vehicle name, brand, and type with armouring level filter.</p>
+    </div>
+
+    <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:20px;">
+        <select id="vehicleArmourFilter" onchange="onVehicleArmourFilterChange()" style="padding:10px 12px; border-radius:10px; border:1px solid var(--border-color);">
+            <option value="all">All Armouring Levels</option>
+        </select>
+
+        <button onclick="resetVehicleTrend()" style="border:none; background:rgba(255,80,0,0.08); color:var(--primary-color); padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer;">
+            Reset View
+        </button>
+
+        <button onclick="vehicleTrendBack()" style="border:none; background:var(--bg-body); color:var(--text-dark); padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer;">
+            Back One Level
+        </button>
+
+        <div id="vehicleTrendBreadcrumb" style="font-weight:700; color:var(--text-muted);"></div>
+    </div>
+
+    <div class="summary-strip" style="grid-template-columns: repeat(4, 1fr); margin-bottom:20px;">
+        <div class="mini-stat">
+            <div class="label">Current Level</div>
+            <div class="value" id="vehicleTrendLevelLabel">Vehicle Names</div>
+        </div>
+        <div class="mini-stat">
+            <div class="label">Categories</div>
+            <div class="value" id="vehicleTrendCategoryCount">0</div>
+        </div>
+        <div class="mini-stat">
+            <div class="label">Total Records</div>
+            <div class="value" id="vehicleTrendRecordCount">0</div>
+        </div>
+        <div class="mini-stat">
+            <div class="label">Total Qty</div>
+            <div class="value" id="vehicleTrendQty">0</div>
+        </div>
+    </div>
+
+    <div class="table-wrapper" style="padding:20px; max-height:none;">
+        <canvas id="vehicleTrendChart" height="110"></canvas>
+    </div>
+
+    <div style="margin-top:32px;">
+        <h2 style="margin-bottom:12px;">Vehicle Trend Table</h2>
+        <div class="table-wrapper" style="max-height:420px;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>BDM</th>
+<th>Company</th>
+<th>Proposal No</th>
+<th>Vehicle Name</th>
+<th>Vehicle Brand</th>
+<th>Vehicle Type</th>
+<th>Armouring Level</th>
+<th>Qty</th>
+<th>Country</th>
+                    </tr>
+                </thead>
+                <tbody id="vehicleTrendTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+            <!-- PAGE 7 -->
+            <div id="page7" class="page">
+                <div style="margin-bottom: 24px;">
+                    <h1>Report <span style="color: var(--primary-color)">Ready</span></h1>
+                </div>
+
+                <div class="final-note">
+                    <p style="margin-top:0;"><strong>Current build status:</strong></p>
+                    <p>This version now supports:</p>
+                    <ul>
+                        <li>CSV upload and parsing</li>
+                        <li>BDM detection and filtering</li>
+                        <li>date-based filtering</li>
+                        <li>outline KPI analysis</li>
+                        <li>record-level data explorer</li>
+                        <li>individual BDM performance review</li>
+                        <li>open pipeline follow-ups</li>
+                    </ul>
+                    <p style="margin-bottom:0;">
+                        Next strong step is to add charts, vehicle quantity logic, opportunity-stage intelligence,
+                        and export to PDF/HTML report.
+                    </p>
+                </div>
+            </div>
+
+
+            <!-- PAGE 8 -->
+<div id="page8" class="page">
+
+    <div style="margin-bottom: 24px;">
+        <h1>Raw <span style="color: var(--primary-color)">Data</span></h1>
+        <p>Full filtered CSV records with all available columns based on selected BDM and FY date range.</p>
+    </div>
+
+    <!-- DRILL FILTER STATUS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:16px; flex-wrap:wrap;">
+        <p id="rawDataDrillLabel" style="color: var(--text-muted); margin:0;">
+            Showing full filtered dataset
+        </p>
+
+        <button onclick="clearRawDataDrill()" 
+            style="border:none; background:rgba(255,80,0,0.08); color:var(--primary-color); padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer;">
+            Clear Drill Filter
+        </button>
+    </div>
+
+    <div class="summary-strip" style="grid-template-columns: repeat(2, 1fr);">
+        <div class="mini-stat">
+            <div class="label">Filtered Rows</div>
+            <div class="value" id="rawDataRowCount">0</div>
+        </div>
+
+        <div class="mini-stat">
+            <div class="label">Columns</div>
+            <div class="value" id="rawDataColCount">0</div>
+        </div>
+    </div>
+
+    <div style="margin-top: 24px;" class="table-wrapper">
+        <div id="rawDataTableWrap" style="overflow:auto; max-height: 70vh; border-radius: 16px;">
+            <table class="data-table" id="rawDataTable"></table>
+        </div>
+    </div>
+
+</div>
+        </main>
+
+        <footer class="footer-actions">
+            <button class="btn btn-back" id="backBtn" onclick="goPage(-1)" style="visibility: hidden;">
+                <i class="ph ph-caret-left"></i>
+                <span>Back</span>
+            </button>
+
+            <button class="btn btn-next" id="nextBtn" onclick="goPage(1)">
+                <span id="nextBtnText">Process & Analyze</span>
+                <i class="ph ph-caret-right"></i>
+            </button>
+        </footer>
+    </div>
+</div>
+
+<script>
+    let stepCount = 1;
+    let fullCsvData = [];
+    let latestExplorerRows = [];
+    let rawDataDrillFilter = null;
+    let vehicleTrendLevel = 'name';
+let vehicleTrendSelectedName = null;
+let vehicleTrendSelectedBrand = null;
+let vehicleTrendArmourFilter = 'all';
+let vehicleTrendChartInstance = null;
+    const MAX_STEP = 8;
+
+    function handleFileUpload(input) {
+        if (!input.files || !input.files[0]) return;
+
+        const file = input.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            const text = e.target.result;
+            processCsv(text);
+
+            document.getElementById('fileNameText').innerText = "File Ready: " + file.name;
+            document.getElementById('dropZone').style.borderColor = "var(--success-color)";
+            document.getElementById('dropZone').style.backgroundColor = "rgba(30, 142, 62, 0.05)";
+        };
+
+        reader.readAsText(file);
+    }
+
+    function parseCSVText(text) {
+        const result = [];
+        let row = [];
+        let inQuotes = false;
+        let val = '';
+
+        for (let i = 0; i < text.length; i++) {
+            const c = text[i];
+            const next = text[i + 1];
+
+            if (c === '"') {
+                if (inQuotes && next === '"') {
+                    val += '"';
+                    i++;
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (c === ',' && !inQuotes) {
+                row.push(val);
+                val = '';
+            } else if ((c === '\n' || (c === '\r' && next === '\n')) && !inQuotes) {
+                if (c === '\r') i++;
+                row.push(val);
+                result.push(row);
+                row = [];
+                val = '';
+            } else {
+                if (c !== '\r' || inQuotes) val += c;
+            }
+        }
+
+        row.push(val);
+        if (row.length > 1 || row[0] !== '') result.push(row);
+
+        return result.filter(r => r.length > 1 || (r.length === 1 && r[0] !== ''));
+    }
+
+    function processCsv(text) {
+        const rows = parseCSVText(text);
+        if (rows.length < 2) {
+            alert("CSV file appears empty or invalid.");
+            return;
+        }
+
+        const headers = rows[0].map(h => h.trim().toLowerCase().replace(/^\uFEFF/, ''));
+        fullCsvData = [];
+        const uniqueBdms = new Set();
+
+        for (let i = 1; i < rows.length; i++) {
+            const rowObj = {};
+            for (let j = 0; j < headers.length; j++) {
+                rowObj[headers[j]] = rows[i][j] ? rows[i][j].trim() : '';
+            }
+
+            fullCsvData.push(rowObj);
+
+            if (rowObj.bdm_name_final) {
+                uniqueBdms.add(rowObj.bdm_name_final);
+            }
+        }
+
+        renderBdmGrid(Array.from(uniqueBdms).sort());
+    }
+
+    function renderBdmGrid(names) {
+        const grid = document.getElementById('bdmGrid');
+        const section = document.getElementById('bdmSection');
+
+        grid.innerHTML = '';
+
+        names.forEach(name => {
+            const card = document.createElement('div');
+            card.className = 'bdm-card';
+            card.innerHTML = `
+                <input type="checkbox" class="bdm-checkbox" value="${escapeHtml(name)}">
+                <div class="bdm-info">
+                    <span class="bdm-name">${escapeHtml(name)}</span>
+                </div>
+            `;
+
+            const checkbox = card.querySelector('.bdm-checkbox');
+
+            card.addEventListener('click', function(e) {
+                if (e.target !== checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                }
+                card.classList.toggle('selected', checkbox.checked);
+            });
+
+            checkbox.addEventListener('click', function(e) {
+                e.stopPropagation();
+                card.classList.toggle('selected', checkbox.checked);
+            });
+
+            grid.appendChild(card);
+        });
+
+        section.style.display = 'block';
+        section.style.animation = 'slideUpFade 0.5s ease forwards';
+    }
+
+    function selectAllBdms(state) {
+        document.querySelectorAll('.bdm-card').forEach(card => {
+            const cb = card.querySelector('.bdm-checkbox');
+            cb.checked = state;
+            card.classList.toggle('selected', state);
+        });
+    }
+
+    function categorizeSource(sourceStr) {
+        if (!sourceStr) return 'other';
+        const s = sourceStr.trim().toLowerCase();
+
+        if (s === 'company provided' || s.includes('company')) return 'comp';
+        if (s === 'self prospect' || s.includes('self')) return 'self';
+        return 'other';
+    }
+
+    function parseSafeDate(dateStr) {
+        if (!dateStr) return null;
+
+        const parts = dateStr.trim().split(/[ \/:-]/);
+
+        if (parts.length >= 3) {
+            let d = parseInt(parts[0], 10);
+            let m = parseInt(parts[1], 10) - 1;
+            let y = parseInt(parts[2], 10);
+
+            if (y < 100) y += 2000;
+
+            if (!isNaN(d) && !isNaN(m) && !isNaN(y)) {
+                const date = new Date(y, m, d);
+                if (!isNaN(date.getTime())) return date;
+            }
+        }
+
+        const fallbackDate = new Date(dateStr);
+        if (!isNaN(fallbackDate.getTime())) return fallbackDate;
+
+        return null;
+    }
+
+    function isOpportunity(row) {
+        return row.is_converted_to_opportunity === '1' ||
+               (row.opportunity_code && row.opportunity_code.trim() !== '');
+    }
+
+    function isProposal(row) {
+        return row.is_proposal_created === '1' ||
+               (row.proposal_number && row.proposal_number.trim() !== '');
+    }
+
+    function isOrder(row) {
+        return row.has_order === '1' ||
+               (row.order_id && row.order_id.trim() !== '');
+    }
+
+    function toInt(val, fallback = 0) {
+        const n = parseInt(val, 10);
+        return isNaN(n) ? fallback : n;
+    }
+
+    function parseDateFlexible(dateStr) {
+    if (!dateStr) return null;
+    const raw = String(dateStr).trim();
+    if (!raw) return null;
+
+    const direct = new Date(raw);
+    if (!isNaN(direct.getTime())) return direct;
+
+    const parts = raw.split(/[\/\- :T]/).filter(Boolean);
+    if (parts.length >= 3) {
+        let d = parseInt(parts[0], 10);
+        let m = parseInt(parts[1], 10) - 1;
+        let y = parseInt(parts[2], 10);
+        if (y < 100) y += 2000;
+        const dt = new Date(y, m, d);
+        if (!isNaN(dt.getTime())) return dt;
+    }
+    return null;
+}
+
+function diffDays(fromDate, toDate) {
+    if (!fromDate || !toDate) return null;
+    const ms = toDate.getTime() - fromDate.getTime();
+    return Math.floor(ms / (1000 * 60 * 60 * 24));
+}
+
+function safeCompany(row) {
+    return row.company_name_final || row.opportunity_updated_company_name || 'Unknown';
+}
+
+function getCurrentStage(row) {
+    if (isOrder(row)) return 'Order Confirmed';
+    if (isProposal(row)) return 'Proposal Submitted';
+    if (isOpportunity(row)) return row.opportunity_stage || 'Opportunity';
+    return row.lead_pipeline_stage || 'Lead';
+}
+
+function getFollowUpContext(row) {
+    const oppExists = isOpportunity(row);
+
+    const totalFollowUps = oppExists
+        ? toInt(row.opp_followup_count, 0)
+        : toInt(row.lead_followup_count, 0);
+
+    const lastFollowUp = oppExists
+        ? parseDateFlexible(row.last_opp_followup_date)
+        : parseDateFlexible(row.last_lead_followup_date);
+
+    const nextFollowUp = oppExists
+        ? parseDateFlexible(row.next_opp_followup_gmt)
+        : parseDateFlexible(row.next_lead_followup_gmt);
+
+    return {
+        totalFollowUps,
+        lastFollowUp,
+        nextFollowUp,
+        mode: oppExists ? 'opportunity' : 'lead'
+    };
+}
+
+function getRecordAnchorDate(row) {
+    return (
+        parseDateFlexible(row.proposal_created_at) ||
+        parseDateFlexible(row.opportunity_created_at) ||
+        parseDateFlexible(row.lead_created_at) ||
+        parseDateFlexible(row.lead_date_gmt)
+    );
+}
+
+function getDaysSinceLastFollowUp(row, today = new Date()) {
+    const ctx = getFollowUpContext(row);
+    if (!ctx.lastFollowUp) return null;
+    return diffDays(ctx.lastFollowUp, today);
+}
+
+function getDisciplineStatus(row, today = new Date()) {
+    const ctx = getFollowUpContext(row);
+    const anchorDate = getRecordAnchorDate(row);
+    const recordAge = anchorDate ? diffDays(anchorDate, today) : null;
+    const daysSinceLast = ctx.lastFollowUp ? diffDays(ctx.lastFollowUp, today) : null;
+    const nextDueIn = ctx.nextFollowUp ? diffDays(today, ctx.nextFollowUp) : null;
+
+    // nextDueIn > 0 means overdue
+    if (ctx.totalFollowUps === 0 && recordAge !== null && recordAge > 14) {
+        return { label: 'Critical', tone: 'critical' };
+    }
+    if (nextDueIn !== null && nextDueIn > 7) {
+        return { label: 'Critical', tone: 'critical' };
+    }
+    if (daysSinceLast !== null && daysSinceLast > 30) {
+        return { label: 'Critical', tone: 'critical' };
+    }
+
+    if (ctx.totalFollowUps === 0) {
+        return { label: 'Needs Attention', tone: 'warn' };
+    }
+    if (nextDueIn !== null && nextDueIn > 0) {
+        return { label: 'Needs Attention', tone: 'warn' };
+    }
+    if (daysSinceLast !== null && daysSinceLast > 14) {
+        return { label: 'Needs Attention', tone: 'warn' };
+    }
+
+    return { label: 'On Track', tone: 'good' };
+}
+
+function getVelocityDays(row) {
+    const leadCreated = parseDateFlexible(row.lead_created_at) || parseDateFlexible(row.lead_date_gmt);
+    const oppCreated = parseDateFlexible(row.opportunity_created_at) || parseDateFlexible(row.opportunity_date_gmt);
+    const proposalCreated = parseDateFlexible(row.proposal_created_at);
+    const finalQuoteDate = parseDateFlexible(row.final_quotation_date);
+
+    return {
+        leadToOpp: (leadCreated && oppCreated) ? diffDays(leadCreated, oppCreated) : null,
+        oppToProposal: (oppCreated && proposalCreated) ? diffDays(oppCreated, proposalCreated) : null,
+        proposalToQuote: (proposalCreated && finalQuoteDate) ? diffDays(proposalCreated, finalQuoteDate) : null
+    };
+}
+
+function average(nums) {
+    const valid = nums.filter(v => v !== null && !isNaN(v) && v >= 0);
+    if (!valid.length) return 0;
+    return Math.round(valid.reduce((a, b) => a + b, 0) / valid.length);
+}
+
+function getDeadPipelineReason(row, today = new Date()) {
+    if (isOrder(row)) return null;
+
+    const ctx = getFollowUpContext(row);
+    const stage = getCurrentStage(row);
+    const anchorDate = getRecordAnchorDate(row);
+    const recordAge = anchorDate ? diffDays(anchorDate, today) : null;
+    const daysSinceLast = ctx.lastFollowUp ? diffDays(ctx.lastFollowUp, today) : null;
+    const overdueDays = ctx.nextFollowUp ? diffDays(ctx.nextFollowUp, today) : null;
+    const oppAge = toInt(row.opportunity_age_days, 0);
+
+    if (!isOpportunity(row) && ctx.totalFollowUps === 0 && recordAge !== null && recordAge > 21) {
+        return {
+            stage,
+            reason: 'Lead aged without any follow-up',
+            age: `${recordAge} days`,
+            action: 'Qualify immediately or close lead'
+        };
+    }
+
+    if (isOpportunity(row) && !isProposal(row) && oppAge > 45 && (daysSinceLast === null || daysSinceLast > 21)) {
+        return {
+            stage,
+            reason: 'Opportunity stalled before proposal',
+            age: `${oppAge} days`,
+            action: 'Escalate, re-engage, or mark lost'
+        };
+    }
+
+    const proposalCreated = parseDateFlexible(row.proposal_created_at);
+    const proposalAge = proposalCreated ? diffDays(proposalCreated, today) : null;
+
+    if (isProposal(row) && !isOrder(row) && proposalAge !== null && proposalAge > 45 && (daysSinceLast === null || daysSinceLast > 30)) {
+        return {
+            stage,
+            reason: 'Proposal not progressing to closure',
+            age: `${proposalAge} days`,
+            action: 'Commercial push or formal close-out'
+        };
+    }
+
+    if (overdueDays !== null && overdueDays > 14) {
+        return {
+            stage,
+            reason: 'Follow-up overdue for too long',
+            age: `${overdueDays} days overdue`,
+            action: 'Immediate follow-up required'
+        };
+    }
+
+    return null;
+}
+
+function badgeHtml(label, tone) {
+    const styles = {
+        good: 'background: rgba(30,142,62,0.1); color: var(--success-color);',
+        warn: 'background: rgba(245,158,11,0.12); color: #b45309;',
+        critical: 'background: rgba(239,68,68,0.1); color: #ef4444;'
+    };
+    return `<span style="${styles[tone]} padding:4px 8px; border-radius:4px; font-size:0.8rem; font-weight:700;">${escapeHtml(label)}</span>`;
+}
+let entryTrendChartInstance = null;
+
+function monthKeyFromDate(dt) {
+    if (!dt || isNaN(dt.getTime())) return null;
+    const y = dt.getFullYear();
+    const m = String(dt.getMonth() + 1).padStart(2, '0');
+    return `${y}-${m}`;
+}
+
+function formatMonthLabel(key) {
+    const [y, m] = key.split('-');
+    const dt = new Date(Number(y), Number(m) - 1, 1);
+    return dt.toLocaleString('en-US', { month: 'short', year: 'numeric' });
+}
+
+function getOrderDate(row) {
+    return (
+        parseDateFlexible(row.order_confirmed_date) ||
+        parseDateFlexible(row.order_date) ||
+        parseDateFlexible(row.so_date) ||
+        parseDateFlexible(row.final_quotation_date)
+    );
+}
+
+function buildEntryTrendData(data) {
+
+    const FY_START = new Date('2025-04-01');
+    const FY_END = new Date('2026-03-31');
+
+    const monthMap = new Map();
+
+    // Force 12 FY months
+    let cursor = new Date(FY_START);
+
+    while (cursor <= FY_END) {
+        const key = monthKeyFromDate(cursor);
+
+        monthMap.set(key, {
+            monthKey: key,
+            leads: 0,
+            opps: 0,
+            props: 0,
+            orders: 0
+        });
+
+        cursor.setMonth(cursor.getMonth() + 1);
+    }
+
+    data.forEach(row => {
+        const leadDate =
+            parseDateFlexible(row.lead_created_at) ||
+            parseDateFlexible(row.lead_date_gmt);
+
+        const oppDate =
+            parseDateFlexible(row.opportunity_created_at) ||
+            parseDateFlexible(row.opportunity_date_gmt);
+
+        const propDate =
+            parseDateFlexible(row.proposal_created_at);
+
+        const orderDate = getOrderDate(row);
+
+        let leadCount = 1;
+        if (row['lead count'] !== undefined) {
+            if (String(row['lead count']).trim() === '') {
+                leadCount = 0;
+            } else {
+                leadCount = toInt(row['lead count'], 0);
+            }
+        }
+
+        const leadMonth = monthKeyFromDate(leadDate);
+        const oppMonth = monthKeyFromDate(oppDate);
+        const propMonth = monthKeyFromDate(propDate);
+        const orderMonth = monthKeyFromDate(orderDate);
+
+        if (leadMonth && monthMap.has(leadMonth) && leadCount > 0) {
+    monthMap.get(leadMonth).leads += leadCount;
+}
+
+        if (oppMonth && monthMap.has(oppMonth) && isOpportunity(row)) {
+    monthMap.get(oppMonth).opps += 1;
+}
+
+        if (propMonth && monthMap.has(propMonth) && isProposal(row)) {
+    monthMap.get(propMonth).props += 1;
+}
+
+        if (orderMonth && monthMap.has(orderMonth) && isOrder(row)) {
+    monthMap.get(orderMonth).orders += 1;
+}
+    });
+
+    return Array.from(monthMap.values()).sort((a, b) => a.monthKey.localeCompare(b.monthKey));
+}
+
+function renderEntryTrend(data) {
+    const trendRows = buildEntryTrendData(data);
+    renderEntryTrendChart(trendRows);
+    renderEntryTrendTable(trendRows);
+
+    safeSetText('trendMonths', trendRows.length.toLocaleString());
+    safeSetText('trendLeadTotal', trendRows.reduce((s, r) => s + r.leads, 0).toLocaleString());
+    safeSetText('trendProposalTotal', trendRows.reduce((s, r) => s + r.props, 0).toLocaleString());
+    safeSetText('trendOrderTotal', trendRows.reduce((s, r) => s + r.orders, 0).toLocaleString());
+}
+
+function renderEntryTrendChart(rows) {
+    const canvas = document.getElementById('entryTrendChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    const labels = rows.map(r => formatMonthLabel(r.monthKey));
+
+    if (entryTrendChartInstance) {
+        entryTrendChartInstance.destroy();
+    }
+
+    entryTrendChartInstance = new Chart(canvas, {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'Leads',
+                    data: rows.map(r => r.leads),
+                    borderColor: '#2563eb',
+                    backgroundColor: 'rgba(37,99,235,0.08)',
+                    tension: 0.3,
+                    fill: false
+                },
+                {
+                    label: 'Opportunities',
+                    data: rows.map(r => r.opps),
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245,158,11,0.08)',
+                    tension: 0.3,
+                    fill: false
+                },
+                {
+                    label: 'Proposals',
+                    data: rows.map(r => r.props),
+                    borderColor: '#7c3aed',
+                    backgroundColor: 'rgba(124,58,237,0.08)',
+                    tension: 0.3,
+                    fill: false
+                },
+                {
+                    label: 'Orders',
+                    data: rows.map(r => r.orders),
+                    borderColor: '#16a34a',
+                    backgroundColor: 'rgba(22,163,74,0.08)',
+                    tension: 0.3,
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'top'
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Month'
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    },
+                    title: {
+                        display: true,
+                        text: 'Entries'
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderEntryTrendTable(rows) {
+    const tbody = document.getElementById('entryTrendTableBody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    if (!rows.length) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="5" style="text-align:center; color: var(--text-muted);">No trend data available for selected filters.</td>`;
+        tbody.appendChild(tr);
+        return;
+    }
+
+    rows.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><strong>${escapeHtml(formatMonthLabel(row.monthKey))}</strong></td>
+            <td><button class="drill-link" onclick="openRawDataDrill('lead', '${row.monthKey}')">${row.leads}</button></td>
+            <td><button class="drill-link" onclick="openRawDataDrill('opportunity', '${row.monthKey}')">${row.opps}</button></td>
+            <td><button class="drill-link" onclick="openRawDataDrill('proposal', '${row.monthKey}')">${row.props}</button></td>
+            <td><button class="drill-link" onclick="openRawDataDrill('order', '${row.monthKey}')">${row.orders}</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+function renderVehicleTrend() {
+    populateVehicleArmourFilter();
+
+    const rows = getVehicleTrendBaseRows();
+    const map = new Map();
+
+    rows.forEach(row => {
+        let key = 'Unknown';
+
+        if (vehicleTrendLevel === 'name') {
+            key = getVehicleName(row);
+        } else if (vehicleTrendLevel === 'brand') {
+            key = getVehicleBrand(row);
+        } else {
+            key = getVehicleType(row);
+        }
+
+        if (!map.has(key)) {
+            map.set(key, {
+                category: key,
+                records: 0,
+                qty: 0,
+                levels: new Set()
+            });
+        }
+
+        const item = map.get(key);
+        item.records += 1;
+        item.qty += getVehicleQty(row);
+        item.levels.add(getArmourLevel(row));
+    });
+
+    const data = Array.from(map.values()).sort((a, b) => b.qty - a.qty || b.records - a.records);
+
+renderVehicleTrendChart(data);
+renderVehicleTrendTable(rows);
+renderVehicleTrendMeta(data, rows);
+}
+function populateVehicleArmourFilter() {
+    const select = document.getElementById('vehicleArmourFilter');
+    if (!select) return;
+
+    const current = vehicleTrendArmourFilter;
+    const levels = Array.from(
+        new Set(
+            latestExplorerRows
+                .map(row => getArmourLevel(row))
+                .filter(v => v && v !== 'Unknown')
+        )
+    ).sort();
+
+    select.innerHTML = '<option value="all">All Armouring Levels</option>';
+
+    levels.forEach(level => {
+        const opt = document.createElement('option');
+        opt.value = level;
+        opt.textContent = level;
+        select.appendChild(opt);
+    });
+
+    select.value = levels.includes(current) ? current : 'all';
+}
+function renderVehicleTrendMeta(groupedRows, baseRows) {
+    const levelMap = {
+        name: 'Vehicle Names',
+        brand: 'Vehicle Brands',
+        type: 'Vehicle Types'
+    };
+
+    safeSetText('vehicleTrendLevelLabel', levelMap[vehicleTrendLevel] || vehicleTrendLevel);
+    safeSetText('vehicleTrendCategoryCount', groupedRows.length.toLocaleString());
+    safeSetText('vehicleTrendRecordCount', baseRows.length.toLocaleString());
+    safeSetText(
+        'vehicleTrendQty',
+        groupedRows.reduce((sum, row) => sum + row.qty, 0).toLocaleString()
+    );
+
+    const parts = [];
+
+    if (vehicleTrendLevel === 'name') {
+        parts.push('Vehicle Names');
+    }
+    if (vehicleTrendLevel === 'brand') {
+        parts.push(`Vehicle: ${vehicleTrendSelectedName}`);
+    }
+    if (vehicleTrendLevel === 'type') {
+        parts.push(`Vehicle: ${vehicleTrendSelectedName}`);
+        parts.push(`Brand: ${vehicleTrendSelectedBrand}`);
+    }
+    if (vehicleTrendArmourFilter !== 'all') {
+        parts.push(`Armour: ${vehicleTrendArmourFilter}`);
+    }
+
+    safeSetText('vehicleTrendBreadcrumb', parts.join('  →  ') || 'Vehicle Names');
+}
+function renderVehicleTrendChart(rows) {
+    const canvas = document.getElementById('vehicleTrendChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    if (vehicleTrendChartInstance) {
+        vehicleTrendChartInstance.destroy();
+    }
+
+    vehicleTrendChartInstance = new Chart(canvas, {
+        type: 'doughnut',
+        data: {
+            labels: rows.map(r => r.category),
+            datasets: [{
+                data: rows.map(r => r.qty > 0 ? r.qty : r.records),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            },
+            onClick: (evt, elements) => {
+                if (!elements.length) return;
+
+                const idx = elements[0].index;
+                const item = rows[idx];
+                if (!item) return;
+
+                if (vehicleTrendLevel === 'name') {
+                    vehicleTrendSelectedName = item.category;
+                    vehicleTrendSelectedBrand = null;
+                    vehicleTrendLevel = 'brand';
+                    renderVehicleTrend();
+                } else if (vehicleTrendLevel === 'brand') {
+                    vehicleTrendSelectedBrand = item.category;
+                    vehicleTrendLevel = 'type';
+                    renderVehicleTrend();
+                }
+            }
+        }
+    });
+}
+
+function renderVehicleTrendTable(rows) {
+
+    const tbody = document.getElementById('vehicleTrendTableBody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    if (!rows.length) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="8" style="text-align:center; color: var(--text-muted);">No vehicle records found.</td>`;
+        tbody.appendChild(tr);
+        return;
+    }
+
+    const limit = Math.min(rows.length, 500);
+
+    for (let i = 0; i < limit; i++) {
+
+        const row = rows[i];
+
+        const company = row.company_name_final || row.opportunity_updated_company_name || '';
+
+        const tr = document.createElement('tr');
+const proposalNo =
+    row.proposal_number ||
+    row.proposal_no ||
+    row.quotation_number ||
+    row.final_quotation_number ||
+    '';
+
+const proposalCell = proposalNo
+    ? `<button class="drill-link" onclick="openRawDataProposal('${String(proposalNo).replace(/'/g, "\\'")}')">${escapeHtml(proposalNo)}</button>`
+    : `<span style="color: var(--text-muted);">-</span>`;
+
+tr.innerHTML = `
+<td><strong>${escapeHtml(row.bdm_name_final || '')}</strong></td>
+<td>${escapeHtml(company)}</td>
+<td>${proposalCell}</td>
+<td>${escapeHtml(getVehicleName(row))}</td>
+<td>${escapeHtml(getVehicleBrand(row))}</td>
+<td>${escapeHtml(getVehicleType(row))}</td>
+<td>${escapeHtml(getArmourLevel(row))}</td>
+<td>${getVehicleQty(row)}</td>
+<td>${escapeHtml(row.country_name_final || '')}</td>
+`;
+        tbody.appendChild(tr);
+    }
+
+}
+
+
+function resetVehicleTrend() {
+    vehicleTrendLevel = 'name';
+    vehicleTrendSelectedName = null;
+    vehicleTrendSelectedBrand = null;
+    renderVehicleTrend();
+}
+
+function vehicleTrendBack() {
+    if (vehicleTrendLevel === 'type') {
+        vehicleTrendLevel = 'brand';
+        vehicleTrendSelectedBrand = null;
+    } else if (vehicleTrendLevel === 'brand') {
+        vehicleTrendLevel = 'name';
+        vehicleTrendSelectedName = null;
+        vehicleTrendSelectedBrand = null;
+    }
+    renderVehicleTrend();
+}
+
+function onVehicleArmourFilterChange() {
+    const select = document.getElementById('vehicleArmourFilter');
+    vehicleTrendArmourFilter = select ? select.value : 'all';
+    renderVehicleTrend();
+}
+    function getOpportunityDate(row) {
+    return (
+        parseDateFlexible(row.opportunity_created_at) ||
+        parseDateFlexible(row.opportunity_date_gmt)
+    );
+}
+
+function getProposalDate(row) {
+    return parseDateFlexible(row.proposal_created_at);
+}
+
+function getLeadDate(row) {
+    return (
+        parseDateFlexible(row.lead_created_at) ||
+        parseDateFlexible(row.lead_date_gmt)
+    );
+}
+function cleanText(value, fallback = 'Unknown') {
+    const v = String(value ?? '').trim();
+    return v ? v : fallback;
+}
+
+function getVehicleName(row) {
+    return cleanText(row.vehicle_names, 'Unknown');
+}
+
+function getVehicleBrand(row) {
+    return cleanText(row.vehicle_brands, 'Unknown');
+}
+
+function getVehicleType(row) {
+    return cleanText(row.vehicle_types, 'Unknown');
+}
+
+function getArmourLevel(row) {
+    return cleanText(row.armouring_levels, 'Unknown');
+}
+
+function getVehicleQty(row) {
+    const qty = Number(row.vehicle_qty_total);
+    return Number.isFinite(qty) ? qty : 0;
+}
+
+function getVehicleTrendBaseRows() {
+
+    let rows = latestExplorerRows;
+
+    // Apply armour filter
+    if (vehicleTrendArmourFilter !== 'all') {
+        rows = rows.filter(r => getArmourLevel(r) === vehicleTrendArmourFilter);
+    }
+
+    // Apply hierarchy filter
+    if (vehicleTrendLevel === 'brand' && vehicleTrendSelectedName) {
+        rows = rows.filter(r => getVehicleName(r) === vehicleTrendSelectedName);
+    }
+
+    if (vehicleTrendLevel === 'type' && vehicleTrendSelectedBrand) {
+        rows = rows.filter(r => getVehicleBrand(r) === vehicleTrendSelectedBrand);
+    }
+
+    // 🔴 IMPORTANT FIX
+    // Only rows with real vehicle names
+    rows = rows.filter(row => {
+        const name = getVehicleName(row);
+        return name && name !== 'Unknown' && name.trim() !== '';
+    });
+
+    return rows;
+}
+
+
+function rowMatchesDrillFilter(row, filter) {
+    if (!filter) return true;
+
+    if (filter.stage === 'lead') {
+        if (!getLeadDate(row)) return false;
+        if (monthKeyFromDate(getLeadDate(row)) !== filter.monthKey) return false;
+        return true;
+    }
+
+    if (filter.stage === 'opportunity') {
+        if (!isOpportunity(row)) return false;
+        const dt = getOpportunityDate(row);
+        if (!dt) return false;
+        return monthKeyFromDate(dt) === filter.monthKey;
+    }
+
+    if (filter.stage === 'proposal') {
+        if (!isProposal(row)) return false;
+        const dt = getProposalDate(row);
+        if (!dt) return false;
+        return monthKeyFromDate(dt) === filter.monthKey;
+    }
+
+    if (filter.stage === 'order') {
+        if (!isOrder(row)) return false;
+        const dt = getOrderDate(row);
+        if (!dt) return false;
+        return monthKeyFromDate(dt) === filter.monthKey;
+    }
+    if (filter.proposal) {
+
+    const proposal =
+        row.proposal_number ||
+        row.proposal_no ||
+        row.quotation_number ||
+        row.final_quotation_number;
+
+    if (String(proposal) !== String(filter.proposal)) return false;
+
+}
+
+    return true;
+}
+
+function applyRawDataDrillFilter() {
+    const baseRows = latestExplorerRows || [];
+    const drilledRows = rawDataDrillFilter
+        ? baseRows.filter(row => rowMatchesDrillFilter(row, rawDataDrillFilter))
+        : baseRows;
+
+    renderRawDataTable(drilledRows);
+    updateRawDataDrillLabel(drilledRows.length);
+}
+
+function updateRawDataDrillLabel(count) {
+    const el = document.getElementById('rawDataDrillLabel');
+    if (!el) return;
+
+    if (!rawDataDrillFilter) {
+        el.innerHTML = `Showing full filtered dataset`;
+        return;
+    }
+
+    const stageMap = {
+        lead: 'Leads',
+        opportunity: 'Opportunities',
+        proposal: 'Proposals',
+        order: 'Orders'
+    };
+
+    el.innerHTML = `Drill filter: <strong>${stageMap[rawDataDrillFilter.stage] || rawDataDrillFilter.stage}</strong> for <strong>${formatMonthLabel(rawDataDrillFilter.monthKey)}</strong> · ${count.toLocaleString()} rows`;
+}
+
+function openRawDataDrill(stage, monthKey) {
+    rawDataDrillFilter = { stage, monthKey };
+    applyRawDataDrillFilter();
+    goToStep(7); // Raw Data page number
+}
+function openRawDataProposal(proposalNo) {
+
+    rawDataDrillFilter = { proposal: proposalNo };
+
+    applyRawDataDrillFilter();
+
+    goToStep(7); // Raw Data page
+
+}
+function clearRawDataDrill() {
+    rawDataDrillFilter = null;
+    applyRawDataDrillFilter();
+}
+
+let outlineFunnelChartInstance = null;
+
+function renderOutlineStackedBarChart(perfMap) {
+    const canvas = document.getElementById('outlineFunnelChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    if (outlineFunnelChartInstance) {
+        outlineFunnelChartInstance.destroy();
+    }
+
+    const bdmNames = Object.keys(perfMap);
+
+    outlineFunnelChartInstance = new Chart(canvas, {
+        type: 'bar',
+        data: {
+            labels: bdmNames,
+            datasets: [
+                {
+                    label: 'Leads',
+                    data: bdmNames.map(name => perfMap[name].leads || 0),
+                    backgroundColor: 'rgba(59, 130, 246, 0.85)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 1,
+                    stack: 'pipeline'
+                },
+                {
+                    label: 'Opportunities',
+                    data: bdmNames.map(name => perfMap[name].opps || 0),
+                    backgroundColor: 'rgba(245, 158, 11, 0.85)',
+                    borderColor: 'rgba(245, 158, 11, 1)',
+                    borderWidth: 1,
+                    stack: 'pipeline'
+                },
+                {
+                    label: 'Proposals',
+                    data: bdmNames.map(name => perfMap[name].props || 0),
+                    backgroundColor: 'rgba(124, 58, 237, 0.85)',
+                    borderColor: 'rgba(124, 58, 237, 1)',
+                    borderWidth: 1,
+                    stack: 'pipeline'
+                },
+                {
+                    label: 'Orders',
+                    data: bdmNames.map(name => perfMap[name].orders || 0),
+                    backgroundColor: 'rgba(30, 142, 62, 0.85)',
+                    borderColor: 'rgba(30, 142, 62, 1)',
+                    borderWidth: 1,
+                    stack: 'pipeline'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        footer: function(items) {
+                            const total = items.reduce((sum, item) => sum + (item.raw || 0), 0);
+                            return 'Total: ' + total;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                    title: {
+                        display: true,
+                        text: 'BDM Name'
+                    },
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 0
+                    }
+                },
+                y: {
+                    stacked: true,
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    },
+                    title: {
+                        display: true,
+                        text: 'Count'
+                    }
+                }
+            }
+        }
+    });
+}
+
+    function analyzeData() {
+        const startDateStr = document.getElementById('startDate').value || '2025-04-01';
+        const endDateStr = document.getElementById('endDate').value || '2026-03-31';
+        const start = new Date(startDateStr);
+        const end = new Date(endDateStr);
+        end.setHours(23, 59, 59, 999);
+
+        const selectedBdms = Array.from(document.querySelectorAll('.bdm-checkbox:checked')).map(cb => cb.value);
+
+        const displayDateRange = document.getElementById('displayDateRange');
+        if (displayDateRange) displayDateRange.innerText = `${startDateStr} to ${endDateStr}`;
+        
+        const displayBdms = document.getElementById('displayBdms');
+        if (displayBdms) {
+            displayBdms.innerText = selectedBdms.length <= 3 
+                ? selectedBdms.join(', ') 
+                : `${selectedBdms.length} Managers Selected`;
+        }
+
+        const stats = {
+            leads: { total: 0, comp: 0, self: 0, other: 0 },
+            opps: { total: 0, comp: 0, self: 0, other: 0 },
+            props: { total: 0, comp: 0, self: 0, other: 0 },
+            orders: { total: 0, comp: 0, self: 0, other: 0 }
+        };
+
+        const perfMap = {};
+        const filteredRows = [];
+
+        fullCsvData.forEach(row => {
+            if (!selectedBdms.includes(row.bdm_name_final)) return;
+
+            const rowDate = parseSafeDate(row.lead_date_gmt);
+            if (!rowDate || rowDate < start || rowDate > end) return;
+
+            filteredRows.push(row);
+
+            const sourceKey = categorizeSource(row.lead_source_name);
+            const bdm = row.bdm_name_final || 'Unknown';
+
+            if (!perfMap[bdm]) {
+                perfMap[bdm] = { leads: 0, opps: 0, props: 0, orders: 0 };
+            }
+
+            let leadCount = 1;
+if (row['lead count'] !== undefined) {
+    if (String(row['lead count']).trim() === '') {
+        leadCount = 0;
+    } else {
+        leadCount = toInt(row['lead count'], 0);
+    }
+}
+
+            if (leadCount > 0) {
+                stats.leads.total += leadCount;
+                stats.leads[sourceKey] += leadCount;
+                perfMap[bdm].leads += leadCount;
+            }
+
+            if (isOpportunity(row)) {
+                stats.opps.total++;
+                stats.opps[sourceKey]++;
+                perfMap[bdm].opps++;
+            }
+
+            if (isProposal(row)) {
+                stats.props.total++;
+                stats.props[sourceKey]++;
+                perfMap[bdm].props++;
+            }
+
+            if (isOrder(row)) {
+                stats.orders.total++;
+                stats.orders[sourceKey]++;
+                perfMap[bdm].orders++;
+            }
+        });
+
+         
+
+        updateOutlineCard('leads', stats.leads);
+        updateOutlineCard('opps', stats.opps);
+        updateOutlineCard('props', stats.props);
+        updateOutlineCard('orders', stats.orders);
+
+
+        renderOutlineStackedBarChart(perfMap);
+        safeSetText('selectedBdmCount', selectedBdms.length.toLocaleString());
+        safeSetText('filteredRecordCount', filteredRows.length.toLocaleString());
+        safeSetText('proposalRate', stats.opps.total > 0 ? Math.round((stats.props.total / stats.opps.total) * 100) + '%' : '0%');
+        safeSetText('orderRate', stats.props.total > 0 ? Math.round((stats.orders.total / stats.props.total) * 100) + '%' : '0%');
+
+        latestExplorerRows = [...filteredRows];
+        applyMasterFilter();
+        renderPerformanceTable(perfMap);
+        renderFollowUps(filteredRows);
+        renderOrderConfirmations(filteredRows);
+        renderEntryTrend(filteredRows);
+        rawDataDrillFilter = null;
+applyRawDataDrillFilter();
+renderVehicleTrend();
+    }
+
+    function safeSetText(id, text) {
+        const el = document.getElementById(id);
+        if (el) el.innerText = text;
+    }
+
+    function safeSetWidth(id, width) {
+        const el = document.getElementById(id);
+        if (el) el.style.width = width;
+    }
+
+    function updateOutlineCard(type, data) {
+        safeSetText(`out-${type}-total`, data.total.toLocaleString());
+        safeSetText(`out-${type}-comp`, data.comp.toLocaleString());
+        safeSetText(`out-${type}-self`, data.self.toLocaleString());
+        safeSetText(`out-${type}-other`, data.other.toLocaleString());
+
+        if (data.total > 0) {
+            safeSetWidth(`bar-${type}-comp`, ((data.comp / data.total) * 100) + '%');
+            safeSetWidth(`bar-${type}-self`, ((data.self / data.total) * 100) + '%');
+            safeSetWidth(`bar-${type}-other`, ((data.other / data.total) * 100) + '%');
+        } else {
+            safeSetWidth(`bar-${type}-comp`, '0%');
+            safeSetWidth(`bar-${type}-self`, '0%');
+            safeSetWidth(`bar-${type}-other`, '0%');
+        }
+    }
+
+    function applyMasterFilter() {
+        const filterEl = document.getElementById('masterStageFilter');
+        const selected = filterEl ? filterEl.value : 'all';
+
+        let filtered = [...latestExplorerRows];
+
+        if (selected === 'leads_only') {
+            filtered = filtered.filter(row => !isOpportunity(row) && !isProposal(row) && !isOrder(row));
+        } else if (selected === 'lead_to_opportunity') {
+            filtered = filtered.filter(row => isOpportunity(row) && !isProposal(row) && !isOrder(row));
+        } else if (selected === 'proposal_generated') {
+            filtered = filtered.filter(row => isProposal(row) && !isOrder(row));
+        } else if (selected === 'order_confirmed') {
+            filtered = filtered.filter(row => isOrder(row));
+        }
+
+        renderDataTable(filtered);
+    }
+
+    function renderDataTable(data) {
+        const tbody = document.getElementById('dataTableBody');
+        const countDisplay = document.getElementById('tableCount');
+
+        tbody.innerHTML = '';
+
+        const limit = Math.min(data.length, 500);
+        countDisplay.innerHTML = `Showing ${limit} of ${data.length} records`;
+
+        for (let i = 0; i < limit; i++) {
+            const row = data[i];
+            const company = row.company_name_final || row.opportunity_updated_company_name || '';
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${escapeHtml(row.bdm_name_final || '')}</strong></td>
+                <td>${escapeHtml(row.lead_date_gmt || '')}</td>
+                <td style="max-width: 220px; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(company)}</td>
+                <td>${escapeHtml(row.country_name_final || '')}</td>
+                <td><span style="background: var(--bg-body); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">${escapeHtml(row.lead_source_name || '')}</span></td>
+                <td><span style="background: rgba(255, 80, 0, 0.08); color: var(--primary-color); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 700;">${escapeHtml(row.lead_pipeline_stage || '')}</span></td>
+                <td style="text-align:center;"><div class="status-badge ${isOpportunity(row) ? 'yes' : 'no'}"><i class="ph ${isOpportunity(row) ? 'ph-check' : 'ph-minus'}"></i></div></td>
+                <td style="text-align:center;"><div class="status-badge ${isProposal(row) ? 'yes' : 'no'}"><i class="ph ${isProposal(row) ? 'ph-check' : 'ph-minus'}"></i></div></td>
+                <td style="text-align:center;"><div class="status-badge ${isOrder(row) ? 'yes' : 'no'}"><i class="ph ${isOrder(row) ? 'ph-check' : 'ph-minus'}"></i></div></td>
+            `;
+            tbody.appendChild(tr);
+        }
+    }
+
+    function renderPerformanceTable(perfMap) {
+        const tbody = document.getElementById('performanceTableBody');
+        if (!tbody) return;
+        
+        tbody.innerHTML = '';
+
+        const rows = Object.entries(perfMap)
+            .map(([bdm, v]) => ({
+                bdm,
+                ...v,
+                oppRate: v.leads > 0 ? (v.opps / v.leads) * 100 : 0,
+                propRate: v.opps > 0 ? (v.props / v.opps) * 100 : 0,
+                orderRate: v.props > 0 ? (v.orders / v.props) * 100 : 0
+            }))
+            .sort((a, b) => b.orders - a.orders || b.props - a.props || b.opps - a.opps);
+
+        rows.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${escapeHtml(row.bdm)}</strong></td>
+                <td>${row.leads}</td>
+                <td>${row.opps}</td>
+                <td>${row.props}</td>
+                <td>${row.orders}</td>
+                <td>${Math.round(row.oppRate)}%</td>
+                <td>${Math.round(row.propRate)}%</td>
+                <td>${Math.round(row.orderRate)}%</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        if (rows.length === 0) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td colspan="8" style="text-align:center; color: var(--text-muted);">No performance data available for selected filters.</td>`;
+            tbody.appendChild(tr);
+        }
+    }
+    function renderOrderConfirmations(data) {
+    const tbody = document.getElementById('orderConfirmationsTableBody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    const rows = data
+        .filter(row => isOrder(row))
+        .map(row => ({
+            company: row.company_name_final || row.opportunity_updated_company_name || 'Unknown',
+            bdm: row.bdm_name_final || '',
+            orderId: row.sales_order_number || row.order_id || row.so_no || '-',
+            orderDate: row.order_confirmed_date || row.order_date || row.so_date || row.final_quotation_date || '-',
+            vehicleBrand: row.vehicle_brands || '-',
+            vehicleType: row.vehicle_types || '-',
+            qty: toInt(row.vehicle_qty_total, 0),
+            country: row.country_name_final || '-'
+        }))
+        .sort((a, b) => a.company.localeCompare(b.company));
+
+    if (!rows.length) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="8" style="text-align:center; color: var(--text-muted);">No confirmed orders available for selected filters.</td>`;
+        tbody.appendChild(tr);
+        return;
+    }
+
+    rows.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><strong>${escapeHtml(row.company)}</strong></td>
+            <td>${escapeHtml(row.bdm)}</td>
+            <td>${escapeHtml(String(row.orderId))}</td>
+            <td>${escapeHtml(String(row.orderDate))}</td>
+            <td>${escapeHtml(String(row.vehicleBrand))}</td>
+            <td>${escapeHtml(String(row.vehicleType))}</td>
+            <td>${row.qty}</td>
+            <td>${escapeHtml(String(row.country))}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+function renderFollowUps(data) {
+    const tbody = document.getElementById('followUpTableBody');
+    const deadTbody = document.getElementById('deadPipelineTableBody');
+
+    tbody.innerHTML = '';
+    deadTbody.innerHTML = '';
+
+    const today = new Date();
+
+    const actionableRows = data
+        .filter(row => !isOrder(row) && safeCompany(row) !== 'Unknown')
+        .map(row => {
+            const ctx = getFollowUpContext(row);
+            const status = getDisciplineStatus(row, today);
+            const daysSinceLast = getDaysSinceLastFollowUp(row, today);
+            const deadReason = getDeadPipelineReason(row, today);
+
+            return {
+                row,
+                ctx,
+                status,
+                daysSinceLast,
+                deadReason
+            };
+        });
+
+    actionableRows.sort((a, b) => {
+        const aPriority = a.status.tone === 'critical' ? 3 : a.status.tone === 'warn' ? 2 : 1;
+        const bPriority = b.status.tone === 'critical' ? 3 : b.status.tone === 'warn' ? 2 : 1;
+        if (bPriority !== aPriority) return bPriority - aPriority;
+        return (b.daysSinceLast || 0) - (a.daysSinceLast || 0);
+    });
+
+    const overdueCount = actionableRows.filter(x => {
+        const next = x.ctx.nextFollowUp;
+        return next && diffDays(next, today) > 0;
+    }).length;
+
+    const noActionCount = actionableRows.filter(x => x.ctx.totalFollowUps === 0).length;
+    const deadRows = actionableRows.filter(x => x.deadReason);
+
+    const velocity = data.map(getVelocityDays);
+    const avgLeadOpp = average(velocity.map(v => v.leadToOpp));
+    const avgOppProp = average(velocity.map(v => v.oppToProposal));
+
+    safeSetText('fuTotal', actionableRows.length.toLocaleString());
+    safeSetText('fuOverdue', overdueCount.toLocaleString());
+    safeSetText('fuNoAction', noActionCount.toLocaleString());
+    safeSetText('velLeadOpp', `${avgLeadOpp}d`);
+    safeSetText('velOppProp', `${avgOppProp}d`);
+    safeSetText('deadPipeline', deadRows.length.toLocaleString());
+
+    if (!actionableRows.length) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color: var(--text-muted);">No follow-up activity records found.</td></tr>`;
+    } else {
+        actionableRows.slice(0, 500).forEach(item => {
+            const row = item.row;
+            const company = safeCompany(row);
+            const lastFu = item.ctx.lastFollowUp ? item.ctx.lastFollowUp.toLocaleDateString('en-GB') : '-';
+            const nextFu = item.ctx.nextFollowUp ? item.ctx.nextFollowUp.toLocaleDateString('en-GB') : '-';
+            const daysSinceLast = item.daysSinceLast !== null ? `${item.daysSinceLast} Days` : '-';
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${escapeHtml(row.bdm_name_final || '')}</strong></td>
+                <td style="max-width: 220px; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(company)}</td>
+                <td><span style="background: rgba(255,80,0,0.08); color: var(--primary-color); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 700;">${escapeHtml(getCurrentStage(row))}</span></td>
+                <td>${item.ctx.totalFollowUps}</td>
+                <td>${lastFu}</td>
+                <td>${nextFu}</td>
+                <td>${daysSinceLast}</td>
+                <td>${badgeHtml(item.status.label, item.status.tone)}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    if (!deadRows.length) {
+        deadTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">No dead pipeline items under current rules.</td></tr>`;
+    } else {
+        deadRows.slice(0, 500).forEach(item => {
+            const row = item.row;
+            const company = safeCompany(row);
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${escapeHtml(row.bdm_name_final || '')}</strong></td>
+                <td style="max-width: 220px; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(company)}</td>
+                <td>${escapeHtml(item.deadReason.stage)}</td>
+                <td>${escapeHtml(item.deadReason.reason)}</td>
+                <td>${escapeHtml(item.deadReason.age)}</td>
+                <td>${escapeHtml(item.deadReason.action)}</td>
+            `;
+            deadTbody.appendChild(tr);
+        });
+    }
+}
+
+function renderRawDataTable(data) {
+
+    const table = document.getElementById('rawDataTable');
+    if (!table) return;
+
+    table.innerHTML = '';
+
+    const rowCountEl = document.getElementById('rawDataRowCount');
+    const colCountEl = document.getElementById('rawDataColCount');
+
+    if (!data || !data.length) {
+        if (rowCountEl) rowCountEl.innerText = '0';
+        if (colCountEl) colCountEl.innerText = '0';
+        return;
+    }
+
+    const columns = Object.keys(data[0]);
+
+    if (rowCountEl) rowCountEl.innerText = data.length.toLocaleString();
+    if (colCountEl) colCountEl.innerText = columns.length.toLocaleString();
+
+    const displayRows = data.slice(0, 500);
+
+    const thead = document.createElement('thead');
+    const headRow = document.createElement('tr');
+
+    columns.forEach(col => {
+        const th = document.createElement('th');
+        th.innerText = col;
+        headRow.appendChild(th);
+    });
+
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+
+    displayRows.forEach(row => {
+        const tr = document.createElement('tr');
+
+        columns.forEach(col => {
+            const td = document.createElement('td');
+            td.innerHTML = escapeHtml(row[col] ?? '');
+            tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+    });
+
+    table.appendChild(tbody);
+}
+
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+    
+    function jumpToStep1() {
+        goPage(1 - stepCount);
+    }
+
+    function goToStep(targetStep) {
+        if (targetStep === stepCount) return;
+        goPage(targetStep - stepCount);
+    }
+
+    function goPage(delta) {
+        if (stepCount === 1 && delta > 0) {
+            const csvInput = document.getElementById('csvInput');
+            const checkboxes = document.querySelectorAll('.bdm-checkbox:checked');
+
+            if (!csvInput.files.length) {
+                alert("Please upload a data source.");
+                return;
+            }
+
+            if (checkboxes.length === 0) {
+                alert("Please select at least one BDM.");
+                return;
+            }
+
+            analyzeData();
+        }
+
+        const targetStep = stepCount + delta;
+        if (targetStep < 1 || targetStep > MAX_STEP) return;
+
+        const currentPage = document.getElementById(`page${stepCount}`);
+        const currentNav = document.getElementById(`nav${stepCount}`);
+        if (currentPage) currentPage.classList.remove('active');
+        if (currentNav) currentNav.classList.remove('active');
+
+        stepCount = targetStep;
+
+        const nextPage = document.getElementById(`page${stepCount}`);
+        const nextNav = document.getElementById(`nav${stepCount}`);
+        if (nextPage) nextPage.classList.add('active');
+        if (nextNav) nextNav.classList.add('active');
+
+        const backBtn = document.getElementById('backBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        backBtn.style.visibility = (stepCount === 1) ? 'hidden' : 'visible';
+        nextBtn.style.display = (stepCount === MAX_STEP) ? 'none' : 'inline-flex';
+        document.getElementById('nextBtnText').textContent = stepCount === 1 ? 'Process & Analyze' : 'Next';
+        
+        const filterBar = document.getElementById('filterSummaryBar');
+        if (stepCount === 1) {
+            filterBar.style.display = 'none';
+        } else {
+            filterBar.style.display = 'flex';
+        }
+    }
+</script>
+</body>
+</html>
