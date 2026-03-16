@@ -4,11 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MEVA FY 2026 | Report Dashboard</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-funnel"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Teko:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet & Map Data -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="mapData.js"></script>
 
     <style>
         :root {
@@ -19,7 +24,7 @@
             --text-muted: #64748b;
             --bg-body: #f8fafc;
             --bg-card: #ffffff;
-            --border-color: #e2e88f0;
+            --border-color: #e2e8f0;
             --success-color: #1e8e3e;
             --linkedin-blue: #0a66c2;
 
@@ -557,19 +562,126 @@
         }
 
         .drill-link {
-    background: none;
-    border: none;
-    color: var(--primary-color);
-    font-weight: 800;
-    cursor: pointer;
-    padding: 0;
-    font-size: inherit;
-    text-decoration: underline;
-}
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-weight: 800;
+            cursor: pointer;
+            padding: 0;
+            font-size: inherit;
+            text-decoration: underline;
+        }
 
-.drill-link:hover {
-    opacity: 0.8;
-}
+        .drill-link:hover {
+            opacity: 0.8;
+        }
+
+        /* --- Page 9 (LinkedIn) Custom Styles --- */
+        .linkedin-bar-row { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+        .linkedin-bar-label { width: 160px; text-align: right; font-weight: 600; font-size: 0.9rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .linkedin-bar-track { flex: 1; height: 24px; background: #f1f5f9; border-radius: 999px; position: relative; overflow: hidden; }
+        .linkedin-bar-fill { position: absolute; top: 0; left: 0; height: 100%; border-radius: 999px; transition: width 1s ease; }
+        .linkedin-bar-value { width: 60px; font-weight: 600; font-size: 0.85rem; color: var(--text-muted); }
+
+        .linkedin-accordion { background: #fff; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; margin-bottom: 24px; transition: all 0.3s; box-shadow: var(--shadow-sm); }
+        .linkedin-accordion-header { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: background 0.2s; }
+        .linkedin-accordion-header:hover { background: #f8fafc; }
+        .linkedin-accordion-body { padding: 0 24px 24px 24px; display: none; background: #f8fafc; border-top: 1px solid var(--border-color); }
+        .linkedin-accordion.expanded .linkedin-accordion-body { display: block; animation: slideUpFade 0.3s ease; }
+        .linkedin-accordion.expanded { border-color: var(--primary-color); box-shadow: var(--shadow-md); }
+
+        .linkedin-metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px; }
+        .linkedin-metric { margin-bottom: 20px; }
+        .linkedin-metric-title { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+        .linkedin-metric-value { font-size: 0.9rem; color: var(--text-main); line-height: 1.5; }
+
+        .linkedin-final-eval { margin-top: 24px; padding: 16px; border-radius: 8px; border: 1px solid var(--border-color); background: #fff; }
+        
+        @media (max-width: 768px) {
+            .linkedin-metric-grid { grid-template-columns: 1fr; gap: 0; }
+            .linkedin-bar-row { flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 24px; }
+            .linkedin-bar-label { width: auto; text-align: left; }
+            .linkedin-bar-track { width: 100%; }
+        }
+
+        /* --- Page 10 (Territory) Custom Styles --- */
+        .territory-toolbar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .territory-toggle-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            padding: 6px;
+            border-radius: 12px;
+        }
+
+        .territory-toggle-btn {
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 0.78rem;
+            transition: all 0.2s ease;
+        }
+
+        .territory-toggle-btn.active {
+            background: #fff;
+            color: var(--secondary-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        #territoryManagerFilters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 16px 0 20px;
+        }
+
+        #territoryMap {
+            height: 560px;
+            width: 100%;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            background: #f8fafc;
+        }
+
+        #territoryLegend {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        #territoryCrmPanel {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 1000;
+            width: 260px;
+            background: rgba(255,255,255,0.96);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: var(--shadow-lg);
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -606,10 +718,10 @@
             <div class="nav-item" id="nav5" onclick="goToStep(5)"><i class="ph ph-file-pdf"></i><span>Monthly Trend</span></div>
             <div class="nav-item" id="nav6" onclick="goToStep(6)"><i class="ph ph-car"></i><span>Vehicle Trend</span></div>
             <div class="nav-item" id="nav7" onclick="goToStep(7)"><i class="ph ph-file-pdf"></i><span>Final Export</span></div>
-   
             <div class="nav-item" id="nav8" onclick="goToStep(8)"><i class="ph ph-file-pdf"></i><span>Raw Data</span></div>
-
-</nav>
+            <div class="nav-item" id="nav9" onclick="goToStep(9)"><i class="ph ph-linkedin-logo"></i><span>LinkedIn</span></div>
+            <div class="nav-item" id="nav10" onclick="goToStep(10)"><i class="ph ph-globe-hemisphere-west"></i><span>Regional Trends</span></div>
+        </nav>
 
         <main class="content-area">
 
@@ -1139,6 +1251,81 @@
     </div>
 
 </div>
+
+            <!-- PAGE 9: LINKEDIN BDM ANALYSIS -->
+            <div id="page9" class="page">
+                <div style="margin-bottom: 32px;">
+                    <h1 style="display: flex; align-items: center; gap: 12px;">
+                        <i class="ph ph-linkedin-logo" style="color: var(--linkedin-blue);"></i>
+                        LinkedIn <span style="color: var(--primary-color);">Analysis</span>
+                    </h1>
+                    <p>Comprehensive alphabetical directory containing all profile strength, activity, and qualitative evaluation data.</p>
+                </div>
+
+                <div class="outline-card" style="margin-bottom: 32px; padding: 24px;">
+                    <h2 style="margin-bottom: 24px; display: flex; align-items: center; gap: 8px;">
+                        <i class="ph ph-users" style="color: var(--text-muted);"></i> Network Size Overview (Followers)
+                    </h2>
+                    <div id="linkedin-follower-chart"></div>
+                    <p style="text-align: right; font-size: 0.8rem; color: var(--text-muted); margin-top: 16px;">*Cristian's follower count estimated for visualization purposes.</p>
+                </div>
+
+                <h2 style="margin-bottom: 24px; display: flex; align-items: center; gap: 8px;">
+                    <i class="ph ph-target" style="color: var(--text-muted);"></i> Detailed BDM Profiles
+                </h2>
+                <div id="linkedin-profiles-grid"></div>
+            </div>
+
+            <!-- PAGE 10: REGIONAL TRENDS (MAP) -->
+            <div id="page10" class="page">
+                <div style="margin-bottom: 24px;">
+                    <h1>Regional <span style="color: var(--primary-color)">Trends</span></h1>
+                    <p>Toggle between static territory coverage and live filtered CRM operations from the uploaded CSV.</p>
+                </div>
+
+                <div class="summary-strip" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 20px;">
+                    <div class="mini-stat">
+                        <div class="label">Mode</div>
+                        <div class="value" id="territoryModeValue">Territory</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="label">Visible Countries</div>
+                        <div class="value" id="territoryCountryValue">0</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="label">Visible Managers</div>
+                        <div class="value" id="territoryManagerValue">0</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="label">Visible Records</div>
+                        <div class="value" id="territoryRecordValue">0</div>
+                    </div>
+                </div>
+
+                <div class="territory-toolbar">
+                    <div class="territory-toggle-group">
+                        <button id="territorySourceJson" class="territory-toggle-btn active" onclick="setTerritorySourceMode('territory')">Territory</button>
+                        <button id="territorySourceCsv" class="territory-toggle-btn" onclick="setTerritorySourceMode('operations')">Operations</button>
+                    </div>
+
+                    <div class="territory-toggle-group" id="territoryLayerWrap">
+                        <button id="territoryLayerAll" class="territory-toggle-btn active" onclick="setTerritoryLayerMode('all')">All</button>
+                        <button id="territoryLayerCountries" class="territory-toggle-btn" onclick="setTerritoryLayerMode('countries')">Countries</button>
+                        <button id="territoryLayerAgencies" class="territory-toggle-btn" onclick="setTerritoryLayerMode('agencies')">Agencies</button>
+                        <button id="territoryLayerCorporates" class="territory-toggle-btn" onclick="setTerritoryLayerMode('corporates')">Corporates</button>
+                    </div>
+                </div>
+
+                <div id="territoryManagerFilters"></div>
+
+                <div style="position: relative;">
+                    <div id="territoryMap"></div>
+                    <div id="territoryCrmPanel"></div>
+                </div>
+
+                <div id="territoryLegend"></div>
+            </div>
+
         </main>
 
         <footer class="footer-actions">
@@ -1161,11 +1348,24 @@
     let latestExplorerRows = [];
     let rawDataDrillFilter = null;
     let vehicleTrendLevel = 'name';
-let vehicleTrendSelectedName = null;
-let vehicleTrendSelectedBrand = null;
-let vehicleTrendArmourFilter = 'all';
-let vehicleTrendChartInstance = null;
-    const MAX_STEP = 8;
+    let vehicleTrendSelectedName = null;
+    let vehicleTrendSelectedBrand = null;
+    let vehicleTrendArmourFilter = 'all';
+    let vehicleTrendChartInstance = null;
+    
+    // Map State Variables
+    let territoryMap = null;
+    let territoryCountryLayer = null;
+    let territoryAgencyLayer = null;
+    let territoryCorporateLayer = null;
+    let territoryOpsLayer = null;
+    let territorySourceMode = 'territory';
+    let territoryLayerMode = 'all';
+    let territoryActiveManager = 'ALL';
+    let territoryOpsData = [];
+    let territoryBdmStats = {};
+    
+    const MAX_STEP = 10; // Updated from 9
 
     function handleFileUpload(input) {
         if (!input.files || !input.files[0]) return;
@@ -2324,9 +2524,11 @@ if (row['lead count'] !== undefined) {
         renderFollowUps(filteredRows);
         renderOrderConfirmations(filteredRows);
         renderEntryTrend(filteredRows);
+        
         rawDataDrillFilter = null;
-applyRawDataDrillFilter();
-renderVehicleTrend();
+        applyRawDataDrillFilter();
+        renderVehicleTrend();
+        renderTerritoryPage();
     }
 
     function safeSetText(id, text) {
@@ -2697,7 +2899,586 @@ function renderRawDataTable(data) {
         } else {
             filterBar.style.display = 'flex';
         }
+
+        if (stepCount === 10) {
+            setTimeout(() => {
+                renderTerritoryPage();
+            }, 100);
+        }
     }
+
+    // --- LINKEDIN QUALITATIVE DATA & RENDER LOGIC ---
+    const bdmLinkedInData = [
+        {
+            name: 'Anas Alkhawaldah', rank: 4, followers: 663, networkSize: '500+ connections',
+            profileStrength: 'Strong profile aligned with country management and business development',
+            postingActivity: 'Moderate activity primarily through reposts',
+            engagement: 'Good engagement on company announcements',
+            industryRelevance: 'Highly relevant to MEVA products and company updates',
+            utilization: 'Used mainly as a brand amplification channel rather than personal voice',
+            assessment: 'Active but largely reactive presence',
+            finalComment: 'Anas maintains an active and relevant LinkedIn presence, mainly through reposting important company updates and supporting market visibility. His activity helps amplify the brand and keeps his profile current, but it is still largely reactive in nature. At present, LinkedIn is functioning more as a company-support platform for him than as a distinct personal business development tool.',
+            hexColor: '#f59e0b'
+        },
+        {
+            name: 'Cristian T.', rank: 5, followers: 1200, networkSize: '500+ connections',
+            profileStrength: 'Very strong profile; long defense-industry experience, senior leadership roles, broad international reach',
+            postingActivity: 'Low frequency; limited to comments on other people’s posts',
+            engagement: 'Moderate/Low; comments are short and reactive',
+            industryRelevance: 'Highly relevant to government contracting and international defense sales',
+            utilization: 'Static professional identity; no visible original posts or market commentary',
+            assessment: 'High profile authority and audience size, but low actual platform usage',
+            finalComment: 'Cristian has one of the strongest profiles in terms of experience, international defense sales credibility, and follower reach. However, his LinkedIn usage is currently very limited from a visibility perspective, with recent activity consisting mainly of comments rather than original or business-oriented posts. As a result, his profile shows strong authority but weak active utilization as a business development platform.',
+            hexColor: '#ef4444'
+        },
+        {
+            name: 'Lyes Laouar', rank: 3, followers: 839, networkSize: '500+ connections',
+            profileStrength: 'Strong profile with cross-border sales and technical-commercial positioning',
+            postingActivity: 'Moderate recent activity with some direct posts and reposts',
+            engagement: 'Good engagement on company-related content',
+            industryRelevance: 'Highly relevant to armoured vehicles, service support, exhibitions, and export markets',
+            utilization: 'Used mainly for company amplification with occasional personal posting',
+            assessment: 'Active and commercially relevant but still company-content driven',
+            finalComment: 'Lyes maintains an active and relevant LinkedIn presence supported by a strong cross-border commercial profile. He contributes to visibility through a mix of direct posts and company amplification, especially around service support, exhibitions, and technical updates. His profile is commercially aligned, but his presence is still shaped more by company-driven messaging than by a strong personal business development voice.',
+            hexColor: '#8b5cf6'
+        },
+        {
+            name: 'Major Azmi Siddiqui', rank: 6, followers: 1052, networkSize: '500+ connections',
+            profileStrength: 'Strong profile with defence sector credibility',
+            postingActivity: 'Low frequency with limited recent activity',
+            engagement: 'Moderate engagement when posting',
+            industryRelevance: 'Highly relevant to defence cooperation and regional interactions',
+            utilization: 'Used mostly as a professional presence rather than an active BD channel',
+            assessment: 'Strong credibility but weakest recent LinkedIn activity',
+            finalComment: 'Azmi has a strong and credible defense-oriented LinkedIn profile backed by senior experience and relevant industry positioning. His earlier content was aligned with defense cooperation and market relevance, but recent activity is limited. As a result, LinkedIn currently serves more as a professional presence for him than as an active business development or market-visibility tool.',
+            hexColor: '#64748b'
+        },
+        {
+            name: 'Nader Hassan', rank: 1, followers: 1505, networkSize: '500+ connections',
+            profileStrength: 'Very strong profile aligned with defense and aerospace business development',
+            postingActivity: 'Moderate activity with original event posts and company reposts',
+            engagement: 'Good engagement on company-related reposts',
+            industryRelevance: 'Highly relevant to defense exhibitions, vehicles, and market outreach',
+            utilization: 'Used for event visibility and company amplification, with some personal outreach orientation',
+            assessment: 'Strongest active presence among BDMs, though still not fully strategic',
+            finalComment: 'Nader has the strongest overall LinkedIn presence among the BDMs due to his relevant profile positioning, higher follower base, visible recent activity, and commercially aligned posts. He uses the platform effectively for event visibility and company amplification, but there is still room to make his LinkedIn presence more strategic, consistent, and insight-driven.',
+            hexColor: '#3b82f6'
+        },
+        {
+            name: 'Rowan Carpenter', rank: 2, followers: 664, networkSize: '500+ connections',
+            profileStrength: 'Very credible profile with long armoured vehicle sales experience',
+            postingActivity: 'Moderate activity with a balance of personal posts and reposts',
+            engagement: 'Fair engagement on personal posts and stronger engagement on company reposts',
+            industryRelevance: 'Highly relevant to procurement, security events, and armoured vehicle market',
+            utilization: 'Used for networking, event visibility, and company amplification with a clearer personal voice',
+            assessment: 'Credible and externally market-facing presence',
+            finalComment: 'Rowan has one of the most credible and naturally market-facing LinkedIn profiles in the BDM team. His industry background gives him strong authority, and his use of personal event-led posts makes his presence more authentic than many others. However, his activity remains concentrated around exhibitions and industry events, and it has not yet developed into a consistent business development channel.',
+            hexColor: '#10b981'
+        }
+    ];
+
+    function initLinkedInData() {
+        const maxFollowers = Math.max(...bdmLinkedInData.map(b => b.followers));
+        
+        const chartContainer = document.getElementById('linkedin-follower-chart');
+        if (chartContainer) {
+            chartContainer.innerHTML = bdmLinkedInData.map(bdm => `
+                <div class="linkedin-bar-row">
+                    <div class="linkedin-bar-label">${escapeHtml(bdm.name)}</div>
+                    <div class="linkedin-bar-track">
+                        <div class="linkedin-bar-fill" style="width: ${(bdm.followers / maxFollowers) * 100}%; background-color: ${bdm.hexColor};"></div>
+                    </div>
+                    <div class="linkedin-bar-value">${bdm.followers === 1200 ? '1,200*' : bdm.followers.toLocaleString()}</div>
+                </div>
+            `).join('');
+        }
+
+        const profilesContainer = document.getElementById('linkedin-profiles-grid');
+        if (profilesContainer) {
+            profilesContainer.innerHTML = bdmLinkedInData.map((bdm, index) => `
+                <div class="linkedin-accordion" id="linkedin-acc-${index}">
+                    <div class="linkedin-accordion-header" onclick="toggleLinkedInAccordion(${index})">
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <div style="width: 48px; height: 48px; border-radius: 50%; background: ${bdm.hexColor}20; display: flex; align-items: center; justify-content: center; color: ${bdm.hexColor}; font-size: 1.5rem;">
+                                <i class="ph ph-user"></i>
+                            </div>
+                            <div>
+                                <h3 style="margin: 0; font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--text-main); text-transform: none;">${escapeHtml(bdm.name)}</h3>
+                                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 4px;">
+                                    <i class="ph ph-users"></i> ${bdm.networkSize} | ${bdm.followers} followers
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <span style="background: #f1f5f9; padding: 4px 12px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: none; @media(min-width: 600px){ display: inline-block; }">Rank #${bdm.rank}</span>
+                            <i class="ph ph-caret-down acc-icon" id="linkedin-icon-${index}" style="color: var(--text-muted); font-size: 1.2rem;"></i>
+                        </div>
+                    </div>
+                    <div class="linkedin-accordion-body">
+                        <div class="linkedin-metric-grid">
+                            <div>
+                                <div class="linkedin-metric">
+                                    <div class="linkedin-metric-title"><i class="ph ph-medal"></i> Profile Strength</div>
+                                    <div class="linkedin-metric-value">${escapeHtml(bdm.profileStrength)}</div>
+                                </div>
+                                <div class="linkedin-metric">
+                                    <div class="linkedin-metric-title"><i class="ph ph-activity"></i> Posting Activity</div>
+                                    <div class="linkedin-metric-value">${escapeHtml(bdm.postingActivity)}</div>
+                                </div>
+                                <div class="linkedin-metric">
+                                    <div class="linkedin-metric-title"><i class="ph ph-chat-circle-dots"></i> Engagement</div>
+                                    <div class="linkedin-metric-value">${escapeHtml(bdm.engagement)}</div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="linkedin-metric">
+                                    <div class="linkedin-metric-title"><i class="ph ph-briefcase"></i> Industry Relevance</div>
+                                    <div class="linkedin-metric-value">${escapeHtml(bdm.industryRelevance)}</div>
+                                </div>
+                                <div class="linkedin-metric">
+                                    <div class="linkedin-metric-title"><i class="ph ph-chart-bar"></i> LinkedIn Utilization</div>
+                                    <div class="linkedin-metric-value">${escapeHtml(bdm.utilization)}</div>
+                                </div>
+                                <div class="linkedin-metric">
+                                    <div class="linkedin-metric-title"><i class="ph ph-trend-up"></i> Summary Assessment</div>
+                                    <div class="linkedin-metric-value" style="font-weight: 600;">${escapeHtml(bdm.assessment)}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="linkedin-final-eval" style="border-left: 4px solid ${bdm.hexColor}; background: ${bdm.hexColor}0a;">
+                            <h4 style="margin: 0 0 8px 0; font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--text-main);">Final Evaluation</h4>
+                            <p style="margin: 0; font-size: 0.9rem; font-style: italic; color: var(--text-main); line-height: 1.5;">"${escapeHtml(bdm.finalComment)}"</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+
+    function toggleLinkedInAccordion(index) {
+        const acc = document.getElementById(`linkedin-acc-${index}`);
+        const icon = document.getElementById(`linkedin-icon-${index}`);
+        
+        if (acc.classList.contains('expanded')) {
+            acc.classList.remove('expanded');
+            icon.classList.replace('ph-caret-up', 'ph-caret-down');
+        } else {
+            acc.classList.add('expanded');
+            icon.classList.replace('ph-caret-down', 'ph-caret-up');
+        }
+    }
+
+    // --- TERRITORY LOGIC ---
+    const territoryBdmNameMapping = {
+        "Rowan Carpenter": "MR. ROWAN",
+        "Rajiv Gupta": "MR. RAJIV",
+        "Lyes Laouar": "MR. LYES",
+        "Nader Hassan": "MR. NADER",
+        "Azmi Siddiqui": "MR. AZMI",
+        "Cristian Tanasa": "MR. CRISTIAN",
+        "Marcos Nicodemos": "MR. MARCOS",
+        "BDM - Sujitha Nidhi": "SUJITHA",
+        "BDM - Rahul Saxena": "MR. RAHUL"
+    };
+
+    function mapTerritoryManagerName(name) {
+        const raw = String(name || '').trim();
+        if (!raw) return 'OPEN';
+        return territoryBdmNameMapping[raw] || raw.toUpperCase();
+    }
+
+    function normalizeTerritoryCountry(name) {
+        return String(name || '')
+            .trim()
+            .toLowerCase()
+            .replace(/\./g, '')
+            .replace(/\(drc\)/g, 'drc')
+            .replace(/democratic republic of the congo/g, 'dr congo')
+            .replace(/congo the democratic republic of the/g, 'dr congo')
+            .replace(/republic of the congo/g, 'congo')
+            .replace(/cote d'ivoire/g, 'ivory coast')
+            .replace(/papua new guinea/g, 'papua new guinea')
+            .replace(/\s+/g, ' ');
+    }
+
+    function buildTerritoryCountryCoordIndex() {
+        const index = {};
+        if (!window.mapData || !Array.isArray(mapData.countries)) return index;
+
+        mapData.countries.forEach(item => {
+            index[normalizeTerritoryCountry(item.name)] = item.coords;
+        });
+
+        index['united arab emirates'] = index['united arab emirates'] || [23.4241, 53.8478];
+        index['uae'] = index['united arab emirates'];
+        index['ivory coast'] = index['ivory coast'] || [7.5399, -5.5471];
+        index['cote divoire'] = index['ivory coast'];
+        index['dr congo'] = index['dr congo'] || index['congo drc'] || [-4.0383, 21.7587];
+        index['congo drc'] = index['dr congo'];
+        index['cambodia'] = index['cambodia'] || [12.5657, 104.9910];
+        index['rwanda'] = index['rwanda'] || [-1.9403, 29.8739];
+        index['thailand'] = index['thailand'] || [15.8700, 100.9925];
+        index['mali'] = index['mali'] || [17.5707, -3.9962];
+        index['cameroon'] = index['cameroon'] || [7.3697, 12.3547];
+
+        return index;
+    }
+
+    function initTerritoryMap() {
+        if (territoryMap || typeof L === 'undefined') return;
+
+        territoryMap = L.map('territoryMap', {
+            center: [25, 15],
+            zoom: 3,
+            attributionControl: false,
+            zoomControl: true
+        });
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(territoryMap);
+
+        territoryCountryLayer = L.layerGroup().addTo(territoryMap);
+        territoryAgencyLayer = L.layerGroup().addTo(territoryMap);
+        territoryCorporateLayer = L.layerGroup().addTo(territoryMap);
+        territoryOpsLayer = L.layerGroup().addTo(territoryMap);
+    }
+
+    function getTerritoryManagerColors() {
+        if (window.mapData && mapData.managerColors) return mapData.managerColors;
+        return {
+            "MR. RAJIV": "#f43f5e",
+            "MR. NADER": "#10b981",
+            "MR. ROWAN": "#f59e0b",
+            "MR. LYES": "#6366f1",
+            "MR. CRISTIAN": "#708090",
+            "MR. AZMI": "#06b6d4",
+            "MR. MARCOS": "#3b82f6",
+            "SUJITHA": "#ec4899",
+            "MR. RAHUL": "#8b5cf6",
+            "OPEN": "#ef4444"
+        };
+    }
+
+    function rebuildTerritoryOperationsData() {
+        const rows = Array.isArray(latestExplorerRows) ? latestExplorerRows : [];
+        const coordIndex = buildTerritoryCountryCoordIndex();
+
+        territoryOpsData = [];
+        territoryBdmStats = {};
+
+        const grouped = {};
+
+        rows.forEach(row => {
+            const country = String(row.country_name_final || '').trim();
+            if (!country) return;
+
+            const manager = mapTerritoryManagerName(row.bdm_name_final || 'OPEN');
+            const normCountry = normalizeTerritoryCountry(country);
+            const coords = coordIndex[normCountry];
+
+            if (!territoryBdmStats[manager]) {
+                territoryBdmStats[manager] = { leads: 0, opps: 0, proposals: 0, orders: 0 };
+            }
+
+            let leadCount = 1;
+            if (row['lead count'] !== undefined) {
+                if (String(row['lead count']).trim() === '') {
+                    leadCount = 0;
+                } else {
+                    leadCount = toInt(row['lead count'], 0);
+                }
+            }
+
+            if (leadCount > 0) territoryBdmStats[manager].leads += leadCount;
+            if (isOpportunity(row)) territoryBdmStats[manager].opps += 1;
+            if (isProposal(row)) territoryBdmStats[manager].proposals += 1;
+            if (isOrder(row)) territoryBdmStats[manager].orders += 1;
+
+            if (!coords) return;
+
+            const key = manager + '||' + country;
+            if (!grouped[key]) {
+                const latOffset = coords[0] + ((Object.keys(grouped).length % 7) - 3) * 0.18;
+                const lngOffset = coords[1] + ((Object.keys(grouped).length % 5) - 2) * 0.18;
+                grouped[key] = {
+                    name: country,
+                    manager,
+                    coords: [latOffset, lngOffset],
+                    leads: 0,
+                    opps: 0,
+                    proposals: 0,
+                    orders: 0
+                };
+            }
+
+            if (leadCount > 0) grouped[key].leads += leadCount;
+            if (isOpportunity(row)) grouped[key].opps += 1;
+            if (isProposal(row)) grouped[key].proposals += 1;
+            if (isOrder(row)) grouped[key].orders += 1;
+        });
+
+        territoryOpsData = Object.values(grouped);
+    }
+
+    function renderTerritoryManagerFilters() {
+        const wrap = document.getElementById('territoryManagerFilters');
+        if (!wrap) return;
+
+        let managers = [];
+
+        if (territorySourceMode === 'territory' && window.mapData) {
+            const managerSet = new Set();
+            [...(mapData.countries || []), ...(mapData.agencies || []), ...(mapData.corporates || [])]
+                .forEach(item => managerSet.add(item.manager));
+            managers = Array.from(managerSet).sort();
+        } else {
+            managers = Object.keys(territoryBdmStats).sort();
+        }
+
+        wrap.innerHTML = `
+            <button class="pill" onclick="setTerritoryManager('ALL')" style="${territoryActiveManager === 'ALL' ? 'background: var(--primary-color); color: #fff;' : ''}">
+                All Team
+            </button>
+            ${managers.map(name => `
+                <button class="pill" onclick="setTerritoryManager('${String(name).replace(/'/g, "\\'")}')" style="${territoryActiveManager === name ? 'background: var(--primary-color); color: #fff;' : ''}">
+                    ${escapeHtml(String(name).replace(/^MR\. /, ''))}
+                </button>
+            `).join('')}
+        `;
+    }
+
+    function setTerritoryManager(name) {
+        territoryActiveManager = name;
+        renderTerritoryPage();
+    }
+
+    function setTerritorySourceMode(mode) {
+        territorySourceMode = mode;
+        document.getElementById('territorySourceJson').classList.toggle('active', mode === 'territory');
+        document.getElementById('territorySourceCsv').classList.toggle('active', mode === 'operations');
+        document.getElementById('territoryLayerWrap').style.display = mode === 'territory' ? 'flex' : 'none';
+        renderTerritoryPage();
+    }
+
+    function setTerritoryLayerMode(mode) {
+        territoryLayerMode = mode;
+        document.getElementById('territoryLayerAll').classList.toggle('active', mode === 'all');
+        document.getElementById('territoryLayerCountries').classList.toggle('active', mode === 'countries');
+        document.getElementById('territoryLayerAgencies').classList.toggle('active', mode === 'agencies');
+        document.getElementById('territoryLayerCorporates').classList.toggle('active', mode === 'corporates');
+        renderTerritoryPage();
+    }
+
+    function renderTerritoryLegend() {
+        const el = document.getElementById('territoryLegend');
+        if (!el) return;
+
+        if (territorySourceMode === 'territory') {
+            el.innerHTML = `
+                <span><span class="legend-indicator" style="background:#64748b;"></span>Countries</span>
+                <span><span class="legend-indicator" style="background:#2563eb;"></span>Agencies</span>
+                <span><span class="legend-indicator" style="background:#111827;"></span>Corporates</span>
+            `;
+        } else {
+            el.innerHTML = `
+                <span><span class="legend-indicator" style="background:#2563eb;"></span>Operations from filtered CSV</span>
+                <span>Bubble size reflects lead volume</span>
+            `;
+        }
+    }
+
+    function showTerritoryCrmPanel(manager) {
+        const panel = document.getElementById('territoryCrmPanel');
+        if (!panel) return;
+
+        if (territorySourceMode !== 'operations' || manager === 'ALL' || !territoryBdmStats[manager]) {
+            panel.style.display = 'none';
+            panel.innerHTML = '';
+            return;
+        }
+
+        const stats = territoryBdmStats[manager];
+        const colors = getTerritoryManagerColors();
+        const color = colors[manager] || '#64748b';
+
+        panel.innerHTML = `
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                <span style="width:10px; height:10px; border-radius:50%; background:${color}; display:inline-block;"></span>
+                <strong style="font-size:0.9rem;">${escapeHtml(manager.replace(/^MR\. /, ''))} PIPELINE</strong>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; text-align:center;">
+                <div style="background:#f8fafc; padding:10px; border-radius:8px;">
+                    <div style="font-size:0.65rem; color:#64748b; font-weight:700;">LEADS</div>
+                    <div style="font-weight:800;">${stats.leads}</div>
+                </div>
+                <div style="background:#eff6ff; padding:10px; border-radius:8px;">
+                    <div style="font-size:0.65rem; color:#2563eb; font-weight:700;">OPPS</div>
+                    <div style="font-weight:800; color:#2563eb;">${stats.opps}</div>
+                </div>
+                <div style="background:#fff7ed; padding:10px; border-radius:8px;">
+                    <div style="font-size:0.65rem; color:#f97316; font-weight:700;">PROPS</div>
+                    <div style="font-weight:800; color:#f97316;">${stats.proposals}</div>
+                </div>
+                <div style="background:#f0fdf4; padding:10px; border-radius:8px;">
+                    <div style="font-size:0.65rem; color:#16a34a; font-weight:700;">ORDERS</div>
+                    <div style="font-weight:800; color:#16a34a;">${stats.orders}</div>
+                </div>
+            </div>
+        `;
+        panel.style.display = 'block';
+    }
+
+    function renderTerritoryPage() {
+        initTerritoryMap();
+        if (!territoryMap) return;
+
+        rebuildTerritoryOperationsData();
+        renderTerritoryManagerFilters();
+        renderTerritoryLegend();
+
+        territoryCountryLayer.clearLayers();
+        territoryAgencyLayer.clearLayers();
+        territoryCorporateLayer.clearLayers();
+        territoryOpsLayer.clearLayers();
+
+        const colors = getTerritoryManagerColors();
+
+        if (territorySourceMode === 'territory' && window.mapData) {
+            const managerFilter = item => territoryActiveManager === 'ALL' || item.manager === territoryActiveManager;
+
+            const countries = (mapData.countries || []).filter(managerFilter);
+            const agencies = (mapData.agencies || []).filter(managerFilter);
+            const corporates = (mapData.corporates || []).filter(managerFilter);
+
+            countries.forEach(c => {
+                const color = colors[c.manager] || '#94a3b8';
+                L.circleMarker(c.coords, {
+                    radius: 6,
+                    fillColor: color,
+                    color: '#fff',
+                    weight: 2,
+                    fillOpacity: 0.9
+                }).addTo(territoryCountryLayer).bindPopup(`
+                    <div>
+                        <strong>${escapeHtml(c.name)}</strong><br>
+                        <span style="color:#64748b; font-size:12px;">${escapeHtml(c.manager)}</span>
+                    </div>
+                `);
+            });
+
+            agencies.forEach(a => {
+                const color = colors[a.manager] || '#94a3b8';
+                const icon = L.divIcon({
+                    html: `<div style="width:28px;height:28px;border-radius:8px;background:#fff;border:2px solid ${color};display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,0.08);font-size:14px;">🏛️</div>`,
+                    className: '',
+                    iconSize: [28, 28],
+                    iconAnchor: [14, 28],
+                    popupAnchor: [0, -28]
+                });
+                L.marker(a.coords, { icon }).addTo(territoryAgencyLayer).bindPopup(`
+                    <div>
+                        <strong>${escapeHtml(a.name)}</strong><br>
+                        <span style="color:#64748b; font-size:12px;">${escapeHtml(a.manager)}</span>
+                    </div>
+                `);
+            });
+
+            corporates.forEach(c => {
+                const color = colors[c.manager] || '#94a3b8';
+                const icon = L.divIcon({
+                    html: `<div style="width:28px;height:28px;border-radius:50%;background:#111827;border:2px solid ${color};display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,0.10);font-size:13px;color:#fff;">🏢</div>`,
+                    className: '',
+                    iconSize: [28, 28],
+                    iconAnchor: [14, 14],
+                    popupAnchor: [0, -14]
+                });
+                L.marker(c.coords, { icon }).addTo(territoryCorporateLayer).bindPopup(`
+                    <div>
+                        <strong>${escapeHtml(c.name)}</strong><br>
+                        <span style="color:#64748b; font-size:12px;">${escapeHtml(c.manager)}</span>
+                    </div>
+                `);
+            });
+
+            if (territoryLayerMode === 'all' || territoryLayerMode === 'countries') territoryCountryLayer.addTo(territoryMap);
+            else territoryMap.removeLayer(territoryCountryLayer);
+
+            if (territoryLayerMode === 'all' || territoryLayerMode === 'agencies') territoryAgencyLayer.addTo(territoryMap);
+            else territoryMap.removeLayer(territoryAgencyLayer);
+
+            if (territoryLayerMode === 'all' || territoryLayerMode === 'corporates') territoryCorporateLayer.addTo(territoryMap);
+            else territoryMap.removeLayer(territoryCorporateLayer);
+
+            territoryMap.removeLayer(territoryOpsLayer);
+
+            safeSetText('territoryModeValue', 'Territory');
+            safeSetText('territoryCountryValue', countries.length.toLocaleString());
+            safeSetText('territoryManagerValue', String(territoryActiveManager === 'ALL'
+                ? new Set([...countries, ...agencies, ...corporates].map(x => x.manager)).size
+                : 1));
+            safeSetText('territoryRecordValue', String(countries.length + agencies.length + corporates.length));
+            showTerritoryCrmPanel('ALL');
+        } else {
+            territoryMap.removeLayer(territoryCountryLayer);
+            territoryMap.removeLayer(territoryAgencyLayer);
+            territoryMap.removeLayer(territoryCorporateLayer);
+            territoryOpsLayer.addTo(territoryMap);
+
+            const ops = territoryActiveManager === 'ALL'
+                ? territoryOpsData
+                : territoryOpsData.filter(x => x.manager === territoryActiveManager);
+
+            ops.forEach(c => {
+                const color = colors[c.manager] || '#ef4444';
+                const radius = Math.max(6, Math.min(22, 6 + c.leads));
+                const popupHTML = `
+                    <div style="min-width:160px;">
+                        <div style="font-size:10px; color:#64748b; font-weight:700;">${escapeHtml(c.manager)}</div>
+                        <div style="font-size:16px; font-weight:800; margin-bottom:8px;">${escapeHtml(c.name)}</div>
+                        <div style="background:#f8fafc; border-radius:8px; padding:10px; font-size:12px;">
+                            <div>Leads: <strong>${c.leads}</strong></div>
+                            <div>Opps: <strong style="color:#2563eb;">${c.opps}</strong></div>
+                            <div>Props: <strong style="color:#f97316;">${c.proposals}</strong></div>
+                            <div>Orders: <strong style="color:#16a34a;">${c.orders}</strong></div>
+                        </div>
+                    </div>
+                `;
+                L.circleMarker(c.coords, {
+                    radius,
+                    fillColor: color,
+                    color: '#fff',
+                    weight: 2,
+                    fillOpacity: 0.86
+                }).addTo(territoryOpsLayer).bindPopup(popupHTML);
+            });
+
+            safeSetText('territoryModeValue', 'Operations');
+            safeSetText('territoryCountryValue', ops.length.toLocaleString());
+            safeSetText('territoryManagerValue', String(territoryActiveManager === 'ALL'
+                ? new Set(territoryOpsData.map(x => x.manager)).size
+                : 1));
+            safeSetText('territoryRecordValue', String(Array.isArray(latestExplorerRows) ? latestExplorerRows.length : 0));
+            showTerritoryCrmPanel(territoryActiveManager);
+        }
+
+        setTimeout(() => {
+            territoryMap.invalidateSize();
+
+            const fg = new L.featureGroup();
+            if (territoryMap.hasLayer(territoryCountryLayer)) territoryCountryLayer.eachLayer(l => fg.addLayer(l));
+            if (territoryMap.hasLayer(territoryAgencyLayer)) territoryAgencyLayer.eachLayer(l => fg.addLayer(l));
+            if (territoryMap.hasLayer(territoryCorporateLayer)) territoryCorporateLayer.eachLayer(l => fg.addLayer(l));
+            if (territoryMap.hasLayer(territoryOpsLayer)) territoryOpsLayer.eachLayer(l => fg.addLayer(l));
+
+            if (fg.getLayers().length > 0) {
+                territoryMap.fitBounds(fg.getBounds(), { padding: [40, 40], maxZoom: 5 });
+            } else {
+                territoryMap.setView([25, 15], 3);
+            }
+        }, 80);
+    }
+
+    // Initialize the static LinkedIn page data immediately on load
+    initLinkedInData();
 </script>
 </body>
 </html>
