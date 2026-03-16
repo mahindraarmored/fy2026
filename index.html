@@ -1318,6 +1318,13 @@
                         <button id="territoryLayerAgencies" class="territory-toggle-btn" onclick="setTerritoryLayerMode('agencies')">Agencies</button>
                         <button id="territoryLayerCorporates" class="territory-toggle-btn" onclick="setTerritoryLayerMode('corporates')">Corporates</button>
                     </div>
+                    <div class="territory-toggle-group" id="territoryOpsWrap" style="display:none;">
+    <button id="territoryOpsAll" class="territory-toggle-btn active" onclick="setTerritoryOpsMetric('all')">All</button>
+    <button id="territoryOpsLeads" class="territory-toggle-btn" onclick="setTerritoryOpsMetric('leads')">Leads</button>
+    <button id="territoryOpsOpps" class="territory-toggle-btn" onclick="setTerritoryOpsMetric('opps')">Opps</button>
+    <button id="territoryOpsProposals" class="territory-toggle-btn" onclick="setTerritoryOpsMetric('proposals')">Proposals</button>
+    <button id="territoryOpsOrders" class="territory-toggle-btn" onclick="setTerritoryOpsMetric('orders')">Orders</button>
+</div>
                 </div>
 
                 <div id="territoryManagerFilters"></div>
@@ -1365,6 +1372,7 @@
     let territoryOpsLayer = null;
     let territorySourceMode = 'territory';
     let territoryLayerMode = 'all';
+    let territoryOpsMetric = 'all';
     let territoryActiveManager = 'ALL';
     let territoryOpsData = [];
     let territoryBdmStats = {};
@@ -3342,12 +3350,16 @@ function renderRawDataTable(data) {
     }
 
     function setTerritorySourceMode(mode) {
-        territorySourceMode = mode;
-        document.getElementById('territorySourceJson').classList.toggle('active', mode === 'territory');
-        document.getElementById('territorySourceCsv').classList.toggle('active', mode === 'operations');
-        document.getElementById('territoryLayerWrap').style.display = mode === 'territory' ? 'flex' : 'none';
-        renderTerritoryPage();
-    }
+    territorySourceMode = mode;
+
+    document.getElementById('territorySourceJson').classList.toggle('active', mode === 'territory');
+    document.getElementById('territorySourceCsv').classList.toggle('active', mode === 'operations');
+
+    document.getElementById('territoryLayerWrap').style.display = mode === 'territory' ? 'flex' : 'none';
+    document.getElementById('territoryOpsWrap').style.display = mode === 'operations' ? 'flex' : 'none';
+
+    renderTerritoryPage();
+}
 
     function setTerritoryLayerMode(mode) {
         territoryLayerMode = mode;
@@ -3357,6 +3369,25 @@ function renderRawDataTable(data) {
         document.getElementById('territoryLayerCorporates').classList.toggle('active', mode === 'corporates');
         renderTerritoryPage();
     }
+    function setTerritoryOpsMetric(mode) {
+    territoryOpsMetric = mode;
+
+    document.getElementById('territoryOpsAll').classList.toggle('active', mode === 'all');
+    document.getElementById('territoryOpsLeads').classList.toggle('active', mode === 'leads');
+    document.getElementById('territoryOpsOpps').classList.toggle('active', mode === 'opps');
+    document.getElementById('territoryOpsProposals').classList.toggle('active', mode === 'proposals');
+    document.getElementById('territoryOpsOrders').classList.toggle('active', mode === 'orders');
+
+    renderTerritoryPage();
+}
+function getTerritoryOpsMetricValue(item) {
+    if (territoryOpsMetric === 'leads') return item.leads || 0;
+    if (territoryOpsMetric === 'opps') return item.opps || 0;
+    if (territoryOpsMetric === 'proposals') return item.proposals || 0;
+    if (territoryOpsMetric === 'orders') return item.orders || 0;
+
+    return (item.leads || 0) + (item.opps || 0) + (item.proposals || 0) + (item.orders || 0);
+}
 
     function renderTerritoryLegend() {
         const el = document.getElementById('territoryLegend');
@@ -3369,10 +3400,18 @@ function renderRawDataTable(data) {
                 <span><span class="legend-indicator" style="background:#111827;"></span>Corporates</span>
             `;
         } else {
-            el.innerHTML = `
-                <span><span class="legend-indicator" style="background:#2563eb;"></span>Operations from filtered CSV</span>
-                <span>Bubble size reflects lead volume</span>
-            `;
+            const opsLegendLabelMap = {
+    all: 'total activity',
+    leads: 'lead volume',
+    opps: 'opportunity volume',
+    proposals: 'proposal volume',
+    orders: 'order volume'
+};
+
+el.innerHTML = `
+    <span><span class="legend-indicator" style="background:#2563eb;"></span>Operations from filtered CSV</span>
+    <span>Bubble size reflects ${opsLegendLabelMap[territoryOpsMetric]}</span>
+`;
         }
     }
 
@@ -3514,32 +3553,51 @@ function renderRawDataTable(data) {
             territoryOpsLayer.addTo(territoryMap);
 
             const ops = territoryActiveManager === 'ALL'
-                ? territoryOpsData
-                : territoryOpsData.filter(x => x.manager === territoryActiveManager);
+    ? territoryOpsData
+    : territoryOpsData.filter(x => x.manager === territoryActiveManager);
 
-            ops.forEach(c => {
-                const color = colors[c.manager] || '#ef4444';
-                const radius = Math.max(6, Math.min(22, 6 + c.leads));
-                const popupHTML = `
-                    <div style="min-width:160px;">
-                        <div style="font-size:10px; color:#64748b; font-weight:700;">${escapeHtml(c.manager)}</div>
-                        <div style="font-size:16px; font-weight:800; margin-bottom:8px;">${escapeHtml(c.name)}</div>
-                        <div style="background:#f8fafc; border-radius:8px; padding:10px; font-size:12px;">
-                            <div>Leads: <strong>${c.leads}</strong></div>
-                            <div>Opps: <strong style="color:#2563eb;">${c.opps}</strong></div>
-                            <div>Props: <strong style="color:#f97316;">${c.proposals}</strong></div>
-                            <div>Orders: <strong style="color:#16a34a;">${c.orders}</strong></div>
-                        </div>
-                    </div>
-                `;
-                L.circleMarker(c.coords, {
-                    radius,
-                    fillColor: color,
-                    color: '#fff',
-                    weight: 2,
-                    fillOpacity: 0.86
-                }).addTo(territoryOpsLayer).bindPopup(popupHTML);
-            });
+const metricLabelMap = {
+    all: 'Total Activity',
+    leads: 'Leads',
+    opps: 'Opportunities',
+    proposals: 'Proposals',
+    orders: 'Orders'
+};
+
+ops.forEach(c => {
+    const color = colors[c.manager] || '#ef4444';
+    const metricValue = getTerritoryOpsMetricValue(c);
+
+    if (territoryOpsMetric !== 'all' && metricValue <= 0) return;
+
+    const radius = territoryOpsMetric === 'all'
+        ? Math.max(6, Math.min(22, 6 + c.leads))
+        : Math.max(6, Math.min(24, 6 + metricValue * 2));
+
+    const popupHTML = `
+        <div style="min-width:180px;">
+            <div style="font-size:10px; color:#64748b; font-weight:700;">${escapeHtml(c.manager)}</div>
+            <div style="font-size:16px; font-weight:800; margin-bottom:8px;">${escapeHtml(c.name)}</div>
+            <div style="margin-bottom:8px; font-size:12px;">
+                <strong>${metricLabelMap[territoryOpsMetric]}:</strong> ${metricValue}
+            </div>
+            <div style="background:#f8fafc; border-radius:8px; padding:10px; font-size:12px;">
+                <div>Leads: <strong>${c.leads}</strong></div>
+                <div>Opps: <strong style="color:#2563eb;">${c.opps}</strong></div>
+                <div>Props: <strong style="color:#f97316;">${c.proposals}</strong></div>
+                <div>Orders: <strong style="color:#16a34a;">${c.orders}</strong></div>
+            </div>
+        </div>
+    `;
+
+    L.circleMarker(c.coords, {
+        radius,
+        fillColor: color,
+        color: '#fff',
+        weight: 2,
+        fillOpacity: 0.86
+    }).addTo(territoryOpsLayer).bindPopup(popupHTML);
+});
 
             safeSetText('territoryModeValue', 'Operations');
             safeSetText('territoryCountryValue', ops.length.toLocaleString());
