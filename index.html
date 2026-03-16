@@ -702,7 +702,7 @@
                 <div class="outline-card" style="margin-top: 24px; padding: 24px;">
     <h2 style="margin-bottom: 16px; color: var(--secondary-color);">Pipeline Volume by BDM</h2>
 <p style="margin: 0 0 12px 0; color: var(--text-muted); font-size: 0.95rem;">
-    Stacked comparison of leads, opportunities, proposals, and orders across selected BDMs.
+    Grouped comparison of leads, opportunities, proposals, and orders across selected BDMs.
 </p>
     <div class="table-wrapper" style="padding: 20px; border: none; box-shadow: none;">
         <canvas id="outlineFunnelChart" height="120"></canvas>
@@ -2147,7 +2147,8 @@ function renderOutlineStackedBarChart(perfMap) {
                     backgroundColor: 'rgba(59, 130, 246, 0.85)',
                     borderColor: 'rgba(59, 130, 246, 1)',
                     borderWidth: 1,
-                    stack: 'pipeline'
+                    categoryPercentage: 0.72,
+                    barPercentage: 0.88
                 },
                 {
                     label: 'Opportunities',
@@ -2155,7 +2156,8 @@ function renderOutlineStackedBarChart(perfMap) {
                     backgroundColor: 'rgba(245, 158, 11, 0.85)',
                     borderColor: 'rgba(245, 158, 11, 1)',
                     borderWidth: 1,
-                    stack: 'pipeline'
+                    categoryPercentage: 0.72,
+                    barPercentage: 0.88
                 },
                 {
                     label: 'Proposals',
@@ -2163,7 +2165,8 @@ function renderOutlineStackedBarChart(perfMap) {
                     backgroundColor: 'rgba(124, 58, 237, 0.85)',
                     borderColor: 'rgba(124, 58, 237, 1)',
                     borderWidth: 1,
-                    stack: 'pipeline'
+                    categoryPercentage: 0.72,
+                    barPercentage: 0.88
                 },
                 {
                     label: 'Orders',
@@ -2171,7 +2174,8 @@ function renderOutlineStackedBarChart(perfMap) {
                     backgroundColor: 'rgba(30, 142, 62, 0.85)',
                     borderColor: 'rgba(30, 142, 62, 1)',
                     borderWidth: 1,
-                    stack: 'pipeline'
+                    categoryPercentage: 0.72,
+                    barPercentage: 0.88
                 }
             ]
         },
@@ -2193,7 +2197,7 @@ function renderOutlineStackedBarChart(perfMap) {
             },
             scales: {
                 x: {
-                    stacked: true,
+                    stacked: false,
                     title: {
                         display: true,
                         text: 'BDM Name'
@@ -2201,10 +2205,13 @@ function renderOutlineStackedBarChart(perfMap) {
                     ticks: {
                         maxRotation: 45,
                         minRotation: 0
+                    },
+                    grid: {
+                        display: false
                     }
                 },
                 y: {
-                    stacked: true,
+                    stacked: false,
                     beginAtZero: true,
                     ticks: {
                         precision: 0
