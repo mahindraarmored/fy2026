@@ -729,7 +729,7 @@
             <div id="page1" class="page active">
                 <div style="margin-bottom: 32px;">
                     <h1>Dashboard <span style="color: var(--primary-color)">Initialization</span></h1>
-                    <p>Upload your raw data to identify active managers and define your reporting timeframe.</p>
+                    <p>Upload raw data to identify active BDMs and define reporting timeframe.</p>
                 </div>
 
                 <div class="upload-box" id="dropZone" onclick="document.getElementById('csvInput').click()">
@@ -742,7 +742,7 @@
                 <div class="bdm-selection-wrapper" id="bdmSection" style="display: none;">
                     <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
                         <div>
-                            <h2 style="margin: 0;">Manager Selection</h2>
+                            <h2 style="margin: 0;">BDM Selection</h2>
                         </div>
                         <div style="display:flex; gap:12px;">
                             <button onclick="selectAllBdms(true)" style="background:none; border:none; color:var(--primary-color); font-weight:700; cursor:pointer;">Select All</button>
@@ -795,7 +795,7 @@
 
                 <div class="summary-strip">
                     <div class="mini-stat">
-                        <div class="label">Selected Managers</div>
+                        <div class="label">Selected BDM</div>
                         <div class="value" id="selectedBdmCount">0</div>
                     </div>
                     <div class="mini-stat">
@@ -924,7 +924,7 @@
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>Manager</th>
+                                    <th>BDM</th>
                                     <th>Date (GMT)</th>
                                     <th>Company</th>
                                     <th>Country</th>
@@ -982,7 +982,7 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Manager</th>
+                        <th>BDM</th>
                         <th>Company</th>
                         <th>Stage</th>
                         <th>Total Follow-Ups</th>
@@ -1003,7 +1003,7 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Manager</th>
+                        <th>BDM</th>
                         <th>Company</th>
                         <th>Stage</th>
                         <th>Reason</th>
@@ -1021,7 +1021,7 @@
             <div id="page4" class="page">
                 <div style="margin-bottom: 24px;">
                     <h1>Individual <span style="color: var(--primary-color)">Performance</span></h1>
-                    <p>BDM-level review for the selected period and selected managers.</p>
+                    <p>BDM-level review for the selected period and selected BDMs.</p>
                 </div>
 
                 <div class="table-wrapper" style="max-height:none;">
@@ -1293,7 +1293,7 @@
                         <div class="value" id="territoryCountryValue">0</div>
                     </div>
                     <div class="mini-stat">
-                        <div class="label">Visible Managers</div>
+                        <div class="label">Visible BDMs</div>
                         <div class="value" id="territoryManagerValue">0</div>
                     </div>
                     <div class="mini-stat">
