@@ -1,0 +1,4504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEVA FY 2026 | Executive Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-funnel"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="mapData.js"></script>
+
+    <style>
+        :root {
+            --navy: #0B1F3F;
+            --navy-light: #1a3260;
+            --charcoal: #2c3e50;
+            --slate: #4a5568;
+            --muted: #8896a7;
+            --border: #e2e8f0;
+            --border-light: #edf2f7;
+            --surface: #ffffff;
+            --surface-alt: #f7f9fc;
+            --body-bg: #f0f2f5;
+            --accent: #c0392b;
+            --accent-soft: rgba(192, 57, 43, 0.08);
+            --accent-medium: rgba(192, 57, 43, 0.15);
+            --accent-hover: #a93226;
+            --success: #1e8e3e;
+            --success-bg: #e6f4ea;
+            --warning: #e67e22;
+            --danger: #e74c3c;
+            --info: #2980b9;
+            --linkedin-blue: #0a66c2;
+
+            /* Legacy mapping for JS compat */
+            --primary-color: #c0392b;
+            --primary-dark: #a93226;
+            --secondary-color: #0B1F3F;
+            --text-main: #2c3e50;
+            --text-muted: #8896a7;
+            --bg-body: #f0f2f5;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --success-color: #1e8e3e;
+            ---blue: #0a66c2;
+
+            --shadow-sm: 0 1px 3px rgba(11, 31, 63, 0.04);
+            --shadow-md: 0 4px 12px rgba(11, 31, 63, 0.06);
+            --shadow-lg: 0 8px 30px rgba(11, 31, 63, 0.08);
+            --shadow-btn: 0 4px 14px rgba(192, 57, 43, 0.25);
+            --radius: 8px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--body-bg);
+            color: var(--charcoal);
+            -webkit-font-smoothing: antialiased;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Inter', Georgia, serif;
+            font-weight: 700;
+            color: var(--navy);
+            margin-top: 0;
+            text-transform: none;
+        }
+
+        /* ═══ APP SHELL — 100vh flex column ═══ */
+        #onboarding-app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background: var(--surface);
+        }
+
+        .page { display: none !important; width: 100%; height: 100%; flex-direction: column; }
+        .page.active { display: flex !important; animation: pageReveal 0.35s ease forwards; }
+
+        @keyframes pageReveal {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ═══ BRAND HEADER ═══ */
+        .brand-header {
+            width: 100%;
+            height: 52px;
+            min-height: 52px;
+            background: var(--navy);
+            padding: 0 36px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            flex-shrink: 0;
+        }
+        .partner-logo img { height: 28px; filter: brightness(10); }
+
+        /* ═══ FILTER BAR ═══ */
+        .filter-summary-bar {
+            width: 100%;
+            height: 40px;
+            min-height: 40px;
+            background: var(--surface-alt);
+            border-bottom: 1px solid var(--border);
+            padding: 0 36px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+        .filter-item { display: flex; align-items: center; gap: 5px; }
+        .filter-item i { color: var(--accent); font-size: 0.95rem; }
+        .filter-item span { font-weight: 600; color: var(--charcoal); font-size: 0.75rem; }
+
+        /* ═══ MAIN CARD (full viewport flex child) ═══ */
+        .main-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        /* ═══ NAV BAR ═══ */
+        .nav-bar {
+            display: flex;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 28px;
+            height: 48px;
+            min-height: 48px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            flex-shrink: 0;
+        }
+        .nav-bar::-webkit-scrollbar { display: none; }
+
+        .nav-item {
+            padding: 0 14px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-item:hover { color: var(--slate); background: var(--surface-alt); }
+        .nav-item.active { color: var(--navy); border-bottom-color: var(--accent); font-weight: 700; }
+        .nav-item i { font-size: 0.95rem; }
+
+        /* ═══ CONTENT AREA — flex:1, scrollable ═══ */
+        .content-area {
+            flex: 1;
+            overflow: hidden;
+            padding: 20px 32px;
+            background: var(--surface-alt);
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-area::-webkit-scrollbar { width: 5px; }
+        .content-area::-webkit-scrollbar-track { background: transparent; }
+        .content-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+        /* ═══ PAGE HEADER TEXT ═══ */
+        .page-header-text {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin: 0 0 14px 0;
+            flex-shrink: 0;
+            line-height: 1.4;
+        }
+
+        h1 { font-size: 1.8rem; line-height: 1.15; margin-bottom: 4px; }
+        h1 span { color: var(--accent); }
+        h2 { font-size: 1.1rem; margin-bottom: 6px; font-weight: 600; }
+
+        /* ═══ STRUCTURAL: split-2 layout (from restruct) ═══ */
+        .split-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .split-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 14px;
+            flex-shrink: 0;
+        }
+
+        /* ═══ PANEL (card container for charts/content) ═══ */
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .panel-title {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--navy);
+            flex-shrink: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        /* ═══ CHART WRAPPER (flexbox sizing — critical) ═══ */
+        .chart-wrapper {
+            position: relative;
+            flex: 1;
+            min-height: 0;
+            width: 100%;
+        }
+
+        /* ═══ SUMMARY STRIP (KPIs) ═══ */
+        .summary-strip {
+            display: grid;
+            gap: 12px;
+            flex-shrink: 0;
+            margin-bottom: 14px;
+        }
+
+        .mini-stat {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .mini-stat .label {
+            font-size: 0.62rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 4px;
+        }
+
+        .mini-stat .value {
+            font-size: 1.4rem;
+            font-family: 'Inter', serif;
+            font-weight: 700;
+            line-height: 1.1;
+            color: var(--navy);
+        }
+
+        /* ═══ OUTLINE CARDS (Page 2) ═══ */
+        .outline-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .outline-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+        .outline-header i { color: var(--accent); font-size: 1.1rem; }
+
+        .outline-total {
+            font-family: 'Inter', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--navy);
+            margin-bottom: 10px;
+        }
+
+        .progress-bar-container {
+            height: 6px;
+            border-radius: 999px;
+            display: flex;
+            overflow: hidden;
+            background: var(--border-light);
+            margin-top: 6px;
+        }
+       .outline-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 4px 0 6px;
+    font-size: 0.66rem;
+    color: var(--muted);
+    line-height: 1.2;
+}
+
+.outline-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.outline-meta-item::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.outline-meta-item.comp::before { background: var(--accent); }
+.outline-meta-item.self::before { background: var(--linkedin-blue); }
+.outline-meta-item.other::before { background: #b0bec5; }
+
+.outline-meta-item strong {
+    font-weight: 700;
+    color: var(--charcoal);
+    font-variant-numeric: tabular-nums;
+}
+.progress-segment {
+    height: 100%;
+    transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+}        .progress-segment.comp { background: var(--accent); }
+        .progress-segment.self { background: var(--linkedin-blue); }
+        .progress-segment.other { background: #b0bec5; }
+
+        /* ═══ CONVERSION STRIP ═══ */
+        .conversion-strip {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            flex-shrink: 0;
+            margin-bottom: 12px;
+        }
+        .conversion-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .conversion-kicker {
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 4px;
+        }
+        .conversion-value {
+            font-family: 'Inter', serif;
+            font-size: 1.5rem;
+            line-height: 1;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* ═══ DATA TABLES ═══ */
+        .table-wrapper {
+            flex: 1;
+            min-height: 0;
+            overflow: auto;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+
+        .data-table { width: 100%; border-collapse: collapse; text-align: left; }
+
+        .data-table thead th {
+            position: sticky;
+            top: 0;
+            background: var(--surface-alt);
+            padding: 10px 14px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+            z-index: 10;
+            white-space: nowrap;
+        }
+
+        .data-table tbody td {
+            padding: 9px 14px;
+            font-size: 0.8rem;
+            color: var(--charcoal);
+            border-bottom: 1px solid var(--border-light);
+            white-space: nowrap;
+        }
+
+        .data-table tbody tr:hover { background: var(--accent-soft); }
+        .data-table tbody tr:last-child td { border-bottom: none; }
+
+        /* ═══ BUTTONS ═══ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 20px;
+            border-radius: 6px;
+            border: none;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.25s ease;
+        }
+        .btn-next { background: var(--accent); color: #fff; }
+        .btn-next:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: var(--shadow-btn); }
+        .btn-back { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+        .btn-back:hover { border-color: var(--slate); color: var(--slate); }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: var(--surface-alt);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 0.7rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+        button.pill:hover, .pill.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+
+        /* ═══ FOOTER ═══ */
+        .footer-actions {
+            height: 50px;
+            min-height: 50px;
+            padding: 0 36px;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        /* ═══ STATUS / BADGES ═══ */
+        .status-badge { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 4px; }
+        .status-badge.yes { background: var(--success-bg); color: var(--success); }
+        .status-badge.no { background: var(--surface-alt); color: var(--border); }
+
+        .drill-link { background: none; border: none; color: var(--accent); font-weight: 700; cursor: pointer; padding: 0; font-size: inherit; text-decoration: none; border-bottom: 1px solid transparent; }
+        .drill-link:hover { border-bottom-color: var(--accent); }
+
+        /* ═══ UPLOAD BOX ═══ */
+        .upload-box {
+            background: var(--surface);
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            padding: 32px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .upload-box:hover { border-color: var(--accent); background: var(--accent-soft); }
+
+        /* ═══ BDM GRID ═══ */
+        .bdm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; overflow-y: auto; flex: 1; min-height: 0; margin-top: 12px; }
+        .bdm-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; background: var(--surface); }
+        .bdm-card:hover { border-color: var(--accent); }
+        .bdm-card.selected { border-color: var(--accent); background: var(--accent-soft); }
+        .bdm-checkbox { width: 15px; height: 15px; accent-color: var(--accent); cursor: pointer; }
+        .bdm-name { font-weight: 600; font-size: 0.82rem; color: var(--charcoal); }
+
+        /* ═══ CONFIG SECTION ═══ */
+        .config-section { background: var(--surface); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border); flex-shrink: 0; margin-bottom: 14px; }
+
+        /* ═══ TERRITORY MAP ═══ */
+        #territoryMap { flex: 1; width: 100%; border-radius: var(--radius); border: 1px solid var(--border); z-index: 1; min-height: 0; }
+        #territoryManagerFilters { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0 12px; }
+        #territoryLegend { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; font-size: 0.72rem; color: var(--muted); font-weight: 700; flex-shrink: 0; }
+        #territoryCrmPanel { position: absolute; top: 12px; right: 12px; z-index: 1000; width: 230px; background: rgba(255,255,255,0.97); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; box-shadow: var(--shadow-lg); display: none; }
+
+        .territory-toggle-group { display: flex; gap: 4px; flex-wrap: wrap; background: var(--surface-alt); border: 1px solid var(--border); padding: 3px; border-radius: 6px; }
+        .territory-toggle-btn { border: none; background: transparent; color: var(--muted); padding: 6px 10px; border-radius: 5px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.04em; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+        .territory-toggle-btn.active { background: var(--surface); color: var(--navy); box-shadow: var(--shadow-sm); }
+
+        .legend-indicator { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 4px; }
+
+        /* ═══ LINKEDIN ═══ */
+        .linkedin-accordion { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; }
+        .linkedin-accordion-header { padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .linkedin-accordion-header:hover { background: var(--surface-alt); }
+        .linkedin-accordion-body { padding: 0 18px 18px; display: none; background: var(--surface-alt); border-top: 1px solid var(--border); }
+        .linkedin-accordion.expanded .linkedin-accordion-body { display: block; }
+        .linkedin-accordion.expanded { border-color: var(--navy); }
+        .linkedin-metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+        .linkedin-metric { margin-bottom: 14px; }
+        .linkedin-metric-title { font-size: 0.62rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
+        .linkedin-metric-value { font-size: 0.8rem; color: var(--charcoal); line-height: 1.45; }
+        .linkedin-final-eval { margin-top: 16px; padding: 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); }
+
+        /* ═══ COMPANY TRENDS ═══ */
+        .company-trends-list { flex: 1; overflow-y: auto; padding-right: 4px; }
+        .company-trend-search { width: 260px; max-width: 100%; height: 34px; border: 1px solid var(--border); border-radius: 6px; padding: 0 10px; font-size: 0.8rem; font-family: 'DM Sans', sans-serif; color: var(--charcoal); background: var(--surface); }
+        .company-trend-search:focus { outline: none; border-color: var(--navy); }
+
+        .country-accordion, .company-accordion { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); margin-bottom: 6px; flex-shrink: 0; }
+        .country-accordion.open, .company-accordion.open { border-color: #b8c2cf; }
+        .company-accordion-header { width: 100%; border: none; background: var(--surface); padding: 8px 12px; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; text-align: left; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+        .company-accordion-header:hover { background: var(--surface-alt); }
+        .country-accordion > .company-accordion-header { background: var(--surface-alt); border-bottom: 1px solid var(--border); }
+        .country-accordion.open > .company-accordion-header { background: #e7edf5; }
+        .company-accordion-main { min-width: 0; flex: 1; }
+        .company-accordion-title { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+        .company-accordion-title strong { font-size: 0.78rem; font-weight: 700; color: var(--charcoal); }
+        .company-badges { display: flex; gap: 4px; flex-wrap: wrap; }
+        .company-badge { display: inline-flex; align-items: center; padding: 1px 6px; border-radius: 3px; font-size: 0.62rem; font-weight: 700; border: 1px solid var(--border); background: var(--surface-alt); color: var(--slate); }
+        .company-badge.new { background: #f0fdf4; color: #166534; border-color: #ccebd6; }
+        .company-badge.nurtured { background: #fff7ed; color: #9a3412; border-color: #fed7aa; }
+        .company-badge.repeat { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+        .company-accordion-meta { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
+        .company-meta-item { min-width: 0; background: var(--surface-alt); border: 1px solid var(--border-light); border-radius: 3px; padding: 5px 6px; }
+        .company-meta-label { display: block; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: var(--muted); margin-bottom: 1px; }
+        .company-meta-value { display: block; font-size: 0.7rem; font-weight: 600; color: var(--charcoal); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .company-accordion-toggle { flex-shrink: 0; width: 24px; height: 24px; border-radius: 5px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.68rem; color: var(--slate); background: var(--surface); transition: transform 0.15s ease; }
+        .company-accordion.open > .company-accordion-header .company-accordion-toggle,
+        .country-accordion.open > .company-accordion-header .company-accordion-toggle { transform: rotate(180deg); }
+        .company-accordion-body { display: none; border-top: 1px solid var(--border); background: var(--surface); padding: 8px 10px 10px; }
+        .company-accordion.open > .company-accordion-body,
+        .country-accordion.open > .company-accordion-body { display: block; }
+        .company-records { display: grid; gap: 5px; }
+        .company-record-card { background: var(--surface); border: 1px solid var(--border-light); border-radius: 5px; padding: 8px 10px; }
+        .company-record-head { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+        .company-record-stage { display: inline-flex; padding: 2px 6px; border-radius: 3px; background: var(--surface-alt); color: var(--slate); font-size: 0.62rem; font-weight: 700; text-transform: uppercase; border: 1px solid var(--border); }
+        .company-record-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
+        .company-empty { border: 1px dashed var(--border); border-radius: 6px; padding: 20px; text-align: center; color: var(--muted); }
+        .final-note { background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+
+        /* ═══ RESPONSIVE ═══ */
+        @media (max-width: 1100px) {
+            .split-2 { grid-template-columns: 1fr; }
+            .company-accordion-meta, .company-record-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 900px) {
+            .content-area { padding: 14px 16px; }
+            h1 { font-size: 1.4rem; }
+            .summary-strip { grid-template-columns: 1fr 1fr !important; }
+            .conversion-strip { grid-template-columns: 1fr; }
+            .nav-bar { padding: 0 12px; }
+            .footer-actions { padding: 0 16px; }
+        }
+        @media (max-width: 700px) {
+            .company-accordion-meta, .company-record-grid { grid-template-columns: 1fr; }
+            .linkedin-metric-grid { grid-template-columns: 1fr; }
+        }
+        .conversion-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    margin-top: 6px;
+    font-size: 0.65rem;
+    color: var(--muted);
+    line-height: 1.2;
+}
+
+.conversion-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.conversion-meta-item::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.conversion-meta-item.comp::before { background: var(--accent); }
+.conversion-meta-item.self::before { background: var(--linkedin-blue); }
+.conversion-meta-item.other::before { background: #b0bec5; }
+
+.conversion-meta-item strong {
+    font-weight: 700;
+    color: var(--charcoal);
+    font-variant-numeric: tabular-nums;
+}
+.outline-meta-item.healthy::before { background: #22c55e; }
+.outline-meta-item.overdue::before { background: #f59e0b; }
+.outline-meta-item.critical::before { background: #f97316; }
+.outline-meta-item.dead::before { background: #6b7280; }
+
+.progress-segment.healthy { background: #22c55e; }
+.progress-segment.overdue { background: #f59e0b; }
+.progress-segment.critical { background: #f97316; }
+.progress-segment.dead { background: #6b7280; }
+    </style>
+</head>
+<body>
+
+<div id="onboarding-app">
+
+    <!-- HEADER -->
+    <header class="brand-header">
+        <div style="display:flex;align-items:center;gap:10px;">
+            <div class="partner-logo"><img src="mevalogo.png" alt="MEVA"></div>
+            <div style="width:1px;height:20px;background:rgba(255,255,255,0.15);"></div>
+            <span style="font-size:0.65rem;font-weight:600;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.1em;">FY 2026 Executive Report</span>
+        </div>
+        <span style="font-size:0.6rem;font-weight:500;color:rgba(255,255,255,0.3);letter-spacing:0.06em;">CONFIDENTIAL</span>
+    </header>
+
+    <!-- FILTER BAR -->
+    <div class="filter-summary-bar" id="filterSummaryBar" style="display: none;">
+        <div style="display: flex; gap: 18px; align-items: center;">
+            <div class="filter-item"><i class="ph ph-calendar-blank"></i><span id="displayDateRange"></span></div>
+            <div class="filter-item"><i class="ph ph-users"></i><span id="displayBdms"></span></div>
+        </div>
+        <button class="pill" onclick="jumpToStep1()"><i class="ph ph-pencil-simple" style="margin-right:3px;"></i> Edit</button>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-card">
+
+        <!-- NAV -->
+        <nav class="nav-bar">
+            <div class="nav-item active" id="nav1" onclick="goToStep(1)"><i class="ph ph-database"></i><span>Setup</span></div>
+            <div class="nav-item" id="nav2" onclick="goToStep(2)"><i class="ph ph-chart-line-up"></i><span>Outline</span></div>
+            <div class="nav-item" id="nav3" onclick="goToStep(3)"><i class="ph ph-phone-call"></i><span>Follow-Ups</span></div>
+            <div class="nav-item" id="nav4" onclick="goToStep(4)"><i class="ph ph-chart-bar-horizontal"></i><span>Pipeline</span></div>
+            <div class="nav-item" id="nav5" onclick="goToStep(5)"><i class="ph ph-trend-up"></i><span>Monthly</span></div>
+            <div class="nav-item" id="nav6" onclick="goToStep(6)"><i class="ph ph-car"></i><span>Vehicle</span></div>
+            <div class="nav-item" id="nav7" onclick="goToStep(7)"><i class="ph ph-check-circle"></i><span>Export</span></div>
+            <div class="nav-item" id="nav8" onclick="goToStep(8)"><i class="ph ph-table"></i><span>Raw Data</span></div>
+            <div class="nav-item" id="nav9" onclick="goToStep(9)"><i class="ph ph-linkedin-logo"></i><span>LinkedIn</span></div>
+            <div class="nav-item" id="nav10" onclick="goToStep(10)"><i class="ph ph-globe-hemisphere-west"></i><span>Regional</span></div>
+            <div class="nav-item" id="nav11" onclick="goToStep(11)"><i class="ph ph-buildings"></i><span>Companies</span></div>
+        </nav>
+
+        <!-- CONTENT -->
+        <main class="content-area">
+
+            <!-- PAGE 1: Setup -->
+            <div id="page1" class="page active" style="overflow-y:auto;">
+                <div style="flex-shrink:0;margin-bottom:12px;"><h1>Dashboard <span>Initialization</span></h1></div>
+                <p class="page-header-text">Upload raw data to identify active BDMs and define the reporting timeframe.</p>
+
+                <div class="upload-box" id="dropZone" onclick="document.getElementById('csvInput').click()" style="margin-bottom:14px;">
+                    <input type="file" id="csvInput" accept=".csv" style="display: none;" onchange="handleFileUpload(this)">
+                    <i class="ph ph-file-csv" style="font-size:2.4rem;color:var(--accent);margin-bottom:8px;"></i>
+                    <h3 id="fileNameText" style="font-family:'DM Sans',sans-serif;font-size:0.88rem;margin:0;">Click to Upload Source CSV</h3>
+                    <p style="color:var(--muted);font-size:0.78rem;margin:4px 0 0;">Automatic BDM parsing on upload.</p>
+                </div>
+
+                <div class="config-section">
+                    <div class="panel-title">Reporting Timeframe</div>
+                    <p style="font-size:0.75rem;color:var(--muted);margin:0 0 10px;">FY 2025–26 (Apr 1, 2025 → Mar 31, 2026)</p>
+                    <div style="display:flex;gap:14px;">
+                        <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                            <label style="font-size:0.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;">Start</label>
+                            <input type="date" id="startDate" value="2025-04-01" style="height:38px;border:1px solid var(--border);border-radius:6px;padding:0 12px;font-family:'DM Sans',sans-serif;font-size:0.82rem;">
+                        </div>
+                        <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                            <label style="font-size:0.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;">End</label>
+                            <input type="date" id="endDate" value="2026-03-31" style="height:38px;border:1px solid var(--border);border-radius:6px;padding:0 12px;font-family:'DM Sans',sans-serif;font-size:0.82rem;">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="bdmSection" style="display:none;display:flex;flex-direction:column;flex:1;min-height:0;margin-top:14px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+                        <div class="panel-title" style="margin:0;">BDM Selection</div>
+                        <div style="display:flex;gap:8px;">
+                            <button class="pill" onclick="selectAllBdms(true)">Select All</button>
+                            <button class="pill" onclick="selectAllBdms(false)">Clear</button>
+                        </div>
+                    </div>
+                    <div class="bdm-grid" id="bdmGrid"></div>
+                </div>
+
+                <div class="table-wrapper" style="max-height:none;display:none;" id="perfTableContainer">
+                    <table class="data-table"><thead><tr><th>BDM</th><th>Leads</th><th>Opportunities</th><th>Proposals</th><th>Orders</th><th>Opp Rate</th><th>Proposal Rate</th><th>Order Rate</th></tr></thead><tbody id="performanceTableBodyMain"></tbody></table>
+                </div>
+            </div>
+
+            <!-- PAGE 2: Outline — split-2 charts -->
+            <div id="page2" class="page">
+
+                <div class="summary-strip" style="grid-template-columns: repeat(4, 1fr);">
+    <div class="outline-card">
+        <div class="outline-header"><i class="ph ph-funnel"></i> Leads</div>
+        <div class="outline-total" id="out-leads-total">0</div>
+        <div class="outline-meta">
+            <span class="outline-meta-item comp">Company <strong id="out-leads-comp">0</strong></span>
+            <span class="outline-meta-item self">Self <strong id="out-leads-self">0</strong></span>
+            <span class="outline-meta-item other">Other <strong id="out-leads-other">0</strong></span>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-segment comp" id="bar-leads-comp" style="width:0%" title="Company: 0"></div>
+            <div class="progress-segment self" id="bar-leads-self" style="width:0%" title="Self: 0"></div>
+            <div class="progress-segment other" id="bar-leads-other" style="width:0%" title="Other: 0"></div>
+        </div>
+    </div>
+
+    <div class="outline-card">
+        <div class="outline-header"><i class="ph ph-briefcase"></i> Opportunities</div>
+        <div class="outline-total" id="out-opps-total">0</div>
+        <div class="outline-meta">
+            <span class="outline-meta-item comp">Company <strong id="out-opps-comp">0</strong></span>
+            <span class="outline-meta-item self">Self <strong id="out-opps-self">0</strong></span>
+            <span class="outline-meta-item other">Other <strong id="out-opps-other">0</strong></span>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-segment comp" id="bar-opps-comp" style="width:0%" title="Company: 0"></div>
+            <div class="progress-segment self" id="bar-opps-self" style="width:0%" title="Self: 0"></div>
+            <div class="progress-segment other" id="bar-opps-other" style="width:0%" title="Other: 0"></div>
+        </div>
+    </div>
+
+    <div class="outline-card">
+        <div class="outline-header"><i class="ph ph-file-text"></i> Proposals</div>
+        <div class="outline-total" id="out-props-total">0</div>
+        <div class="outline-meta">
+            <span class="outline-meta-item comp">Company <strong id="out-props-comp">0</strong></span>
+            <span class="outline-meta-item self">Self <strong id="out-props-self">0</strong></span>
+            <span class="outline-meta-item other">Other <strong id="out-props-other">0</strong></span>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-segment comp" id="bar-props-comp" style="width:0%" title="Company: 0"></div>
+            <div class="progress-segment self" id="bar-props-self" style="width:0%" title="Self: 0"></div>
+            <div class="progress-segment other" id="bar-props-other" style="width:0%" title="Other: 0"></div>
+        </div>
+    </div>
+
+    <div class="outline-card">
+        <div class="outline-header"><i class="ph ph-seal-check"></i> Orders</div>
+        <div class="outline-total" id="out-orders-total">0</div>
+        <div class="outline-meta">
+            <span class="outline-meta-item comp">Company <strong id="out-orders-comp">0</strong></span>
+            <span class="outline-meta-item self">Self <strong id="out-orders-self">0</strong></span>
+            <span class="outline-meta-item other">Other <strong id="out-orders-other">0</strong></span>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-segment comp" id="bar-orders-comp" style="width:0%" title="Company: 0"></div>
+            <div class="progress-segment self" id="bar-orders-self" style="width:0%" title="Self: 0"></div>
+            <div class="progress-segment other" id="bar-orders-other" style="width:0%" title="Other: 0"></div>
+        </div>
+    </div>
+</div>
+
+            <!--    <div class="summary-strip" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="mini-stat"><div class="label">BDMs</div><div class="value" id="selectedBdmCount">0</div></div>
+                    <div class="mini-stat"><div class="label">Records</div><div class="value" id="filteredRecordCount">0</div></div>
+                    <div class="mini-stat"><div class="label">Proposal Rate</div><div class="value" id="proposalRate">0%</div></div>
+                    <div class="mini-stat"><div class="label">Order Rate</div><div class="value" id="orderRate">0%</div></div>
+                </div> -->
+
+                <div class="split-2">
+                    <div class="panel">
+                        <div class="panel-title">Lead -> Opp -> Proposal -> Order
+
+                        </div>
+                        <div class="chart-wrapper"><canvas id="outlineFunnelChart"></canvas>
+                        </div>
+                    </div>
+<div class="panel"><div class="panel-title">Stage Conversion by Source vs Overall</div><div class="chart-wrapper"><canvas id="outlineSourceMixChart"></canvas></div></div>                </div>
+
+                
+<div class="conversion-strip">
+    <div class="conversion-item">
+        <div class="conversion-kicker">Lead → Opportunity</div>
+        <div class="conversion-value" id="conv-lead-opp">0%</div>
+        <div class="conversion-meta">
+            <span class="conversion-meta-item comp">Company <strong id="conv-lead-opp-comp">0%</strong></span>
+            <span class="conversion-meta-item self">Self <strong id="conv-lead-opp-self">0%</strong></span>
+            <span class="conversion-meta-item other">Other <strong id="conv-lead-opp-other">0%</strong></span>
+        </div>
+    </div>
+
+    <div class="conversion-item">
+        <div class="conversion-kicker">Opportunity → Proposal</div>
+        <div class="conversion-value" id="conv-opp-prop">0%</div>
+        <div class="conversion-meta">
+            <span class="conversion-meta-item comp">Company <strong id="conv-opp-prop-comp">0%</strong></span>
+            <span class="conversion-meta-item self">Self <strong id="conv-opp-prop-self">0%</strong></span>
+            <span class="conversion-meta-item other">Other <strong id="conv-opp-prop-other">0%</strong></span>
+        </div>
+    </div>
+
+    <div class="conversion-item">
+        <div class="conversion-kicker">Proposal → Order</div>
+        <div class="conversion-value" id="conv-prop-order">0%</div>
+        <div class="conversion-meta">
+            <span class="conversion-meta-item comp">Company <strong id="conv-prop-order-comp">0%</strong></span>
+            <span class="conversion-meta-item self">Self <strong id="conv-prop-order-self">0%</strong></span>
+            <span class="conversion-meta-item other">Other <strong id="conv-prop-order-other">0%</strong></span>
+        </div>
+    </div>
+</div>
+
+                
+            </div>
+
+            <!-- PAGE 3: Follow-Ups — split-2 charts -->
+        <div id="page3" class="page">
+    <p class="page-header-text">Open pipeline coverage and ageing profile for the selected BDM.</p>
+
+    <div class="summary-strip" style="grid-template-columns: 1fr 1.4fr 1.4fr;">
+        <div class="mini-stat">
+            <div class="label">Open Records</div>
+            <div class="value" id="fyFuOpenTotal">0</div>
+        </div>
+
+        <div class="outline-card">
+            <div class="outline-header"><i class="ph ph-check-circle"></i> Has Follow-Up</div>
+            <div class="outline-total" id="fyFuLoggedTotal">0</div>
+            <div class="outline-meta">
+                <span class="outline-meta-item healthy">Fresh <strong id="fyFuLoggedFresh">0</strong></span>
+                <span class="outline-meta-item overdue">30+ <strong id="fyFuLoggedOverdue">0</strong></span>
+                <span class="outline-meta-item critical">60+ <strong id="fyFuLoggedCritical">0</strong></span>
+                <span class="outline-meta-item dead">90+ <strong id="fyFuLoggedDead">0</strong></span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-segment healthy" id="bar-logged-fresh" style="width:0%" title="Fresh: 0"></div>
+                <div class="progress-segment overdue" id="bar-logged-overdue" style="width:0%" title="Overdue 30+: 0"></div>
+                <div class="progress-segment critical" id="bar-logged-critical" style="width:0%" title="Critical 60+: 0"></div>
+                <div class="progress-segment dead" id="bar-logged-dead" style="width:0%" title="Dead 90+: 0"></div>
+            </div>
+        </div>
+
+        <div class="outline-card">
+            <div class="outline-header"><i class="ph ph-warning-circle"></i> No Follow-Up</div>
+            <div class="outline-total" id="fyFuNoLogTotal">0</div>
+            <div class="outline-meta">
+                <span class="outline-meta-item healthy">Fresh <strong id="fyFuNoLogFresh">0</strong></span>
+                <span class="outline-meta-item overdue">30+ <strong id="fyFuNoLogOverdue">0</strong></span>
+                <span class="outline-meta-item critical">60+ <strong id="fyFuNoLogCritical">0</strong></span>
+                <span class="outline-meta-item dead">90+ <strong id="fyFuNoLogDead">0</strong></span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-segment healthy" id="bar-nolog-fresh" style="width:0%" title="Fresh: 0"></div>
+                <div class="progress-segment overdue" id="bar-nolog-overdue" style="width:0%" title="Overdue 30+: 0"></div>
+                <div class="progress-segment critical" id="bar-nolog-critical" style="width:0%" title="Critical 60+: 0"></div>
+                <div class="progress-segment dead" id="bar-nolog-dead" style="width:0%" title="Dead 90+: 0"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="split-2" style="flex:1; min-height:0;">
+    <div class="panel" style="min-height:0;">
+        <div class="panel-title">Has Follow-Up by Stage | Hot / Warm / Cold</div>
+        <div class="chart-wrapper">
+            <canvas id="followupHasChart"></canvas>
+        </div>
+    </div>
+
+    <div class="panel" style="min-height:0;">
+        <div class="panel-title">No Follow-Up by Stage | Hot / Warm / Cold</div>
+        <div class="chart-wrapper">
+            <canvas id="followupNoChart"></canvas>
+        </div>
+    </div>
+</div>
+</div>
+
+            <!-- PAGE 4: Pipeline — split-2 charts -->
+            <div id="page4" class="page">
+                <p class="page-header-text">Proposal volume, value, and achieved revenue for the selected BDMs.</p>
+
+                <div class="summary-strip" style="grid-template-columns: repeat(5, 1fr);">
+                    <div class="mini-stat"><div class="label">Proposals</div><div class="value" id="pipelineProposalCount">0</div></div>
+                    <div class="mini-stat"><div class="label">Proposal Value</div><div class="value" id="pipelineProposalValue">0</div></div>
+                    <div class="mini-stat"><div class="label">Open Proposals</div><div class="value" id="pipelineOpenProposalCount">0</div></div>
+                    <div class="mini-stat"><div class="label">Open Value</div><div class="value" id="pipelineOpenRevenue">0</div></div>
+                    <div class="mini-stat"><div class="label">Win Rate</div><div class="value" id="pipelineOrderConversion">0</div></div>
+                </div>
+
+                <div class="split-2">
+                    <div class="panel"><div class="panel-title">BDM Proposals vs Orders</div><div class="chart-wrapper"><canvas id="pipelineOverviewChart"></canvas></div></div>
+                    <div class="panel"><div class="panel-title">Top Countries in Pipeline</div><div class="chart-wrapper"><canvas id="outlineCountryChart"></canvas></div></div>
+                </div>
+
+                <div class="summary-strip" style="grid-template-columns: repeat(3, 1fr); margin-top:12px;">
+                    <div class="mini-stat"><div class="label">Orders Achieved</div><div class="value" id="pipelineOrderCount">0</div></div>
+                    <div class="mini-stat"><div class="label">Achieved Revenue</div><div class="value" id="pipelineAchievedRevenue2">0</div></div>
+                    <div class="mini-stat"><div class="label">Conversion Rate</div><div class="value" id="pipelineOrderConversion2" style="display:none;">0</div></div>
+                </div>
+            </div>
+
+            <!-- PAGE 5: Monthly Trend — split-2 (chart + table) -->
+            <div id="page5" class="page">
+                <p class="page-header-text">Monthly trend of leads, opportunities, proposals, and orders.</p>
+
+                <div class="summary-strip" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="mini-stat"><div class="label">FY Months</div><div class="value" id="trendMonths">0</div></div>
+                    <div class="mini-stat"><div class="label">Total Leads</div><div class="value" id="trendLeadTotal">0</div></div>
+                    <div class="mini-stat"><div class="label">Total Proposals</div><div class="value" id="trendProposalTotal">0</div></div>
+                    <div class="mini-stat"><div class="label">Total Orders</div><div class="value" id="trendOrderTotal">0</div></div>
+                </div>
+
+                <div class="split-2">
+                    <div class="panel" style="flex:2;"><div class="panel-title">Monthly Pipeline Timeline</div><div class="chart-wrapper"><canvas id="entryTrendChart"></canvas></div></div>
+                   
+                    <div class="panel" style="flex:1;padding:0;">
+                        <div class="table-wrapper" style="border:none;border-radius:0;">
+                            <table class="data-table"><thead><tr><th>Month</th><th>Leads</th><th>Opps</th><th>Props</th><th>Orders</th></tr></thead><tbody id="entryTrendTableBody"></tbody></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 6: Vehicle Trend — split-2 (chart + table) -->
+            <div id="page6" class="page">
+                <div style="display:flex;gap:10px;margin-bottom:12px;flex-shrink:0;align-items:center;flex-wrap:wrap;">
+                    <select id="vehicleArmourFilter" onchange="onVehicleArmourFilterChange()" style="height:30px;border:1px solid var(--border);border-radius:5px;padding:0 8px;font-family:'DM Sans',sans-serif;font-size:0.75rem;"><option value="all">All Armour Levels</option></select>
+                    <button class="pill" onclick="vehicleTrendBack()"><i class="ph ph-arrow-left" style="margin-right:2px;"></i> Back</button>
+                    <button class="pill" onclick="resetVehicleTrend()"><i class="ph ph-arrow-counter-clockwise" style="margin-right:2px;"></i> Reset</button>
+                    <span id="vehicleTrendBreadcrumb" style="font-size:0.78rem;font-weight:600;color:var(--muted);margin-left:6px;"></span>
+                </div>
+
+                <div class="summary-strip" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="mini-stat"><div class="label">Level</div><div class="value" id="vehicleTrendLevelLabel" style="font-size:1rem;">Vehicle Names</div></div>
+                    <div class="mini-stat"><div class="label">Categories</div><div class="value" id="vehicleTrendCategoryCount">0</div></div>
+                    <div class="mini-stat"><div class="label">Records</div><div class="value" id="vehicleTrendRecordCount">0</div></div>
+                    <div class="mini-stat"><div class="label">Total Qty</div><div class="value" id="vehicleTrendQty">0</div></div>
+                </div>
+
+
+
+
+
+
+                <div class="split-2">
+                    <div class="panel">
+
+ <div class="panel-title">Distribution</div><div class="chart-wrapper"><canvas id="vehicleTrendChart"></canvas></div></div>                    <div class="panel" style="flex:2;padding:0;">
+                       
+    
+    
+    <div class="table-wrapper" style="border:none;border-radius:0;">
+                            <table class="data-table"><thead><tr><th>BDM</th><th>Company</th><th>Proposal No</th><th>Vehicle Name</th><th>Vehicle Brand</th><th>Vehicle Type</th><th>Armouring Level</th><th>Qty</th><th>Country</th></tr></thead><tbody id="vehicleTrendTableBody"></tbody></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 7: Export -->
+            <div id="page7" class="page" style="align-items:center;justify-content:center;">
+                <div class="panel" style="max-width:540px;text-align:center;">
+                    <div class="panel-title" style="text-align:center;">Report Status: Ready</div>
+                    <p style="font-size:0.82rem;color:var(--muted);line-height:1.6;">All modules operational. CSV parsing, BDM filtering, pipeline analysis, follow-up review, vehicle trends, regional mapping, LinkedIn profiling, and company trend grouping are active.</p>
+                </div>
+            </div>
+
+            <!-- PAGE 8: Raw Data -->
+            <div id="page8" class="page">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-shrink:0;">
+                    <p class="page-header-text" style="margin:0;" id="rawDataDrillLabel">Showing full filtered dataset</p>
+                    <button class="pill" onclick="clearRawDataDrill()">Clear Drill Filter</button>
+                </div>
+                <div class="summary-strip" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="mini-stat"><div class="label">Filtered Rows</div><div class="value" id="rawDataRowCount">0</div></div>
+                    <div class="mini-stat"><div class="label">Columns</div><div class="value" id="rawDataColCount">0</div></div>
+                </div>
+                <div class="table-wrapper"><div id="rawDataTableWrap" style="overflow:auto;max-height:100%;"><table class="data-table" id="rawDataTable"></table></div></div>
+            </div>
+
+            <!-- PAGE 9: LinkedIn -->
+            <div id="page9" class="page" style="overflow-y:auto;">
+                <p class="page-header-text">Qualitative BDM LinkedIn profile evaluations and group participation.</p>
+                <h2 style="margin-bottom:14px;flex-shrink:0;"><i class="ph ph-target" style="color:var(--muted);"></i> BDM Profiles</h2>
+                <div id="linkedin-profiles-grid"></div>
+                <h2 style="margin-top:24px;margin-bottom:14px;flex-shrink:0;"><i class="ph ph-users-three" style="color:var(--muted);"></i> Group Participation</h2>
+                <div id="linkedin-groups-grid" style="display:grid;grid-template-columns:1fr;gap:16px;"></div>
+            </div>
+
+            <!-- PAGE 10: Regional -->
+            <div id="page10" class="page">
+                <p class="page-header-text">Toggle between static territory coverage and live filtered CRM operations.</p>
+                <div class="summary-strip" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="mini-stat"><div class="label">Mode</div><div class="value" id="territoryModeValue">Territory</div></div>
+                    <div class="mini-stat"><div class="label">Countries</div><div class="value" id="territoryCountryValue">0</div></div>
+                    <div class="mini-stat"><div class="label">BDMs</div><div class="value" id="territoryManagerValue">0</div></div>
+                    <div class="mini-stat"><div class="label">Records</div><div class="value" id="territoryRecordValue">0</div></div>
+                </div>
+                <div style="display:flex;gap:10px;flex-shrink:0;margin-bottom:12px;flex-wrap:wrap;justify-content:space-between;">
+                    <div class="territory-toggle-group">
+                        <button id="territorySourceJson" class="territory-toggle-btn active" onclick="setTerritorySourceMode('territory')">Territory</button>
+                        <button id="territorySourceCsv" class="territory-toggle-btn" onclick="setTerritorySourceMode('operations')">Operations</button>
+                    </div>
+                    <div class="territory-toggle-group" id="territoryLayerWrap">
+                        <button id="territoryLayerAll" class="territory-toggle-btn active" onclick="setTerritoryLayerMode('all')">All</button>
+                        <button id="territoryLayerCountries" class="territory-toggle-btn" onclick="setTerritoryLayerMode('countries')">Countries</button>
+                        <button id="territoryLayerAgencies" class="territory-toggle-btn" onclick="setTerritoryLayerMode('agencies')">Agencies</button>
+                        <button id="territoryLayerCorporates" class="territory-toggle-btn" onclick="setTerritoryLayerMode('corporates')">Corporates</button>
+                    </div>
+                    <div class="territory-toggle-group" id="territoryOpsWrap" style="display:none;">
+                        <button id="territoryOpsAll" class="territory-toggle-btn active" onclick="setTerritoryOpsMetric('all')">All</button>
+                        <button id="territoryOpsLeads" class="territory-toggle-btn" onclick="setTerritoryOpsMetric('leads')">Leads</button>
+                        <button id="territoryOpsOpps" class="territory-toggle-btn" onclick="setTerritoryOpsMetric('opps')">Opps</button>
+                        <button id="territoryOpsProposals" class="territory-toggle-btn" onclick="setTerritoryOpsMetric('proposals')">Proposals</button>
+                        <button id="territoryOpsOrders" class="territory-toggle-btn" onclick="setTerritoryOpsMetric('orders')">Orders</button>
+                    </div>
+                </div>
+                <div id="territoryManagerFilters"></div>
+                <div style="position:relative;flex:1;min-height:0;display:flex;flex-direction:column;">
+                    <div id="territoryMap"></div>
+                    <div id="territoryCrmPanel"></div>
+                </div>
+                <div id="territoryLegend"></div>
+            </div>
+
+            <!-- PAGE 11: Company Trends -->
+            <div id="page11" class="page">
+                <p class="page-header-text">Account-level view grouped by country — single-touch vs nurtured interactions.</p>
+                <div class="summary-strip" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="mini-stat"><div class="label">Unique Companies</div><div class="value" id="companyTrendUniqueCount">0</div></div>
+                    <div class="mini-stat"><div class="label">Single-Touch</div><div class="value" id="companyTrendNewCount">0</div></div>
+                    <div class="mini-stat"><div class="label">Nurtured</div><div class="value" id="companyTrendRepeatCount">0</div></div>
+                    <div class="mini-stat"><div class="label">Avg Touches</div><div class="value" id="companyTrendAvgTouches">0</div></div>
+                </div>
+                <div style="margin-bottom:10px;flex-shrink:0;display:flex;justify-content:space-between;align-items:center;">
+                    <span style="color:var(--muted);font-weight:600;font-size:0.78rem;">Sorted by latest activity.</span>
+                    <input id="companyTrendSearch" class="company-trend-search" type="text" placeholder="Search company..." oninput="filterCompanyTrendAccordions()" />
+                </div>
+                <div id="companyTrendsList" class="company-trends-list"></div>
+            </div>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="footer-actions">
+            <button class="btn btn-back" id="backBtn" onclick="goPage(-1)" style="visibility:hidden;"><i class="ph ph-caret-left"></i><span>Back</span></button>
+            <button class="btn btn-next" id="nextBtn" onclick="goPage(1)"><span id="nextBtnText">Process & Analyze</span><i class="ph ph-caret-right"></i></button>
+        </footer>
+    </div>
+</div>
+
+<script>
+    // Chart.js global config for flex-based layout
+    Chart.defaults.font.family = "'DM Sans', sans-serif";
+    Chart.defaults.color = "#8896a7";
+    Chart.defaults.maintainAspectRatio = false; // Critical for flexbox chart sizing
+    Chart.defaults.plugins.legend.labels = { boxWidth: 10, usePointStyle: true, font: { size: 11 } };
+
+    let stepCount = 1;
+    let fullCsvData = [];
+    let latestExplorerRows = [];
+    let rawDataDrillFilter = null;
+    let vehicleTrendLevel = 'name';
+    let vehicleTrendSelectedName = null;
+    let vehicleTrendSelectedBrand = null;
+    let vehicleTrendArmourFilter = 'all';
+    let vehicleTrendChartInstance = null;
+    
+    // Map State Variables
+    let territoryMap = null;
+    let territoryCountryLayer = null;
+    let territoryAgencyLayer = null;
+    let territoryCorporateLayer = null;
+    let territoryOpsLayer = null;
+    let territorySourceMode = 'territory';
+    let territoryLayerMode = 'all';
+    let territoryOpsMetric = 'all';
+    let territoryActiveManager = 'ALL';
+    let territoryOpsData = [];
+    let territoryBdmStats = {};
+    let outlineSourceMixChartInstance = null;
+    let outlineCountryChartInstance = null;
+    let companyTrendGroups = [];
+    // --- LINKEDIN GROUPS ANALYSIS LOGIC ---
+ const bdmGroupsData = {
+    "Azmi Siddiqui": {
+        totalGroups: 6,
+        categories: [
+            {
+                name: "Regional Business Networks (GCC)",
+                color: "var(--primary-color)",
+                groups: [
+                    { name: "Saudi Arabia Business and Professional Network", members: "188K" },
+                    { name: "Qatar Business Network", members: "24K" },
+                    { name: "Qatar & Kuwait Vacancies", members: "22K" }
+                ]
+            },
+            {
+                name: "Entrepreneur & Startup Communities",
+                color: "var(--linkedin-blue)",
+                groups: [
+                    { name: "Entrepreneurs in Saudi Arabia (CX Shift)", members: "35K" }
+                ]
+            },
+            {
+                name: "Education & Career Communities",
+                color: "#10b981",
+                groups: [
+                    { name: "YuvaJobs.com", members: "43K" },
+                    { name: "IIM ALDEFCOM", members: "922" }
+                ]
+            }
+        ],
+insight: `
+<ul>
+<li>Group memberships are concentrated in general GCC business communities rather than industry-specific sectors.</li>
+<li>Good visibility within Saudi Arabia and Qatar professional networks, supporting regional relationship building.</li>
+<li>Presence in entrepreneur and startup communities, limited relevance to armored vehicle opportunities.</li>
+<li>Groups which are less likely to contribute directly to business.</li>
+<li>Opportunity exists to join targeted defense, security, government procurement, and mobility sector communities.</li>
+<li>Posting insights, updates, or discussions within relevant groups could improve visibility.</li>
+</ul>
+`  }
+};
+
+    function initLinkedInGroups() {
+        const container = document.getElementById('linkedin-groups-grid');
+        if (!container) return;
+
+        let html = '';
+        for (const [bdmName, data] of Object.entries(bdmGroupsData)) {
+            let categoryHtml = data.categories.map(cat => `
+                <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 16px;">
+                    <h4 style="font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 700; color: ${cat.color}; margin-bottom: 12px; text-transform: uppercase;">
+                        ${cat.name}
+                    </h4>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        ${cat.groups.map(g => `
+                            <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 0.85rem; line-height: 1.3;">
+                                <span style="color: var(--text-main); font-weight: 500;">${g.name}</span>
+                                <span style="color: var(--text-muted); font-size: 0.75rem; white-space: nowrap;">${g.members}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            html += `
+                <div class="outline-card" style="padding: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+                        <h3 style="margin: 0; font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--text-main); text-transform: none;">
+                            ${bdmName}
+                        </h3>
+                        <span style="background: rgba(228, 24, 55, 0.08); color: var(--primary-color); padding: 4px 12px; border-radius: 999px; font-size: 0.8rem; font-weight: 700;">
+                            ${data.totalGroups} Active Groups
+                        </span>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 20px;">
+                        ${categoryHtml}
+                    </div>
+                    
+                    <div style="background: rgba(10, 102, 194, 0.05); border-left: 4px solid var(--linkedin-blue); padding: 12px 16px; border-radius: 0 8px 8px 0;">
+                        <strong style="font-size: 0.85rem; color: var(--linkedin-blue); display: block; margin-bottom: 4px;">Strategic Recommendation</strong>
+                        <span style="font-size: 0.9rem; color: var(--text-main);">${data.insight}</span>
+                    </div>
+                </div>
+            `;
+        }
+        container.innerHTML = html;
+    }
+    const MAX_STEP = 11; // Added Company Trends page
+
+    function handleFileUpload(input) {
+        if (!input.files || !input.files[0]) return;
+
+        const file = input.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            const text = e.target.result;
+            processCsv(text);
+
+            document.getElementById('fileNameText').innerText = "File Ready: " + file.name;
+            document.getElementById('dropZone').style.borderColor = "var(--success-color)";
+            document.getElementById('dropZone').style.backgroundColor = "rgba(30, 142, 62, 0.05)";
+        };
+
+        reader.readAsText(file);
+    }
+
+    function parseCSVText(text) {
+        const result = [];
+        let row = [];
+        let inQuotes = false;
+        let val = '';
+
+        for (let i = 0; i < text.length; i++) {
+            const c = text[i];
+            const next = text[i + 1];
+
+            if (c === '"') {
+                if (inQuotes && next === '"') {
+                    val += '"';
+                    i++;
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (c === ',' && !inQuotes) {
+                row.push(val);
+                val = '';
+            } else if ((c === '\n' || (c === '\r' && next === '\n')) && !inQuotes) {
+                if (c === '\r') i++;
+                row.push(val);
+                result.push(row);
+                row = [];
+                val = '';
+            } else {
+                if (c !== '\r' || inQuotes) val += c;
+            }
+        }
+
+        row.push(val);
+        if (row.length > 1 || row[0] !== '') result.push(row);
+
+        return result.filter(r => r.length > 1 || (r.length === 1 && r[0] !== ''));
+    }
+
+    function processCsv(text) {
+        const rows = parseCSVText(text);
+        if (rows.length < 2) {
+            alert("CSV file appears empty or invalid.");
+            return;
+        }
+
+        const headers = rows[0].map(h => h.trim().toLowerCase().replace(/^\uFEFF/, ''));
+        fullCsvData = [];
+        const uniqueBdms = new Set();
+
+        for (let i = 1; i < rows.length; i++) {
+            const rowObj = {};
+            for (let j = 0; j < headers.length; j++) {
+                rowObj[headers[j]] = rows[i][j] ? rows[i][j].trim() : '';
+            }
+
+            fullCsvData.push(rowObj);
+
+            if (rowObj.bdm_name_final) {
+                uniqueBdms.add(rowObj.bdm_name_final);
+            }
+        }
+
+        renderBdmGrid(Array.from(uniqueBdms).sort());
+    }
+
+    function renderBdmGrid(names) {
+        const grid = document.getElementById('bdmGrid');
+        const section = document.getElementById('bdmSection');
+
+        grid.innerHTML = '';
+
+        names.forEach(name => {
+            const card = document.createElement('div');
+            card.className = 'bdm-card';
+            card.innerHTML = `
+                <input type="checkbox" class="bdm-checkbox" value="${escapeHtml(name)}">
+                <div class="bdm-info">
+                    <span class="bdm-name">${escapeHtml(name)}</span>
+                </div>
+            `;
+
+            const checkbox = card.querySelector('.bdm-checkbox');
+
+            card.addEventListener('click', function(e) {
+                if (e.target !== checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                }
+                card.classList.toggle('selected', checkbox.checked);
+            });
+
+            checkbox.addEventListener('click', function(e) {
+                e.stopPropagation();
+                card.classList.toggle('selected', checkbox.checked);
+            });
+
+            grid.appendChild(card);
+        });
+
+        section.style.display = 'block';
+        section.style.animation = 'slideUpFade 0.5s ease forwards';
+    }
+
+    function selectAllBdms(state) {
+        document.querySelectorAll('.bdm-card').forEach(card => {
+            const cb = card.querySelector('.bdm-checkbox');
+            cb.checked = state;
+            card.classList.toggle('selected', state);
+        });
+    }
+
+    function categorizeSource(sourceStr) {
+        if (!sourceStr) return 'other';
+        const s = sourceStr.trim().toLowerCase();
+
+        if (s === 'company provided' || s.includes('company')) return 'comp';
+        if (s === 'self prospect' || s.includes('self')) return 'self';
+        return 'other';
+    }
+
+    function parseSafeDate(dateStr) {
+        if (!dateStr) return null;
+
+        const parts = dateStr.trim().split(/[ \/:-]/);
+
+        if (parts.length >= 3) {
+            let d = parseInt(parts[0], 10);
+            let m = parseInt(parts[1], 10) - 1;
+            let y = parseInt(parts[2], 10);
+
+            if (y < 100) y += 2000;
+
+            if (!isNaN(d) && !isNaN(m) && !isNaN(y)) {
+                const date = new Date(y, m, d);
+                if (!isNaN(date.getTime())) return date;
+            }
+        }
+
+        const fallbackDate = new Date(dateStr);
+        if (!isNaN(fallbackDate.getTime())) return fallbackDate;
+
+        return null;
+    }
+
+    function isOpportunity(row) {
+        return row.is_converted_to_opportunity === '1' ||
+               (row.opportunity_code && row.opportunity_code.trim() !== '');
+    }
+
+    function isProposal(row) {
+        return row.is_proposal_created === '1' ||
+               (row.proposal_number && row.proposal_number.trim() !== '');
+    }
+
+    function isOrder(row) {
+        return row.has_order === '1' ||
+               (row.order_id && row.order_id.trim() !== '');
+    }
+
+    function toInt(val, fallback = 0) {
+        const n = parseInt(val, 10);
+        return isNaN(n) ? fallback : n;
+    }
+
+    function parseDateFlexible(dateStr) {
+    if (!dateStr) return null;
+    const raw = String(dateStr).trim();
+    if (!raw) return null;
+
+    const direct = new Date(raw);
+    if (!isNaN(direct.getTime())) return direct;
+
+    const parts = raw.split(/[\/\- :T]/).filter(Boolean);
+    if (parts.length >= 3) {
+        let d = parseInt(parts[0], 10);
+        let m = parseInt(parts[1], 10) - 1;
+        let y = parseInt(parts[2], 10);
+        if (y < 100) y += 2000;
+        const dt = new Date(y, m, d);
+        if (!isNaN(dt.getTime())) return dt;
+    }
+    return null;
+}
+
+function diffDays(fromDate, toDate) {
+    if (!fromDate || !toDate) return null;
+    const ms = toDate.getTime() - fromDate.getTime();
+    return Math.floor(ms / (1000 * 60 * 60 * 24));
+}
+
+function safeCompany(row) {
+    return row.company_name_final || row.opportunity_updated_company_name || 'Unknown';
+}
+
+function getCurrentStage(row) {
+    if (isOrder(row)) return 'Order Confirmed';
+    if (isProposal(row)) return 'Proposal Submitted';
+    if (isOpportunity(row)) return row.opportunity_stage || 'Opportunity';
+    return row.lead_pipeline_stage || 'Lead';
+}
+
+function getFollowUpContext(row) {
+    const oppExists = isOpportunity(row);
+
+    const totalFollowUps = oppExists
+        ? toInt(row.opp_followup_count, 0)
+        : toInt(row.lead_followup_count, 0);
+
+    const lastFollowUp = oppExists
+        ? parseDateFlexible(row.last_opp_followup_date)
+        : parseDateFlexible(row.last_lead_followup_date);
+
+    const nextFollowUp = oppExists
+        ? parseDateFlexible(row.next_opp_followup_gmt)
+        : parseDateFlexible(row.next_lead_followup_gmt);
+
+    return {
+        totalFollowUps,
+        lastFollowUp,
+        nextFollowUp,
+        mode: oppExists ? 'opportunity' : 'lead'
+    };
+}
+
+function getRecordAnchorDate(row) {
+    return (
+        parseDateFlexible(row.proposal_created_at) ||
+        parseDateFlexible(row.opportunity_created_at) ||
+        parseDateFlexible(row.lead_created_at) ||
+        parseDateFlexible(row.lead_date_gmt)
+    );
+}
+
+function getDaysSinceLastFollowUp(row, today = new Date()) {
+    const ctx = getFollowUpContext(row);
+    if (!ctx.lastFollowUp) return null;
+    return diffDays(ctx.lastFollowUp, today);
+}
+
+function getDisciplineStatus(row, today = new Date()) {
+    const ctx = getFollowUpContext(row);
+    const anchorDate = getRecordAnchorDate(row);
+    const recordAge = anchorDate ? diffDays(anchorDate, today) : null;
+    const daysSinceLast = ctx.lastFollowUp ? diffDays(ctx.lastFollowUp, today) : null;
+    const nextDueIn = ctx.nextFollowUp ? diffDays(today, ctx.nextFollowUp) : null;
+
+    // nextDueIn > 0 means overdue
+    if (ctx.totalFollowUps === 0 && recordAge !== null && recordAge > 14) {
+        return { label: 'Critical', tone: 'critical' };
+    }
+    if (nextDueIn !== null && nextDueIn > 7) {
+        return { label: 'Critical', tone: 'critical' };
+    }
+    if (daysSinceLast !== null && daysSinceLast > 30) {
+        return { label: 'Critical', tone: 'critical' };
+    }
+
+    if (ctx.totalFollowUps === 0) {
+        return { label: 'Needs Attention', tone: 'warn' };
+    }
+    if (nextDueIn !== null && nextDueIn > 0) {
+        return { label: 'Needs Attention', tone: 'warn' };
+    }
+    if (daysSinceLast !== null && daysSinceLast > 14) {
+        return { label: 'Needs Attention', tone: 'warn' };
+    }
+
+    return { label: 'On Track', tone: 'good' };
+}
+
+function getVelocityDays(row) {
+    const leadCreated = parseDateFlexible(row.lead_created_at) || parseDateFlexible(row.lead_date_gmt);
+    const oppCreated = parseDateFlexible(row.opportunity_created_at) || parseDateFlexible(row.opportunity_date_gmt);
+    const proposalCreated = parseDateFlexible(row.proposal_created_at);
+    const finalQuoteDate = parseDateFlexible(row.final_quotation_date);
+
+    return {
+        leadToOpp: (leadCreated && oppCreated) ? diffDays(leadCreated, oppCreated) : null,
+        oppToProposal: (oppCreated && proposalCreated) ? diffDays(oppCreated, proposalCreated) : null,
+        proposalToQuote: (proposalCreated && finalQuoteDate) ? diffDays(proposalCreated, finalQuoteDate) : null
+    };
+}
+
+function average(nums) {
+    const valid = nums.filter(v => v !== null && !isNaN(v) && v >= 0);
+    if (!valid.length) return 0;
+    return Math.round(valid.reduce((a, b) => a + b, 0) / valid.length);
+}
+
+function getDeadPipelineReason(row, today = new Date()) {
+    if (isOrder(row)) return null;
+
+    const ctx = getFollowUpContext(row);
+    const stage = getCurrentStage(row);
+    const anchorDate = getRecordAnchorDate(row);
+    const recordAge = anchorDate ? diffDays(anchorDate, today) : null;
+    const daysSinceLast = ctx.lastFollowUp ? diffDays(ctx.lastFollowUp, today) : null;
+    const overdueDays = ctx.nextFollowUp ? diffDays(ctx.nextFollowUp, today) : null;
+    const oppAge = toInt(row.opportunity_age_days, 0);
+
+    if (!isOpportunity(row) && ctx.totalFollowUps === 0 && recordAge !== null && recordAge > 21) {
+        return {
+            stage,
+            reason: 'Lead aged without any follow-up',
+            age: `${recordAge} days`,
+            action: 'Qualify immediately or close lead'
+        };
+    }
+
+    if (isOpportunity(row) && !isProposal(row) && oppAge > 45 && (daysSinceLast === null || daysSinceLast > 21)) {
+        return {
+            stage,
+            reason: 'Opportunity stalled before proposal',
+            age: `${oppAge} days`,
+            action: 'Escalate, re-engage, or mark lost'
+        };
+    }
+
+    const proposalCreated = parseDateFlexible(row.proposal_created_at);
+    const proposalAge = proposalCreated ? diffDays(proposalCreated, today) : null;
+
+    if (isProposal(row) && !isOrder(row) && proposalAge !== null && proposalAge > 45 && (daysSinceLast === null || daysSinceLast > 30)) {
+        return {
+            stage,
+            reason: 'Proposal not progressing to closure',
+            age: `${proposalAge} days`,
+            action: 'Commercial push or formal close-out'
+        };
+    }
+
+    if (overdueDays !== null && overdueDays > 14) {
+        return {
+            stage,
+            reason: 'Follow-up overdue for too long',
+            age: `${overdueDays} days overdue`,
+            action: 'Immediate follow-up required'
+        };
+    }
+
+    return null;
+}
+
+function badgeHtml(label, tone) {
+    const styles = {
+        good: 'background: rgba(30,142,62,0.1); color: var(--success-color);',
+        warn: 'background: rgba(245,158,11,0.12); color: #b45309;',
+        critical: 'background: rgba(239,68,68,0.1); color: #ef4444;'
+    };
+    return `<span style="${styles[tone]} padding:4px 8px; border-radius:4px; font-size:0.8rem; font-weight:700;">${escapeHtml(label)}</span>`;
+}
+let entryTrendChartInstance = null;
+
+function monthKeyFromDate(dt) {
+    if (!dt || isNaN(dt.getTime())) return null;
+    const y = dt.getFullYear();
+    const m = String(dt.getMonth() + 1).padStart(2, '0');
+    return `${y}-${m}`;
+}
+
+function formatMonthLabel(key) {
+    const [y, m] = key.split('-');
+    const dt = new Date(Number(y), Number(m) - 1, 1);
+    return dt.toLocaleString('en-US', { month: 'short', year: 'numeric' });
+}
+
+function getOrderDate(row) {
+    return (
+        parseDateFlexible(row.order_confirmed_date) ||
+        parseDateFlexible(row.order_date) ||
+        parseDateFlexible(row.so_date) ||
+        parseDateFlexible(row.final_quotation_date)
+    );
+}
+
+function buildEntryTrendData(data) {
+
+    const FY_START = new Date('2025-04-01');
+    const FY_END = new Date('2026-03-31');
+
+    const monthMap = new Map();
+
+    // Force 12 FY months
+    let cursor = new Date(FY_START);
+
+    while (cursor <= FY_END) {
+        const key = monthKeyFromDate(cursor);
+
+        monthMap.set(key, {
+            monthKey: key,
+            leads: 0,
+            opps: 0,
+            props: 0,
+            orders: 0
+        });
+
+        cursor.setMonth(cursor.getMonth() + 1);
+    }
+
+    data.forEach(row => {
+        const leadDate =
+            parseDateFlexible(row.lead_created_at) ||
+            parseDateFlexible(row.lead_date_gmt);
+
+        const oppDate =
+            parseDateFlexible(row.opportunity_created_at) ||
+            parseDateFlexible(row.opportunity_date_gmt);
+
+        const propDate =
+            parseDateFlexible(row.proposal_created_at);
+
+        const orderDate = getOrderDate(row);
+
+        let leadCount = 1;
+        if (row['lead count'] !== undefined) {
+            if (String(row['lead count']).trim() === '') {
+                leadCount = 0;
+            } else {
+                leadCount = toInt(row['lead count'], 0);
+            }
+        }
+
+        const leadMonth = monthKeyFromDate(leadDate);
+        const oppMonth = monthKeyFromDate(oppDate);
+        const propMonth = monthKeyFromDate(propDate);
+        const orderMonth = monthKeyFromDate(orderDate);
+
+        if (leadMonth && monthMap.has(leadMonth) && leadCount > 0) {
+    monthMap.get(leadMonth).leads += leadCount;
+}
+
+        if (oppMonth && monthMap.has(oppMonth) && isOpportunity(row)) {
+    monthMap.get(oppMonth).opps += 1;
+}
+
+        if (propMonth && monthMap.has(propMonth) && isProposal(row)) {
+    monthMap.get(propMonth).props += 1;
+}
+
+        if (orderMonth && monthMap.has(orderMonth) && isOrder(row)) {
+    monthMap.get(orderMonth).orders += 1;
+}
+    });
+
+    return Array.from(monthMap.values()).sort((a, b) => a.monthKey.localeCompare(b.monthKey));
+}
+
+function renderEntryTrend(data) {
+    const trendRows = buildEntryTrendData(data);
+    renderEntryTrendChart(trendRows);
+    renderEntryTrendTable(trendRows);
+
+    safeSetText('trendMonths', trendRows.length.toLocaleString());
+    safeSetText('trendLeadTotal', trendRows.reduce((s, r) => s + r.leads, 0).toLocaleString());
+    safeSetText('trendProposalTotal', trendRows.reduce((s, r) => s + r.props, 0).toLocaleString());
+    safeSetText('trendOrderTotal', trendRows.reduce((s, r) => s + r.orders, 0).toLocaleString());
+}
+
+function renderEntryTrendChart(rows) {
+    const canvas = document.getElementById('entryTrendChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    const labels = rows.map(r => formatMonthLabel(r.monthKey));
+
+    if (entryTrendChartInstance) {
+        entryTrendChartInstance.destroy();
+    }
+
+    entryTrendChartInstance = new Chart(canvas, {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'Leads',
+                    data: rows.map(r => r.leads),
+                    borderColor: '#2563eb',
+                    backgroundColor: 'rgba(37,99,235,0.08)',
+                    tension: 0.3,
+                    fill: false
+                },
+                {
+                    label: 'Opportunities',
+                    data: rows.map(r => r.opps),
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245,158,11,0.08)',
+                    tension: 0.3,
+                    fill: false
+                },
+                {
+                    label: 'Proposals',
+                    data: rows.map(r => r.props),
+                    borderColor: '#7c3aed',
+                    backgroundColor: 'rgba(124,58,237,0.08)',
+                    tension: 0.3,
+                    fill: false
+                },
+                {
+                    label: 'Orders',
+                    data: rows.map(r => r.orders),
+                    borderColor: '#16a34a',
+                    backgroundColor: 'rgba(22,163,74,0.08)',
+                    tension: 0.3,
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'top'
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Month'
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    },
+                    title: {
+                        display: true,
+                        text: 'Entries'
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderEntryTrendTable(rows) {
+    const tbody = document.getElementById('entryTrendTableBody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    if (!rows.length) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="5" style="text-align:center; color: var(--text-muted);">No trend data available for selected filters.</td>`;
+        tbody.appendChild(tr);
+        return;
+    }
+
+    rows.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><strong>${escapeHtml(formatMonthLabel(row.monthKey))}</strong></td>
+            <td><button class="drill-link" onclick="openRawDataDrill('lead', '${row.monthKey}')">${row.leads}</button></td>
+            <td><button class="drill-link" onclick="openRawDataDrill('opportunity', '${row.monthKey}')">${row.opps}</button></td>
+            <td><button class="drill-link" onclick="openRawDataDrill('proposal', '${row.monthKey}')">${row.props}</button></td>
+            <td><button class="drill-link" onclick="openRawDataDrill('order', '${row.monthKey}')">${row.orders}</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+function renderVehicleTrend() {
+    populateVehicleArmourFilter();
+
+    const rows = getVehicleTrendBaseRows();
+    const map = new Map();
+
+    rows.forEach(row => {
+        let key = 'Unknown';
+
+        if (vehicleTrendLevel === 'name') {
+            key = getVehicleName(row);
+        } else if (vehicleTrendLevel === 'brand') {
+            key = getVehicleBrand(row);
+        } else {
+            key = getVehicleType(row);
+        }
+
+        if (!map.has(key)) {
+            map.set(key, {
+                category: key,
+                records: 0,
+                qty: 0,
+                levels: new Set()
+            });
+        }
+
+        const item = map.get(key);
+        item.records += 1;
+        item.qty += getVehicleQty(row);
+        item.levels.add(getArmourLevel(row));
+    });
+
+    const data = Array.from(map.values()).sort((a, b) => b.qty - a.qty || b.records - a.records);
+
+renderVehicleTrendChart(data);
+renderVehicleTrendTable(rows);
+renderVehicleTrendMeta(data, rows);
+}
+function populateVehicleArmourFilter() {
+    const select = document.getElementById('vehicleArmourFilter');
+    if (!select) return;
+
+    const current = vehicleTrendArmourFilter;
+    const levels = Array.from(
+        new Set(
+            latestExplorerRows
+                .map(row => getArmourLevel(row))
+                .filter(v => v && v !== 'Unknown')
+        )
+    ).sort();
+
+    select.innerHTML = '<option value="all">All Armouring Levels</option>';
+
+    levels.forEach(level => {
+        const opt = document.createElement('option');
+        opt.value = level;
+        opt.textContent = level;
+        select.appendChild(opt);
+    });
+
+    select.value = levels.includes(current) ? current : 'all';
+}
+function renderVehicleTrendMeta(groupedRows, baseRows) {
+    const levelMap = {
+        name: 'Vehicle Names',
+        brand: 'Vehicle Brands',
+        type: 'Vehicle Types'
+    };
+
+    safeSetText('vehicleTrendLevelLabel', levelMap[vehicleTrendLevel] || vehicleTrendLevel);
+    safeSetText('vehicleTrendCategoryCount', groupedRows.length.toLocaleString());
+    safeSetText('vehicleTrendRecordCount', baseRows.length.toLocaleString());
+    safeSetText(
+        'vehicleTrendQty',
+        groupedRows.reduce((sum, row) => sum + row.qty, 0).toLocaleString()
+    );
+
+    const parts = [];
+
+    if (vehicleTrendLevel === 'name') {
+        parts.push('Vehicle Names');
+    }
+    if (vehicleTrendLevel === 'brand') {
+        parts.push(`Vehicle: ${vehicleTrendSelectedName}`);
+    }
+    if (vehicleTrendLevel === 'type') {
+        parts.push(`Vehicle: ${vehicleTrendSelectedName}`);
+        parts.push(`Brand: ${vehicleTrendSelectedBrand}`);
+    }
+    if (vehicleTrendArmourFilter !== 'all') {
+        parts.push(`Armour: ${vehicleTrendArmourFilter}`);
+    }
+
+    safeSetText('vehicleTrendBreadcrumb', parts.join('  →  ') || 'Vehicle Names');
+}
+
+function renderVehicleTrendChart(rows) {
+    const canvas = document.getElementById('vehicleTrendChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    if (!rows || !rows.length) {
+        if (vehicleTrendChartInstance) {
+            vehicleTrendChartInstance.destroy();
+            vehicleTrendChartInstance = null;
+        }
+        return;
+    }
+
+    if (vehicleTrendChartInstance) {
+        vehicleTrendChartInstance.destroy();
+    }
+
+    vehicleTrendChartInstance = new Chart(canvas, {
+        type: 'doughnut',
+        data: {
+            labels: rows.map(r => r.category),
+            datasets: [{
+                data: rows.map(r => r.qty > 0 ? r.qty : r.records),
+                backgroundColor: [
+                    'rgba(10, 102, 194, 0.85)',
+                    'rgba(192, 57, 43, 0.85)',
+                    'rgba(46, 204, 113, 0.85)',
+                    'rgba(241, 196, 15, 0.85)',
+                    'rgba(155, 89, 182, 0.85)',
+                    'rgba(52, 152, 219, 0.85)',
+                    'rgba(230, 126, 34, 0.85)',
+                    'rgba(26, 188, 156, 0.85)',
+                    'rgba(127, 140, 141, 0.85)',
+                    'rgba(231, 76, 60, 0.85)'
+                ],
+                borderColor: '#ffffff',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+                padding: 12
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        boxWidth: 12,
+                        padding: 14,
+                        font: {
+                            size: 11
+                        }
+                    }
+                }
+            },
+            onClick: (evt, elements) => {
+                if (!elements.length) return;
+
+                const idx = elements[0].index;
+                const item = rows[idx];
+                if (!item) return;
+
+                if (vehicleTrendLevel === 'name') {
+                    vehicleTrendSelectedName = item.category;
+                    vehicleTrendSelectedBrand = null;
+                    vehicleTrendLevel = 'brand';
+                    renderVehicleTrend();
+                } else if (vehicleTrendLevel === 'brand') {
+                    vehicleTrendSelectedBrand = item.category;
+                    vehicleTrendLevel = 'type';
+                    renderVehicleTrend();
+                }
+            }
+        }
+    });
+}
+
+function renderVehicleTrendTable(rows) {
+
+    const tbody = document.getElementById('vehicleTrendTableBody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    if (!rows.length) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="8" style="text-align:center; color: var(--text-muted);">No vehicle records found.</td>`;
+        tbody.appendChild(tr);
+        return;
+    }
+
+    const limit = Math.min(rows.length, 500);
+
+    for (let i = 0; i < limit; i++) {
+
+        const row = rows[i];
+
+        const company = row.company_name_final || row.opportunity_updated_company_name || '';
+
+        const tr = document.createElement('tr');
+const proposalNo =
+    row.proposal_number ||
+    row.proposal_no ||
+    row.quotation_number ||
+    row.final_quotation_number ||
+    '';
+
+const proposalCell = proposalNo
+    ? `<button class="drill-link" onclick="openRawDataProposal('${String(proposalNo).replace(/'/g, "\\'")}')">${escapeHtml(proposalNo)}</button>`
+    : `<span style="color: var(--text-muted);">-</span>`;
+
+tr.innerHTML = `
+<td><strong>${escapeHtml(row.bdm_name_final || '')}</strong></td>
+<td>${escapeHtml(company)}</td>
+<td>${proposalCell}</td>
+<td>${escapeHtml(getVehicleName(row))}</td>
+<td>${escapeHtml(getVehicleBrand(row))}</td>
+<td>${escapeHtml(getVehicleType(row))}</td>
+<td>${escapeHtml(getArmourLevel(row))}</td>
+<td>${getVehicleQty(row)}</td>
+<td>${escapeHtml(row.country_name_final || '')}</td>
+`;
+        tbody.appendChild(tr);
+    }
+
+}
+
+
+function resetVehicleTrend() {
+    vehicleTrendLevel = 'name';
+    vehicleTrendSelectedName = null;
+    vehicleTrendSelectedBrand = null;
+    renderVehicleTrend();
+}
+
+function vehicleTrendBack() {
+    if (vehicleTrendLevel === 'type') {
+        vehicleTrendLevel = 'brand';
+        vehicleTrendSelectedBrand = null;
+    } else if (vehicleTrendLevel === 'brand') {
+        vehicleTrendLevel = 'name';
+        vehicleTrendSelectedName = null;
+        vehicleTrendSelectedBrand = null;
+    }
+    renderVehicleTrend();
+}
+
+function onVehicleArmourFilterChange() {
+    const select = document.getElementById('vehicleArmourFilter');
+    vehicleTrendArmourFilter = select ? select.value : 'all';
+    renderVehicleTrend();
+}
+    function getOpportunityDate(row) {
+    return (
+        parseDateFlexible(row.opportunity_created_at) ||
+        parseDateFlexible(row.opportunity_date_gmt)
+    );
+}
+
+function getProposalDate(row) {
+    return parseDateFlexible(row.proposal_created_at);
+}
+
+function getLeadDate(row) {
+    return (
+        parseDateFlexible(row.lead_created_at) ||
+        parseDateFlexible(row.lead_date_gmt)
+    );
+}
+function cleanText(value, fallback = 'Unknown') {
+    const v = String(value ?? '').trim();
+    return v ? v : fallback;
+}
+
+function getVehicleName(row) {
+    return cleanText(row.vehicle_names, 'Unknown');
+}
+
+function getVehicleBrand(row) {
+    return cleanText(row.vehicle_brands, 'Unknown');
+}
+
+function getVehicleType(row) {
+    return cleanText(row.vehicle_types, 'Unknown');
+}
+
+function getArmourLevel(row) {
+    return cleanText(row.armouring_levels, 'Unknown');
+}
+
+function getVehicleQty(row) {
+    const qty = Number(row.vehicle_qty_total);
+    return Number.isFinite(qty) ? qty : 0;
+}
+
+function getVehicleTrendBaseRows() {
+
+    let rows = latestExplorerRows;
+
+    // Apply armour filter
+    if (vehicleTrendArmourFilter !== 'all') {
+        rows = rows.filter(r => getArmourLevel(r) === vehicleTrendArmourFilter);
+    }
+
+    // Apply hierarchy filter
+    if (vehicleTrendLevel === 'brand' && vehicleTrendSelectedName) {
+        rows = rows.filter(r => getVehicleName(r) === vehicleTrendSelectedName);
+    }
+
+    if (vehicleTrendLevel === 'type' && vehicleTrendSelectedBrand) {
+        rows = rows.filter(r => getVehicleBrand(r) === vehicleTrendSelectedBrand);
+    }
+
+    // 🔴 IMPORTANT FIX
+    // Only rows with real vehicle names
+    rows = rows.filter(row => {
+        const name = getVehicleName(row);
+        return name && name !== 'Unknown' && name.trim() !== '';
+    });
+
+    return rows;
+}
+
+
+function rowMatchesDrillFilter(row, filter) {
+    if (!filter) return true;
+
+    if (filter.stage === 'lead') {
+        if (!getLeadDate(row)) return false;
+        if (monthKeyFromDate(getLeadDate(row)) !== filter.monthKey) return false;
+        return true;
+    }
+
+    if (filter.stage === 'opportunity') {
+        if (!isOpportunity(row)) return false;
+        const dt = getOpportunityDate(row);
+        if (!dt) return false;
+        return monthKeyFromDate(dt) === filter.monthKey;
+    }
+
+    if (filter.stage === 'proposal') {
+        if (!isProposal(row)) return false;
+        const dt = getProposalDate(row);
+        if (!dt) return false;
+        return monthKeyFromDate(dt) === filter.monthKey;
+    }
+
+    if (filter.stage === 'order') {
+        if (!isOrder(row)) return false;
+        const dt = getOrderDate(row);
+        if (!dt) return false;
+        return monthKeyFromDate(dt) === filter.monthKey;
+    }
+    if (filter.proposal) {
+
+    const proposal =
+        row.proposal_number ||
+        row.proposal_no ||
+        row.quotation_number ||
+        row.final_quotation_number;
+
+    if (String(proposal) !== String(filter.proposal)) return false;
+
+}
+
+    return true;
+}
+
+function applyRawDataDrillFilter() {
+    const baseRows = latestExplorerRows || [];
+    const drilledRows = rawDataDrillFilter
+        ? baseRows.filter(row => rowMatchesDrillFilter(row, rawDataDrillFilter))
+        : baseRows;
+
+    renderRawDataTable(drilledRows);
+    updateRawDataDrillLabel(drilledRows.length);
+}
+
+function updateRawDataDrillLabel(count) {
+    const el = document.getElementById('rawDataDrillLabel');
+    if (!el) return;
+
+    if (!rawDataDrillFilter) {
+        el.innerHTML = `Showing full filtered dataset`;
+        return;
+    }
+
+    const stageMap = {
+        lead: 'Leads',
+        opportunity: 'Opportunities',
+        proposal: 'Proposals',
+        order: 'Orders'
+    };
+
+    el.innerHTML = `Drill filter: <strong>${stageMap[rawDataDrillFilter.stage] || rawDataDrillFilter.stage}</strong> for <strong>${formatMonthLabel(rawDataDrillFilter.monthKey)}</strong> · ${count.toLocaleString()} rows`;
+}
+
+function openRawDataDrill(stage, monthKey) {
+    rawDataDrillFilter = { stage, monthKey };
+    applyRawDataDrillFilter();
+    goToStep(7); // Raw Data page number
+}
+function openRawDataProposal(proposalNo) {
+
+    rawDataDrillFilter = { proposal: proposalNo };
+
+    applyRawDataDrillFilter();
+
+    goToStep(7); // Raw Data page
+
+}
+function clearRawDataDrill() {
+    rawDataDrillFilter = null;
+    applyRawDataDrillFilter();
+}
+
+let outlineFunnelChartInstance = null;
+
+function renderOutlineStackedBarChart(perfMap) {
+    const canvas = document.getElementById('outlineFunnelChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    if (outlineFunnelChartInstance) {
+        outlineFunnelChartInstance.destroy();
+    }
+
+    const bdmNames = Object.keys(perfMap);
+
+    outlineFunnelChartInstance = new Chart(canvas, {
+        type: 'bar',
+        data: {
+            labels: bdmNames,
+            datasets: [
+                {
+                    label: 'Leads',
+                    data: bdmNames.map(name => perfMap[name].leads || 0),
+                    backgroundColor: 'rgba(59, 130, 246, 0.85)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 1,
+                    categoryPercentage: 0.72,
+                    barPercentage: 0.88
+                },
+                {
+                    label: 'Opportunities',
+                    data: bdmNames.map(name => perfMap[name].opps || 0),
+                    backgroundColor: 'rgba(245, 158, 11, 0.85)',
+                    borderColor: 'rgba(245, 158, 11, 1)',
+                    borderWidth: 1,
+                    categoryPercentage: 0.72,
+                    barPercentage: 0.88
+                },
+                {
+                    label: 'Proposals',
+                    data: bdmNames.map(name => perfMap[name].props || 0),
+                    backgroundColor: 'rgba(124, 58, 237, 0.85)',
+                    borderColor: 'rgba(124, 58, 237, 1)',
+                    borderWidth: 1,
+                    categoryPercentage: 0.72,
+                    barPercentage: 0.88
+                },
+                {
+                    label: 'Orders',
+                    data: bdmNames.map(name => perfMap[name].orders || 0),
+                    backgroundColor: 'rgba(30, 142, 62, 0.85)',
+                    borderColor: 'rgba(30, 142, 62, 1)',
+                    borderWidth: 1,
+                    categoryPercentage: 0.72,
+                    barPercentage: 0.88
+                }
+            ]
+        },
+        options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+        legend: {
+            position: 'top'
+        },
+        tooltip: {
+            callbacks: {
+                footer: function(items) {
+                    const total = items.reduce((sum, item) => sum + (item.raw || 0), 0);
+                    return 'Total: ' + total;
+                }
+            }
+        }
+    },
+    scales: {
+        x: {
+            stacked: false,
+            beginAtZero: true,
+            ticks: {
+                precision: 0
+            },
+            title: {
+                display: true,
+                text: 'Count'
+            },
+            grid: {
+                color: 'rgba(148,163,184,0.12)'
+            }
+        },
+        y: {
+            stacked: false,
+            title: {
+                display: true,
+                text: 'BDM Name'
+            },
+            grid: {
+                display: false
+            }
+        }
+    }
+}
+    });
+}
+
+    function analyzeData() {
+        const startDateStr = document.getElementById('startDate').value || '2025-04-01';
+        const endDateStr = document.getElementById('endDate').value || '2026-03-31';
+        const start = new Date(startDateStr);
+        const end = new Date(endDateStr);
+        end.setHours(23, 59, 59, 999);
+
+        const selectedBdms = Array.from(document.querySelectorAll('.bdm-checkbox:checked')).map(cb => cb.value);
+
+        const displayDateRange = document.getElementById('displayDateRange');
+        if (displayDateRange) displayDateRange.innerText = `${startDateStr} to ${endDateStr}`;
+        
+        const displayBdms = document.getElementById('displayBdms');
+        if (displayBdms) {
+            displayBdms.innerText = selectedBdms.length <= 3 
+                ? selectedBdms.join(', ') 
+                : `${selectedBdms.length} Managers Selected`;
+        }
+
+        const stats = {
+            leads: { total: 0, comp: 0, self: 0, other: 0 },
+            opps: { total: 0, comp: 0, self: 0, other: 0 },
+            props: { total: 0, comp: 0, self: 0, other: 0 },
+            orders: { total: 0, comp: 0, self: 0, other: 0 }
+        };
+
+        const perfMap = {};
+        const filteredRows = [];
+
+        fullCsvData.forEach(row => {
+            if (!selectedBdms.includes(row.bdm_name_final)) return;
+
+            const rowDate = parseSafeDate(row.lead_date_gmt);
+            if (!rowDate || rowDate < start || rowDate > end) return;
+
+            filteredRows.push(row);
+
+            const sourceKey = categorizeSource(row.lead_source_name);
+            const bdm = row.bdm_name_final || 'Unknown';
+
+            if (!perfMap[bdm]) {
+                perfMap[bdm] = { leads: 0, opps: 0, props: 0, orders: 0 };
+            }
+
+            let leadCount = 1;
+if (row['lead count'] !== undefined) {
+    if (String(row['lead count']).trim() === '') {
+        leadCount = 0;
+    } else {
+        leadCount = toInt(row['lead count'], 0);
+    }
+}
+
+            if (leadCount > 0) {
+                stats.leads.total += leadCount;
+                stats.leads[sourceKey] += leadCount;
+                perfMap[bdm].leads += leadCount;
+            }
+
+            if (isOpportunity(row)) {
+                stats.opps.total++;
+                stats.opps[sourceKey]++;
+                perfMap[bdm].opps++;
+            }
+
+            if (isProposal(row)) {
+                stats.props.total++;
+                stats.props[sourceKey]++;
+                perfMap[bdm].props++;
+            }
+
+            if (isOrder(row)) {
+                stats.orders.total++;
+                stats.orders[sourceKey]++;
+                perfMap[bdm].orders++;
+            }
+        });
+
+         
+
+        updateOutlineCard('leads', stats.leads);
+        updateOutlineCard('opps', stats.opps);
+        updateOutlineCard('props', stats.props);
+        updateOutlineCard('orders', stats.orders);
+
+safeSetText('conv-lead-opp', calcRate(stats.opps.total, stats.leads.total));
+safeSetText('conv-opp-prop', calcRate(stats.props.total, stats.opps.total));
+safeSetText('conv-prop-order', calcRate(stats.orders.total, stats.props.total));
+
+
+        safeSetText('conv-lead-opp-comp', calcRate(stats.opps.comp, stats.leads.comp));
+safeSetText('conv-lead-opp-self', calcRate(stats.opps.self, stats.leads.self));
+safeSetText('conv-lead-opp-other', calcRate(stats.opps.other, stats.leads.other));
+
+safeSetText('conv-opp-prop-comp', calcRate(stats.props.comp, stats.opps.comp));
+safeSetText('conv-opp-prop-self', calcRate(stats.props.self, stats.opps.self));
+safeSetText('conv-opp-prop-other', calcRate(stats.props.other, stats.opps.other));
+
+safeSetText('conv-prop-order-comp', calcRate(stats.orders.comp, stats.props.comp));
+safeSetText('conv-prop-order-self', calcRate(stats.orders.self, stats.props.self));
+safeSetText('conv-prop-order-other', calcRate(stats.orders.other, stats.props.other));
+
+
+        renderOutlineStackedBarChart(perfMap);
+        renderOutlineSourceMixChart(stats);
+        renderOutlineCountryChart(filteredRows);
+        safeSetText('selectedBdmCount', selectedBdms.length.toLocaleString());
+        safeSetText('filteredRecordCount', filteredRows.length.toLocaleString());
+        safeSetText('proposalRate', stats.opps.total > 0 ? Math.round((stats.props.total / stats.opps.total) * 100) + '%' : '0%');
+        safeSetText('orderRate', stats.props.total > 0 ? Math.round((stats.orders.total / stats.props.total) * 100) + '%' : '0%');
+
+        latestExplorerRows = [...filteredRows];
+        applyMasterFilter();
+        renderPerformanceTable(perfMap);
+        renderFollowUps(filteredRows);
+        renderPipelinePage(filteredRows);
+        renderEntryTrend(filteredRows);
+        
+        rawDataDrillFilter = null;
+        applyRawDataDrillFilter();
+        renderVehicleTrend();
+        renderTerritoryPage();
+        renderCompanyTrends(filteredRows);
+    }
+
+    function safeSetText(id, text) {
+        const el = document.getElementById(id);
+        if (el) el.innerText = text;
+    }
+
+    function safeSetWidth(id, width) {
+        const el = document.getElementById(id);
+        if (el) el.style.width = width;
+    }
+   function calcRate(part, whole) {
+    if (!whole || whole <= 0) return '0%';
+    return ((part / whole) * 100).toFixed(1) + '%';
+}
+
+    function updateOutlineCard(type, data) {
+        safeSetText(`out-${type}-total`, data.total.toLocaleString());
+        safeSetText(`out-${type}-comp`, data.comp.toLocaleString());
+        safeSetText(`out-${type}-self`, data.self.toLocaleString());
+        safeSetText(`out-${type}-other`, data.other.toLocaleString());
+
+        if (data.total > 0) {
+            safeSetWidth(`bar-${type}-comp`, ((data.comp / data.total) * 100) + '%');
+            safeSetWidth(`bar-${type}-self`, ((data.self / data.total) * 100) + '%');
+            safeSetWidth(`bar-${type}-other`, ((data.other / data.total) * 100) + '%');
+        } else {
+            safeSetWidth(`bar-${type}-comp`, '0%');
+            safeSetWidth(`bar-${type}-self`, '0%');
+            safeSetWidth(`bar-${type}-other`, '0%');
+        }
+    }
+
+
+function renderOutlineSourceMixChart(stats) {
+    const canvas = document.getElementById('outlineSourceMixChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+    if (outlineSourceMixChartInstance) outlineSourceMixChartInstance.destroy();
+
+    const companyL2O = parseFloat(calcRate(stats.opps.comp, stats.leads.comp)) || 0;
+    const companyO2P = parseFloat(calcRate(stats.props.comp, stats.opps.comp)) || 0;
+    const companyP2O = parseFloat(calcRate(stats.orders.comp, stats.props.comp)) || 0;
+
+    const selfL2O = parseFloat(calcRate(stats.opps.self, stats.leads.self)) || 0;
+    const selfO2P = parseFloat(calcRate(stats.props.self, stats.opps.self)) || 0;
+    const selfP2O = parseFloat(calcRate(stats.orders.self, stats.props.self)) || 0;
+
+    const otherL2O = parseFloat(calcRate(stats.opps.other, stats.leads.other)) || 0;
+    const otherO2P = parseFloat(calcRate(stats.props.other, stats.opps.other)) || 0;
+    const otherP2O = parseFloat(calcRate(stats.orders.other, stats.props.other)) || 0;
+
+    const overallL2O = parseFloat(calcRate(stats.opps.total, stats.leads.total)) || 0;
+    const overallO2P = parseFloat(calcRate(stats.props.total, stats.opps.total)) || 0;
+    const overallP2O = parseFloat(calcRate(stats.orders.total, stats.props.total)) || 0;
+
+    outlineSourceMixChartInstance = new Chart(canvas, {
+        data: {
+            labels: ['Lead → Opportunity', 'Opportunity → Proposal', 'Proposal → Order'],
+            datasets: [
+                {
+                    type: 'bar',
+                    label: 'Company',
+                    data: [companyL2O, companyO2P, companyP2O],
+                    backgroundColor: 'rgba(228, 24, 55, 0.85)',
+                    borderRadius: 6,
+                    barThickness: 20,
+                    order: 2
+                },
+                {
+                    type: 'bar',
+                    label: 'Self',
+                    data: [selfL2O, selfO2P, selfP2O],
+                    backgroundColor: 'rgba(10, 102, 194, 0.85)',
+                    borderRadius: 6,
+                    barThickness: 20,
+                    order: 2
+                },
+                {
+                    type: 'bar',
+                    label: 'Other',
+                    data: [otherL2O, otherO2P, otherP2O],
+                    backgroundColor: 'rgba(148, 163, 184, 0.85)',
+                    borderRadius: 6,
+                    barThickness: 20,
+                    order: 2
+                },
+                {
+                    type: 'line',
+                    label: 'Overall',
+                    data: [overallL2O, overallO2P, overallP2O],
+                    borderColor: 'rgba(11, 31, 63, 0.95)',
+                    backgroundColor: 'rgba(11, 31, 63, 0.95)',
+                    pointBackgroundColor: 'rgba(11, 31, 63, 0.95)',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 5,
+                    borderWidth: 2.5,
+                    tension: 0.25,
+                    fill: false,
+                    order: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.dataset.label}: ${Number(context.raw).toFixed(1)}%`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    stacked: false,
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    stacked: false,
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(148,163,184,0.12)'
+                    }
+                }
+            }
+        }
+    });
+}
+
+    function renderOutlineCountryChart(rows) {
+        const canvas = document.getElementById('outlineCountryChart');
+        if (!canvas || typeof Chart === 'undefined') return;
+        if (outlineCountryChartInstance) outlineCountryChartInstance.destroy();
+
+        const countryMap = {};
+        rows.forEach(row => {
+            const key = (row.country_name_final || 'Unknown').trim() || 'Unknown';
+            if (key === 'Unknown') return;
+            countryMap[key] = (countryMap[key] || 0) + 1;
+        });
+
+        const topCountries = Object.entries(countryMap)
+            .map(([country, count]) => ({ country, count }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 10);
+
+        outlineCountryChartInstance = new Chart(canvas, {
+            type: 'bar',
+            data: {
+                labels: topCountries.map(x => x.country),
+                datasets: [{
+                    label: 'Records',
+                    data: topCountries.map(x => x.count),
+                    backgroundColor: 'rgba(249, 115, 22, 0.85)',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(148,163,184,0.12)' } },
+                    y: { grid: { display: false } }
+                }
+            }
+        });
+    }
+
+    function applyMasterFilter() {
+        const filterEl = document.getElementById('masterStageFilter');
+        const selected = filterEl ? filterEl.value : 'all';
+
+        let filtered = [...latestExplorerRows];
+
+        if (selected === 'leads_only') {
+            filtered = filtered.filter(row => !isOpportunity(row) && !isProposal(row) && !isOrder(row));
+        } else if (selected === 'lead_to_opportunity') {
+            filtered = filtered.filter(row => isOpportunity(row) && !isProposal(row) && !isOrder(row));
+        } else if (selected === 'proposal_generated') {
+            filtered = filtered.filter(row => isProposal(row) && !isOrder(row));
+        } else if (selected === 'order_confirmed') {
+            filtered = filtered.filter(row => isOrder(row));
+        }
+
+        renderDataTable(filtered);
+    }
+
+    function renderDataTable(data) {
+        const tbody = document.getElementById('dataTableBody');
+        const countDisplay = document.getElementById('tableCount');
+        if (!tbody || !countDisplay) return;
+
+        tbody.innerHTML = '';
+
+        const limit = Math.min(data.length, 500);
+        countDisplay.innerHTML = `Showing ${limit} of ${data.length} records`;
+
+        for (let i = 0; i < limit; i++) {
+            const row = data[i];
+            const company = row.company_name_final || row.opportunity_updated_company_name || '';
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${escapeHtml(row.bdm_name_final || '')}</strong></td>
+                <td>${escapeHtml(row.lead_date_gmt || '')}</td>
+                <td style="max-width: 220px; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(company)}</td>
+                <td>${escapeHtml(row.country_name_final || '')}</td>
+                <td><span style="background: var(--bg-body); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">${escapeHtml(row.lead_source_name || '')}</span></td>
+                <td><span style="background: rgba(255, 80, 0, 0.08); color: var(--primary-color); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 700;">${escapeHtml(row.lead_pipeline_stage || '')}</span></td>
+                <td style="text-align:center;"><div class="status-badge ${isOpportunity(row) ? 'yes' : 'no'}"><i class="ph ${isOpportunity(row) ? 'ph-check' : 'ph-minus'}"></i></div></td>
+                <td style="text-align:center;"><div class="status-badge ${isProposal(row) ? 'yes' : 'no'}"><i class="ph ${isProposal(row) ? 'ph-check' : 'ph-minus'}"></i></div></td>
+                <td style="text-align:center;"><div class="status-badge ${isOrder(row) ? 'yes' : 'no'}"><i class="ph ${isOrder(row) ? 'ph-check' : 'ph-minus'}"></i></div></td>
+            `;
+            tbody.appendChild(tr);
+        }
+    }
+
+    let followupStatusChartInstance = null;
+let followupHasChartInstance = null;
+let followupNoChartInstance = null;
+    let followupAgingChartInstance = null;
+    let pipelineOverviewChartInstance = null;
+    let pipelineVehicleMixChartInstance = null;
+    let pipelineRevenueSplitChartInstance = null;
+function parseMoney(value) {
+    if (value === null || value === undefined) return 0;
+    const cleaned = String(value).replace(/[^0-9.-]/g, '').trim();
+    const num = parseFloat(cleaned);
+    return Number.isFinite(num) ? num : 0;
+}
+
+function formatMoney(num) {
+    const n = Number(num) || 0;
+    return n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+}
+
+function firstNonEmpty(row, keys) {
+    for (const key of keys) {
+        const val = row[key];
+        if (val !== null && val !== undefined && String(val).trim() !== '') {
+            return String(val).trim();
+        }
+    }
+    return '';
+}
+
+
+function renderPerformanceTable(perfMap) {
+        const tbody = document.getElementById('performanceTableBody');
+        if (!tbody) return;
+        
+        tbody.innerHTML = '';
+
+        const rows = Object.entries(perfMap)
+            .map(([bdm, v]) => ({
+                bdm,
+                ...v,
+                oppRate: v.leads > 0 ? (v.opps / v.leads) * 100 : 0,
+                propRate: v.opps > 0 ? (v.props / v.opps) * 100 : 0,
+                orderRate: v.props > 0 ? (v.orders / v.props) * 100 : 0
+            }))
+            .sort((a, b) => b.orders - a.orders || b.props - a.props || b.opps - a.opps);
+
+        rows.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${escapeHtml(row.bdm)}</strong></td>
+                <td>${row.leads}</td>
+                <td>${row.opps}</td>
+                <td>${row.props}</td>
+                <td>${row.orders}</td>
+                <td>${Math.round(row.oppRate)}%</td>
+                <td>${Math.round(row.propRate)}%</td>
+                <td>${Math.round(row.orderRate)}%</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        if (rows.length === 0) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td colspan="8" style="text-align:center; color: var(--text-muted);">No performance data available for selected filters.</td>`;
+            tbody.appendChild(tr);
+        }
+    }
+    function renderOrderConfirmations(data) {
+    const tbody = document.getElementById('orderConfirmationsTableBody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    const rows = data
+        .filter(row => isOrder(row))
+        .map(row => ({
+            company: row.company_name_final || row.opportunity_updated_company_name || 'Unknown',
+            bdm: row.bdm_name_final || '',
+            orderId: row.sales_order_number || row.order_id || row.so_no || '-',
+            orderDate: row.order_confirmed_date || row.order_date || row.so_date || row.final_quotation_date || '-',
+            vehicleBrand: row.vehicle_brands || '-',
+            vehicleType: row.vehicle_types || '-',
+            qty: toInt(row.vehicle_qty_total, 0),
+            country: row.country_name_final || '-'
+        }))
+        .sort((a, b) => a.company.localeCompare(b.company));
+
+    if (!rows.length) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="8" style="text-align:center; color: var(--text-muted);">No confirmed orders available for selected filters.</td>`;
+        tbody.appendChild(tr);
+        return;
+    }
+
+    rows.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><strong>${escapeHtml(row.company)}</strong></td>
+            <td>${escapeHtml(row.bdm)}</td>
+            <td>${escapeHtml(String(row.orderId))}</td>
+            <td>${escapeHtml(String(row.orderDate))}</td>
+            <td>${escapeHtml(String(row.vehicleBrand))}</td>
+            <td>${escapeHtml(String(row.vehicleType))}</td>
+            <td>${row.qty}</td>
+            <td>${escapeHtml(String(row.country))}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+function renderFollowUps(data) {
+    const openRows = data
+        .filter(row => !isOrder(row) && safeCompany(row) !== 'Unknown')
+        .map(row => {
+            const stage = isProposal(row) ? 'Proposal' : isOpportunity(row) ? 'Opportunity' : 'Lead';
+            const ctx = stage === 'Lead'
+                ? {
+                    total: toInt(row.lead_followup_count, 0),
+                    last: parseSafeDate(row.last_lead_followup_date),
+                    next: parseSafeDate(row.next_lead_followup_gmt)
+                }
+                : {
+                    total: toInt(row.opp_followup_count, 0),
+                    last: parseSafeDate(row.last_opp_followup_date),
+                    next: parseSafeDate(row.next_opp_followup_gmt)
+                };
+
+            let daysLast = null;
+            if (ctx.last) {
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                const lastDate = new Date(ctx.last);
+                lastDate.setHours(0,0,0,0);
+                daysLast = Math.floor((today - lastDate) / 86400000);
+            }
+
+            const followupAdded = ctx.total > 0;
+            const noFU = !followupAdded;
+            const overdue30 = daysLast !== null && daysLast > 30;
+            const critical60 = daysLast !== null && daysLast > 60;
+            const dead90 = daysLast !== null && daysLast > 90;
+
+            let agingBucket = 'No follow-up';
+            if (daysLast !== null) {
+                if (daysLast <= 30) agingBucket = '0-30 days';
+                else if (daysLast <= 60) agingBucket = '31-60 days';
+                else if (daysLast <= 90) agingBucket = '61-90 days';
+                else agingBucket = '90+ days';
+            }
+
+            return {
+                row,
+                bdm: (row.bdm_name_final || 'Unknown').trim() || 'Unknown',
+                company: safeCompany(row),
+                stage,
+                ctx,
+                daysLast,
+                followupAdded,
+                noFU,
+                overdue30,
+                critical60,
+                dead90,
+                agingBucket
+            };
+        });
+const byBdm = {};
+openRows.forEach(item => {
+    if (!item.bdm || ['Unknown', 'Discarded'].includes(item.bdm)) return;
+
+    if (!byBdm[item.bdm]) {
+        byBdm[item.bdm] = {
+            bdm: item.bdm,
+            totalOpen: 0,
+            leadOpen: 0,
+            oppOpen: 0,
+            propOpen: 0,
+            loggedTotal: 0,
+            noLogTotal: 0,
+            overdue30: 0,
+            critical60: 0,
+            dead90: 0,
+            sumDays: 0,
+            countDays: 0,
+            aging_0_30: 0,
+            aging_31_60: 0,
+            aging_61_90: 0,
+            aging_90_plus: 0,
+            aging_no_fu: 0
+        };
+    }
+
+    const agg = byBdm[item.bdm];
+    agg.totalOpen += 1;
+
+    if (item.stage === 'Lead') agg.leadOpen += 1;
+    else if (item.stage === 'Opportunity') agg.oppOpen += 1;
+    else if (item.stage === 'Proposal') agg.propOpen += 1;
+
+    if (item.followupAdded) agg.loggedTotal += 1;
+    if (item.noFU) agg.noLogTotal += 1;
+    if (item.overdue30) agg.overdue30 += 1;
+    if (item.critical60) agg.critical60 += 1;
+    if (item.dead90) agg.dead90 += 1;
+
+    if (item.daysLast !== null) {
+        agg.sumDays += item.daysLast;
+        agg.countDays += 1;
+    }
+
+    if (item.agingBucket === '0-30 days') agg.aging_0_30 += 1;
+    else if (item.agingBucket === '31-60 days') agg.aging_31_60 += 1;
+    else if (item.agingBucket === '61-90 days') agg.aging_61_90 += 1;
+    else if (item.agingBucket === '90+ days') agg.aging_90_plus += 1;
+    else agg.aging_no_fu += 1;
+});
+
+const bdmRows = Object.values(byBdm).sort((a, b) =>
+    b.dead90 - a.dead90 ||
+    b.critical60 - a.critical60 ||
+    b.overdue30 - a.overdue30 ||
+    b.totalOpen - a.totalOpen
+);
+
+const validOpenRows = openRows.filter(r => !['Unknown', 'Discarded'].includes(r.bdm));
+
+const totalOpen = validOpenRows.length;
+
+const loggedRows = validOpenRows.filter(r => r.followupAdded);
+const noLogRows = validOpenRows.filter(r => r.noFU);
+
+const totalLogged = loggedRows.length;
+const totalNoLog = noLogRows.length;
+
+// Has Follow-Up ageing split
+const loggedDead = loggedRows.filter(r => r.dead90).length;
+const loggedCritical = loggedRows.filter(r => r.critical60 && !r.dead90).length;
+const loggedOverdue = loggedRows.filter(r => r.overdue30 && !r.critical60 && !r.dead90).length;
+const loggedFresh = Math.max(0, totalLogged - loggedOverdue - loggedCritical - loggedDead);
+
+// No Follow-Up ageing split
+const noLogDead = noLogRows.filter(r => r.dead90).length;
+const noLogCritical = noLogRows.filter(r => r.critical60 && !r.dead90).length;
+const noLogOverdue = noLogRows.filter(r => r.overdue30 && !r.critical60 && !r.dead90).length;
+const noLogFresh = Math.max(0, totalNoLog - noLogOverdue - noLogCritical - noLogDead);
+
+safeSetText('fyFuOpenTotal', totalOpen.toLocaleString());
+safeSetText('fyFuLoggedTotal', totalLogged.toLocaleString());
+safeSetText('fyFuNoLogTotal', totalNoLog.toLocaleString());
+
+safeSetText('fyFuLoggedFresh', loggedFresh.toLocaleString());
+safeSetText('fyFuLoggedOverdue', loggedOverdue.toLocaleString());
+safeSetText('fyFuLoggedCritical', loggedCritical.toLocaleString());
+safeSetText('fyFuLoggedDead', loggedDead.toLocaleString());
+
+safeSetText('fyFuNoLogFresh', noLogFresh.toLocaleString());
+safeSetText('fyFuNoLogOverdue', noLogOverdue.toLocaleString());
+safeSetText('fyFuNoLogCritical', noLogCritical.toLocaleString());
+safeSetText('fyFuNoLogDead', noLogDead.toLocaleString());
+
+function setAgingStrip(prefix, total, fresh, overdue, critical, dead) {
+    const safePct = (value) => total > 0 ? ((value / total) * 100) : 0;
+
+    const freshEl = document.getElementById(`bar-${prefix}-fresh`);
+    const overdueEl = document.getElementById(`bar-${prefix}-overdue`);
+    const criticalEl = document.getElementById(`bar-${prefix}-critical`);
+    const deadEl = document.getElementById(`bar-${prefix}-dead`);
+
+    if (freshEl) {
+        freshEl.style.width = `${safePct(fresh)}%`;
+        freshEl.title = `Fresh: ${fresh}`;
+    }
+    if (overdueEl) {
+        overdueEl.style.width = `${safePct(overdue)}%`;
+        overdueEl.title = `Overdue 30+: ${overdue}`;
+    }
+    if (criticalEl) {
+        criticalEl.style.width = `${safePct(critical)}%`;
+        criticalEl.title = `Critical 60+: ${critical}`;
+    }
+    if (deadEl) {
+        deadEl.style.width = `${safePct(dead)}%`;
+        deadEl.title = `Dead 90+: ${dead}`;
+    }
+}
+
+setAgingStrip('logged', totalLogged, loggedFresh, loggedOverdue, loggedCritical, loggedDead);
+setAgingStrip('nolog', totalNoLog, noLogFresh, noLogOverdue, noLogCritical, noLogDead);
+
+renderFollowupStageChart(validOpenRows);
+}
+function renderFollowupStatusChart(rows) {
+    const canvas = document.getElementById('followupStatusChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+    if (followupStatusChartInstance) followupStatusChartInstance.destroy();
+
+    const total = rows.reduce((acc, r) => {
+        acc.followup += Number(r.loggedTotal || 0);
+        acc.noFollowup += Number(r.noLogTotal || 0);
+        acc.overdue += Number(r.overdue30 || 0);
+        acc.critical += Number(r.critical60 || 0);
+        acc.dead += Number(r.dead90 || 0);
+        return acc;
+    }, {
+        followup: 0,
+        noFollowup: 0,
+        overdue: 0,
+        critical: 0,
+        dead: 0
+    });
+
+    followupStatusChartInstance = new Chart(canvas, {
+        type: 'bar',
+        data: {
+            labels: [
+                'Follow-Up Added',
+                'No Follow-Up',
+                'Overdue 30+ Days',
+                'Critical 60+ Days',
+                'Dead 90+ Days'
+            ],
+            datasets: [{
+                label: 'Count',
+                data: [
+                    total.followup,
+                    total.noFollowup,
+                    total.overdue,
+                    total.critical,
+                    total.dead
+                ],
+                backgroundColor: [
+                    'rgba(34, 197, 94, 0.85)',
+                    'rgba(148, 163, 184, 0.85)',
+                    'rgba(245, 158, 11, 0.85)',
+                    'rgba(239, 68, 68, 0.85)',
+                    'rgba(107, 114, 128, 0.90)'
+                ],
+                borderRadius: 6,
+                barThickness: 28
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `Count: ${context.raw}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: { precision: 0 },
+                    grid: { color: 'rgba(148,163,184,0.12)' }
+                },
+                y: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+}
+
+function renderFollowupStageChart(rows) {
+    const hasCanvas = document.getElementById('followupHasChart');
+    const noCanvas = document.getElementById('followupNoChart');
+
+    if (!hasCanvas || !noCanvas || typeof Chart === 'undefined') return;
+
+    if (followupHasChartInstance) followupHasChartInstance.destroy();
+    if (followupNoChartInstance) followupNoChartInstance.destroy();
+
+    const stageLabels = ['Lead', 'Opportunity', 'Proposal'];
+
+    function getStageRows(stage, onlyFollowup) {
+        return rows.filter(r => r.stage === stage && (onlyFollowup ? r.followupAdded : r.noFU));
+    }
+
+    function splitHotWarmCold(stageRows) {
+        const hot = stageRows.filter(r => {
+            if (r.daysLast === null) return !r.overdue30 && !r.critical60 && !r.dead90;
+            return r.daysLast <= 30;
+        }).length;
+
+        const warm = stageRows.filter(r => r.daysLast !== null && r.daysLast > 30 && r.daysLast <= 60).length;
+
+        const cold = stageRows.filter(r => r.daysLast !== null && r.daysLast > 60).length;
+
+        return { hot, warm, cold };
+    }
+
+    const hasLead = splitHotWarmCold(getStageRows('Lead', true));
+    const hasOpp = splitHotWarmCold(getStageRows('Opportunity', true));
+    const hasProp = splitHotWarmCold(getStageRows('Proposal', true));
+
+    const noLead = splitHotWarmCold(getStageRows('Lead', false));
+    const noOpp = splitHotWarmCold(getStageRows('Opportunity', false));
+    const noProp = splitHotWarmCold(getStageRows('Proposal', false));
+
+    const hasTotals = [
+        hasLead.hot + hasLead.warm + hasLead.cold,
+        hasOpp.hot + hasOpp.warm + hasOpp.cold,
+        hasProp.hot + hasProp.warm + hasProp.cold
+    ];
+
+    const noTotals = [
+        noLead.hot + noLead.warm + noLead.cold,
+        noOpp.hot + noOpp.warm + noOpp.cold,
+        noProp.hot + noProp.warm + noProp.cold
+    ];
+
+    const commonMax = Math.max(...hasTotals, ...noTotals, 5);
+
+    function buildStackedOptions(chartTitle) {
+        return {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.dataset.label}: ${context.raw}`;
+                        },
+                        footer: function(items) {
+                            const total = items.reduce((sum, item) => sum + (item.raw || 0), 0);
+                            return `Stage Total: ${total}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                    beginAtZero: true,
+                    suggestedMax: commonMax,
+                    ticks: {
+                        precision: 0
+                    },
+                    grid: {
+                        color: 'rgba(148,163,184,0.12)'
+                    }
+                },
+                y: {
+                    stacked: true,
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        };
+    }
+
+    followupHasChartInstance = new Chart(hasCanvas, {
+        type: 'bar',
+        data: {
+            labels: stageLabels,
+            datasets: [
+                {
+                    label: 'Hot',
+                    data: [hasLead.hot, hasOpp.hot, hasProp.hot],
+                    backgroundColor: 'rgba(34, 197, 94, 0.85)',
+                    borderColor: 'rgba(34, 197, 94, 1)',
+                    borderWidth: 1,
+                    borderRadius: 6
+                },
+                {
+                    label: 'Warm',
+                    data: [hasLead.warm, hasOpp.warm, hasProp.warm],
+                    backgroundColor: 'rgba(245, 158, 11, 0.85)',
+                    borderColor: 'rgba(245, 158, 11, 1)',
+                    borderWidth: 1,
+                    borderRadius: 6
+                },
+                {
+                    label: 'Cold',
+                    data: [hasLead.cold, hasOpp.cold, hasProp.cold],
+                    backgroundColor: 'rgba(239, 68, 68, 0.85)',
+                    borderColor: 'rgba(239, 68, 68, 1)',
+                    borderWidth: 1,
+                    borderRadius: 6
+                }
+            ]
+        },
+        options: buildStackedOptions('Has Follow-Up by Stage')
+    });
+
+    followupNoChartInstance = new Chart(noCanvas, {
+        type: 'bar',
+        data: {
+            labels: stageLabels,
+            datasets: [
+                {
+                    label: 'Hot',
+                    data: [noLead.hot, noOpp.hot, noProp.hot],
+                    backgroundColor: 'rgba(34, 197, 94, 0.85)',
+                    borderColor: 'rgba(34, 197, 94, 1)',
+                    borderWidth: 1,
+                    borderRadius: 6
+                },
+                {
+                    label: 'Warm',
+                    data: [noLead.warm, noOpp.warm, noProp.warm],
+                    backgroundColor: 'rgba(245, 158, 11, 0.85)',
+                    borderColor: 'rgba(245, 158, 11, 1)',
+                    borderWidth: 1,
+                    borderRadius: 6
+                },
+                {
+                    label: 'Cold',
+                    data: [noLead.cold, noOpp.cold, noProp.cold],
+                    backgroundColor: 'rgba(239, 68, 68, 0.85)',
+                    borderColor: 'rgba(239, 68, 68, 1)',
+                    borderWidth: 1,
+                    borderRadius: 6
+                }
+            ]
+        },
+        options: buildStackedOptions('No Follow-Up by Stage')
+    });
+}
+
+function renderFollowupAgingChart(rows) {
+    const canvas = document.getElementById('followupAgingChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+    if (followupAgingChartInstance) followupAgingChartInstance.destroy();
+
+    const chartRows = rows.slice(0, 12);
+    followupAgingChartInstance = new Chart(canvas, {
+        type: 'bar',
+        data: {
+            labels: chartRows.map(r => r.bdm),
+            datasets: [
+                { label: '0-30 days', data: chartRows.map(r => r.aging_0_30), backgroundColor: 'rgba(34, 197, 94, 0.80)', borderRadius: 6 },
+                { label: '31-60 days', data: chartRows.map(r => r.aging_31_60), backgroundColor: 'rgba(245, 158, 11, 0.85)', borderRadius: 6 },
+                { label: '61-90 days', data: chartRows.map(r => r.aging_61_90), backgroundColor: 'rgba(239, 68, 68, 0.80)', borderRadius: 6 },
+                { label: '90+ days', data: chartRows.map(r => r.aging_90_plus), backgroundColor: 'rgba(107, 114, 128, 0.9)', borderRadius: 6 },
+                { label: 'No follow-up', data: chartRows.map(r => r.aging_no_fu), backgroundColor: 'rgba(148, 163, 184, 0.65)', borderRadius: 6 }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            interaction: { mode: 'index', intersect: false },
+            plugins: { legend: { position: 'top' } },
+            scales: {
+                x: { stacked: true, beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(148,163,184,0.12)' } },
+                y: { stacked: true, grid: { display: false } }
+            }
+        }
+    });
+}
+
+function renderPipelinePage(data) {
+    const proposalRows = data.filter(row => isProposal(row) || isOrder(row));
+
+    const normalized = proposalRows.map(row => {
+        const proposalAmount = parseMoney(row.final_quotation_total_price_usd);
+
+        return {
+            row,
+            bdm: (row.bdm_name_final || 'Unknown').trim() || 'Unknown',
+            company: safeCompany(row),
+            proposalNo: firstNonEmpty(row, ['proposal_number', 'proposal_no', 'proposal_id']) || '-',
+            proposalDate: parseSafeDate(firstNonEmpty(row, ['proposal_date', 'proposal_created_at'])),
+            proposalAmount,
+            vehicleName: firstNonEmpty(row, ['vehicle_name', 'vehicle details', 'vehicle model', 'vehicle']) || '-',
+            vehicleBrand: firstNonEmpty(row, ['vehicle_brand', 'brand']) || '-',
+            vehicleType: firstNonEmpty(row, ['vehicle_type', 'type']) || '-',
+            qty: toInt(firstNonEmpty(row, ['qty', 'quantity', 'vehicle_qty']), 1),
+            isOrderRow: isOrder(row)
+        };
+    });
+
+    const totalProposalCount = normalized.length;
+    const totalProposalValue = normalized.reduce((s, r) => s + r.proposalAmount, 0);
+    const achievedRows = normalized.filter(r => r.isOrderRow);
+    const totalOrderCount = achievedRows.length;
+    const achievedRevenue = achievedRows.reduce((s, r) => s + r.proposalAmount, 0);
+    const openRows = normalized.filter(r => !r.isOrderRow);
+    const openRevenue = openRows.reduce((s, r) => s + r.proposalAmount, 0);
+    const avgProposalValue = totalProposalCount ? totalProposalValue / totalProposalCount : 0;
+    const conversionToOrders = totalProposalCount ? Math.round((totalOrderCount / totalProposalCount) * 100) : 0;
+
+    safeSetText('pipelineProposalCount', totalProposalCount.toLocaleString());
+    safeSetText('pipelineProposalValue', formatMoney(totalProposalValue));
+    safeSetText('pipelineOrderCount', totalOrderCount.toLocaleString());
+    safeSetText('pipelineAchievedRevenue', formatMoney(achievedRevenue));
+    safeSetText('pipelineAvgProposalValue', formatMoney(avgProposalValue));
+    safeSetText('pipelineOpenRevenue', formatMoney(openRevenue));
+    safeSetText('pipelineAchievedRevenue2', formatMoney(achievedRevenue));
+    safeSetText('pipelineOpenProposalCount', openRows.length.toLocaleString());
+    safeSetText('pipelineOrderConversion', `${conversionToOrders}%`);
+
+    const byBdm = {};
+
+    normalized.forEach(r => {
+        if (!byBdm[r.bdm]) {
+            byBdm[r.bdm] = {
+                bdm: r.bdm,
+                proposalCount: 0,
+                proposalValue: 0,
+                orderCount: 0,
+                achievedRevenue: 0
+            };
+        }
+
+        byBdm[r.bdm].proposalCount += 1;
+        byBdm[r.bdm].proposalValue += r.proposalAmount;
+
+        if (r.isOrderRow) {
+            byBdm[r.bdm].orderCount += 1;
+            byBdm[r.bdm].achievedRevenue += r.proposalAmount;
+        }
+    });
+
+    const bdmRows = Object.values(byBdm)
+        .filter(r => r.bdm && !['Discarded', 'Unknown'].includes(r.bdm))
+        .sort((a, b) => b.proposalValue - a.proposalValue || b.achievedRevenue - a.achievedRevenue);
+
+    renderPipelineOverviewChart(bdmRows);
+    renderPipelineVehicleMixChart(normalized);
+    renderPipelineRevenueSplitChart(openRevenue, achievedRevenue);
+}
+function renderPipelineOverviewChart(rows) {
+    const canvas = document.getElementById('pipelineOverviewChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    if (pipelineOverviewChartInstance) {
+        pipelineOverviewChartInstance.destroy();
+        pipelineOverviewChartInstance = null;
+    }
+
+    const chartRows = rows.slice(0, 10);
+
+    pipelineOverviewChartInstance = new Chart(canvas, {
+        type: 'bar',
+        data: {
+            labels: chartRows.map(r => r.bdm),
+            datasets: [
+    {
+        label: 'Proposals Submitted',
+        data: chartRows.map(r => r.proposalCount),
+        backgroundColor: 'rgba(59, 130, 246, 0.85)',
+        borderRadius: 6
+    },
+    {
+        label: 'Orders Achieved',
+        data: chartRows.map(r => r.orderCount),
+        backgroundColor: 'rgba(34, 197, 94, 0.85)',
+        borderRadius: 6
+    },
+    {
+        label: 'Proposal Value',
+        data: chartRows.map(r => r.proposalValue),
+        type: 'line',
+        yAxisID: 'y1',
+        tension: 0.3,
+        borderWidth: 2,
+        pointRadius: 3
+    },
+    {
+        label: 'Achieved Revenue',
+        data: chartRows.map(r => r.achievedRevenue),
+        type: 'line',
+        yAxisID: 'y1',
+        tension: 0.3,
+        borderWidth: 2,
+        pointRadius: 3
+    }
+]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { position: 'top' }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { precision: 0 }
+                },
+                y1: {
+                    beginAtZero: true,
+                    position: 'right',
+                    grid: { drawOnChartArea: false },
+                    ticks: {
+                        callback: function(value) {
+                            return formatMoney(value);
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+function renderPipelineVehicleMixChart(rows) {
+    const canvas = document.getElementById('pipelineVehicleMixChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    if (pipelineVehicleMixChartInstance) {
+        pipelineVehicleMixChartInstance.destroy();
+        pipelineVehicleMixChartInstance = null;
+    }
+
+    const vehicleMap = {};
+
+    rows.forEach(r => {
+        const key = r.vehicleName || '-';
+        if (!vehicleMap[key]) {
+            vehicleMap[key] = { name: key, count: 0, value: 0 };
+        }
+        vehicleMap[key].count += 1;
+        vehicleMap[key].value += r.proposalAmount;
+    });
+
+    const topVehicles = Object.values(vehicleMap)
+        .sort((a, b) => b.value - a.value || b.count - a.count)
+        .slice(0, 12);
+
+    pipelineVehicleMixChartInstance = new Chart(canvas, {
+        type: 'bar',
+        data: {
+            labels: topVehicles.map(v => v.name),
+            datasets: [
+                {
+                    label: 'Proposal Count',
+                    data: topVehicles.map(v => v.count),
+                    backgroundColor: 'rgba(249, 115, 22, 0.85)',
+                    borderRadius: 6
+                },
+                {
+                    label: 'Proposal Value',
+                    data: topVehicles.map(v => v.value),
+                    type: 'line',
+                    yAxisID: 'y1',
+                    tension: 0.3,
+                    borderWidth: 2,
+                    pointRadius: 3
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { position: 'top' }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { precision: 0 }
+                },
+                y1: {
+                    beginAtZero: true,
+                    position: 'right',
+                    grid: { drawOnChartArea: false },
+                    ticks: {
+                        callback: function(value) {
+                            return formatMoney(value);
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+function renderPipelineRevenueSplitChart(openRevenue, achievedRevenue) {
+    const canvas = document.getElementById('pipelineRevenueSplitChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    if (pipelineRevenueSplitChartInstance) {
+        pipelineRevenueSplitChartInstance.destroy();
+        pipelineRevenueSplitChartInstance = null;
+    }
+
+    pipelineRevenueSplitChartInstance = new Chart(canvas, {
+        type: 'doughnut',
+        data: {
+            labels: ['Open Proposal Value', 'Achieved Revenue'],
+            datasets: [{
+                data: [openRevenue, achievedRevenue],
+                backgroundColor: [
+                    'rgba(249, 115, 22, 0.85)',
+                    'rgba(34, 197, 94, 0.85)'
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(ctx) {
+                            return `${ctx.label}: ${formatMoney(ctx.raw)}`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderRawDataTable(data) {
+
+    const table = document.getElementById('rawDataTable');
+    if (!table) return;
+
+    table.innerHTML = '';
+
+    const rowCountEl = document.getElementById('rawDataRowCount');
+    const colCountEl = document.getElementById('rawDataColCount');
+
+    if (!data || !data.length) {
+        if (rowCountEl) rowCountEl.innerText = '0';
+        if (colCountEl) colCountEl.innerText = '0';
+        return;
+    }
+
+    const columns = Object.keys(data[0]);
+
+    if (rowCountEl) rowCountEl.innerText = data.length.toLocaleString();
+    if (colCountEl) colCountEl.innerText = columns.length.toLocaleString();
+
+    const displayRows = data.slice(0, 500);
+
+    const thead = document.createElement('thead');
+    const headRow = document.createElement('tr');
+
+    columns.forEach(col => {
+        const th = document.createElement('th');
+        th.innerText = col;
+        headRow.appendChild(th);
+    });
+
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+
+    displayRows.forEach(row => {
+        const tr = document.createElement('tr');
+
+        columns.forEach(col => {
+            const td = document.createElement('td');
+            td.innerHTML = escapeHtml(row[col] ?? '');
+            tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+    });
+
+    table.appendChild(tbody);
+}
+
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+    
+    function jumpToStep1() {
+        goPage(1 - stepCount);
+    }
+
+    function goToStep(targetStep) {
+        if (targetStep === stepCount) return;
+        goPage(targetStep - stepCount);
+    }
+
+    function goPage(delta) {
+        if (stepCount === 1 && delta > 0) {
+            const csvInput = document.getElementById('csvInput');
+            const checkboxes = document.querySelectorAll('.bdm-checkbox:checked');
+
+            if (!csvInput.files.length) {
+                alert("Please upload a data source.");
+                return;
+            }
+
+            if (checkboxes.length === 0) {
+                alert("Please select at least one BDM.");
+                return;
+            }
+
+            analyzeData();
+        }
+
+        const targetStep = stepCount + delta;
+        if (targetStep < 1 || targetStep > MAX_STEP) return;
+
+        const currentPage = document.getElementById(`page${stepCount}`);
+        const currentNav = document.getElementById(`nav${stepCount}`);
+        if (currentPage) currentPage.classList.remove('active');
+        if (currentNav) currentNav.classList.remove('active');
+
+        stepCount = targetStep;
+
+        const nextPage = document.getElementById(`page${stepCount}`);
+        const nextNav = document.getElementById(`nav${stepCount}`);
+        if (nextPage) nextPage.classList.add('active');
+        if (nextNav) nextNav.classList.add('active');
+
+        const backBtn = document.getElementById('backBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        backBtn.style.visibility = (stepCount === 1) ? 'hidden' : 'visible';
+        nextBtn.style.display = (stepCount === MAX_STEP) ? 'none' : 'inline-flex';
+        document.getElementById('nextBtnText').textContent = stepCount === 1 ? 'Process & Analyze' : 'Next';
+        
+        const filterBar = document.getElementById('filterSummaryBar');
+        if (stepCount === 1) {
+            filterBar.style.display = 'none';
+        } else {
+            filterBar.style.display = 'flex';
+        }
+
+        if (stepCount === 10) {
+            setTimeout(() => {
+                renderTerritoryPage();
+            }, 100);
+        }
+
+        if (stepCount === 11) {
+            setTimeout(() => {
+                renderCompanyTrends(latestExplorerRows || []);
+            }, 50);
+        }
+    }
+
+    // --- LINKEDIN QUALITATIVE DATA & RENDER LOGIC ---
+    const bdmLinkedInData = [
+        {
+            name: 'Anas Alkhawaldah', rank: 4, followers: 663, networkSize: '500+ connections',
+            profileStrength: 'Strong profile aligned with country management and business development',
+            postingActivity: 'Moderate activity primarily through reposts',
+            engagement: 'Good engagement on company announcements',
+            industryRelevance: 'Highly relevant to MEVA products and company updates',
+            utilization: 'Used mainly as a brand amplification channel rather than personal voice',
+            assessment: 'Active but largely reactive presence',
+            finalComment: 'Anas maintains an active and relevant LinkedIn presence, mainly through reposting important company updates and supporting market visibility. His activity helps amplify the brand and keeps his profile current, but it is still largely reactive in nature. At present, LinkedIn is functioning more as a company-support platform for him than as a distinct personal business development tool.',
+            hexColor: '#f59e0b'
+        },
+        {
+            name: 'Cristian T.', rank: 5, followers: 1200, networkSize: '500+ connections',
+            profileStrength: 'Very strong profile; long defense-industry experience, senior leadership roles, broad international reach',
+            postingActivity: 'Low frequency; limited to comments on other people’s posts',
+            engagement: 'Moderate/Low; comments are short and reactive',
+            industryRelevance: 'Highly relevant to government contracting and international defense sales',
+            utilization: 'Static professional identity; no visible original posts or market commentary',
+            assessment: 'High profile authority and audience size, but low actual platform usage',
+            finalComment: 'Cristian has one of the strongest profiles in terms of experience, international defense sales credibility, and follower reach. However, his LinkedIn usage is currently very limited from a visibility perspective, with recent activity consisting mainly of comments rather than original or business-oriented posts. As a result, his profile shows strong authority but weak active utilization as a business development platform.',
+            hexColor: '#ef4444'
+        },
+        {
+            name: 'Lyes Laouar', rank: 3, followers: 839, networkSize: '500+ connections',
+            profileStrength: 'Strong profile with cross-border sales and technical-commercial positioning',
+            postingActivity: 'Moderate recent activity with some direct posts and reposts',
+            engagement: 'Good engagement on company-related content',
+            industryRelevance: 'Highly relevant to armoured vehicles, service support, exhibitions, and export markets',
+            utilization: 'Used mainly for company amplification with occasional personal posting',
+            assessment: 'Active and commercially relevant but still company-content driven',
+            finalComment: 'Lyes maintains an active and relevant LinkedIn presence supported by a strong cross-border commercial profile. He contributes to visibility through a mix of direct posts and company amplification, especially around service support, exhibitions, and technical updates. His profile is commercially aligned, but his presence is still shaped more by company-driven messaging than by a strong personal business development voice.',
+            hexColor: '#8b5cf6'
+        },
+        {
+            name: 'Major Azmi Siddiqui', rank: 6, followers: 1052, networkSize: '500+ connections',
+            profileStrength: 'Strong profile with defence sector credibility',
+            postingActivity: 'Low frequency with limited recent activity',
+            engagement: 'Moderate engagement when posting',
+            industryRelevance: 'Highly relevant to defence cooperation and regional interactions',
+            utilization: 'Used mostly as a professional presence rather than an active BD channel',
+            assessment: 'Strong credibility but weakest recent LinkedIn activity',
+            finalComment: 'Azmi has a strong and credible defense-oriented LinkedIn profile backed by senior experience and relevant industry positioning. His earlier content was aligned with defense cooperation and market relevance, but recent activity is limited. As a result, LinkedIn currently serves more as a professional presence for him than as an active business development or market-visibility tool.',
+            hexColor: '#64748b'
+        },
+        {
+            name: 'Nader Hassan', rank: 1, followers: 1505, networkSize: '500+ connections',
+            profileStrength: 'Very strong profile aligned with defense and aerospace business development',
+            postingActivity: 'Moderate activity with original event posts and company reposts',
+            engagement: 'Good engagement on company-related reposts',
+            industryRelevance: 'Highly relevant to defense exhibitions, vehicles, and market outreach',
+            utilization: 'Used for event visibility and company amplification, with some personal outreach orientation',
+            assessment: 'Strongest active presence among BDMs, though still not fully strategic',
+            finalComment: 'Nader has the strongest overall LinkedIn presence among the BDMs due to his relevant profile positioning, higher follower base, visible recent activity, and commercially aligned posts. He uses the platform effectively for event visibility and company amplification, but there is still room to make his LinkedIn presence more strategic, consistent, and insight-driven.',
+            hexColor: '#3b82f6'
+        },
+        {
+            name: 'Rowan Carpenter', rank: 2, followers: 664, networkSize: '500+ connections',
+            profileStrength: 'Very credible profile with long armoured vehicle sales experience',
+            postingActivity: 'Moderate activity with a balance of personal posts and reposts',
+            engagement: 'Fair engagement on personal posts and stronger engagement on company reposts',
+            industryRelevance: 'Highly relevant to procurement, security events, and armoured vehicle market',
+            utilization: 'Used for networking, event visibility, and company amplification with a clearer personal voice',
+            assessment: 'Credible and externally market-facing presence',
+            finalComment: 'Rowan has one of the most credible and naturally market-facing LinkedIn profiles in the BDM team. His industry background gives him strong authority, and his use of personal event-led posts makes his presence more authentic than many others. However, his activity remains concentrated around exhibitions and industry events, and it has not yet developed into a consistent business development channel.',
+            hexColor: '#10b981'
+        }
+    ];
+
+    function initLinkedInData() {
+        const maxFollowers = Math.max(...bdmLinkedInData.map(b => b.followers));
+        
+        const chartContainer = document.getElementById('linkedin-follower-chart');
+        if (chartContainer) {
+            chartContainer.innerHTML = bdmLinkedInData.map(bdm => `
+                <div class="linkedin-bar-row">
+                    <div class="linkedin-bar-label">${escapeHtml(bdm.name)}</div>
+                    <div class="linkedin-bar-track">
+                        <div class="linkedin-bar-fill" style="width: ${(bdm.followers / maxFollowers) * 100}%; background-color: ${bdm.hexColor};"></div>
+                    </div>
+                    <div class="linkedin-bar-value">${bdm.followers === 1200 ? '1,200*' : bdm.followers.toLocaleString()}</div>
+                </div>
+            `).join('');
+        }
+
+        const profilesContainer = document.getElementById('linkedin-profiles-grid');
+        if (profilesContainer) {
+            profilesContainer.innerHTML = bdmLinkedInData.map((bdm, index) => `
+                <div class="linkedin-accordion" id="linkedin-acc-${index}">
+                    <div class="linkedin-accordion-header" onclick="toggleLinkedInAccordion(${index})">
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <div style="width: 48px; height: 48px; border-radius: 50%; background: ${bdm.hexColor}20; display: flex; align-items: center; justify-content: center; color: ${bdm.hexColor}; font-size: 1.5rem;">
+                                <i class="ph ph-user"></i>
+                            </div>
+                            <div>
+                                <h3 style="margin: 0; font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--text-main); text-transform: none;">${escapeHtml(bdm.name)}</h3>
+                                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 4px;">
+                                    <i class="ph ph-users"></i> ${bdm.networkSize} | ${bdm.followers} followers
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <span style="background: #f1f5f9; padding: 4px 12px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: none; @media(min-width: 600px){ display: inline-block; }">Rank #${bdm.rank}</span>
+                            <i class="ph ph-caret-down acc-icon" id="linkedin-icon-${index}" style="color: var(--text-muted); font-size: 1.2rem;"></i>
+                        </div>
+                    </div>
+                    <div class="linkedin-accordion-body">
+                        <div class="linkedin-metric-grid">
+                            <div>
+                                <div class="linkedin-metric">
+                                    <div class="linkedin-metric-title"><i class="ph ph-medal"></i> Profile Strength</div>
+                                    <div class="linkedin-metric-value">${escapeHtml(bdm.profileStrength)}</div>
+                                </div>
+                                <div class="linkedin-metric">
+                                    <div class="linkedin-metric-title"><i class="ph ph-activity"></i> Posting Activity</div>
+                                    <div class="linkedin-metric-value">${escapeHtml(bdm.postingActivity)}</div>
+                                </div>
+                                <div class="linkedin-metric">
+                                    <div class="linkedin-metric-title"><i class="ph ph-chat-circle-dots"></i> Engagement</div>
+                                    <div class="linkedin-metric-value">${escapeHtml(bdm.engagement)}</div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="linkedin-metric">
+                                    <div class="linkedin-metric-title"><i class="ph ph-briefcase"></i> Industry Relevance</div>
+                                    <div class="linkedin-metric-value">${escapeHtml(bdm.industryRelevance)}</div>
+                                </div>
+                                <div class="linkedin-metric">
+                                    <div class="linkedin-metric-title"><i class="ph ph-chart-bar"></i> LinkedIn Utilization</div>
+                                    <div class="linkedin-metric-value">${escapeHtml(bdm.utilization)}</div>
+                                </div>
+                                <div class="linkedin-metric">
+                                    <div class="linkedin-metric-title"><i class="ph ph-trend-up"></i> Summary Assessment</div>
+                                    <div class="linkedin-metric-value" style="font-weight: 600;">${escapeHtml(bdm.assessment)}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="linkedin-final-eval" style="border-left: 4px solid ${bdm.hexColor}; background: ${bdm.hexColor}0a;">
+                            <h4 style="margin: 0 0 8px 0; font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--text-main);">Final Evaluation</h4>
+                            <p style="margin: 0; font-size: 0.9rem; font-style: italic; color: var(--text-main); line-height: 1.5;">"${escapeHtml(bdm.finalComment)}"</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+
+    function toggleLinkedInAccordion(index) {
+        const acc = document.getElementById(`linkedin-acc-${index}`);
+        const icon = document.getElementById(`linkedin-icon-${index}`);
+        
+        if (acc.classList.contains('expanded')) {
+            acc.classList.remove('expanded');
+            icon.classList.replace('ph-caret-up', 'ph-caret-down');
+        } else {
+            acc.classList.add('expanded');
+            icon.classList.replace('ph-caret-down', 'ph-caret-up');
+        }
+    }
+
+    // --- TERRITORY LOGIC ---
+    const territoryBdmNameMapping = {
+       "Rowan Carpenter": "MR. ROWAN",
+        "Rajiv Gupta": "MR. RAJIV",
+         "Lyes Laouar": "MR. LYES",
+        "Nader Hassan": "MR. NADER",
+        "Azmi Siddiqui": "MR. AZMI",
+        "Cristian Tanasa": "MR. CRISTIAN",
+        "Marcos Nicodemos": "MR. MARCOS",
+      "BDM - Sujitha Nidhi": "SUJITHA",
+      "BDM - Rahul Saxena": "MR. RAHUL"
+    };
+
+    function mapTerritoryManagerName(name) {
+        const raw = String(name || '').trim();
+        if (!raw) return 'OPEN';
+        return territoryBdmNameMapping[raw] || raw.toUpperCase();
+    }
+
+    function normalizeTerritoryCountry(name) {
+        return String(name || '')
+            .trim()
+            .toLowerCase()
+            .replace(/\./g, '')
+            .replace(/\(drc\)/g, 'drc')
+            .replace(/democratic republic of the congo/g, 'dr congo')
+            .replace(/congo the democratic republic of the/g, 'dr congo')
+            .replace(/republic of the congo/g, 'congo')
+            .replace(/cote d'ivoire/g, 'ivory coast')
+            .replace(/papua new guinea/g, 'papua new guinea')
+            .replace(/\s+/g, ' ');
+    }
+
+    function buildTerritoryCountryCoordIndex() {
+        const index = {};
+        if (!window.mapData || !Array.isArray(mapData.countries)) return index;
+
+        mapData.countries.forEach(item => {
+            index[normalizeTerritoryCountry(item.name)] = item.coords;
+        });
+
+        index['united arab emirates'] = index['united arab emirates'] || [23.4241, 53.8478];
+        index['uae'] = index['united arab emirates'];
+        index['ivory coast'] = index['ivory coast'] || [7.5399, -5.5471];
+        index['cote divoire'] = index['ivory coast'];
+        index['dr congo'] = index['dr congo'] || index['congo drc'] || [-4.0383, 21.7587];
+        index['congo drc'] = index['dr congo'];
+        index['cambodia'] = index['cambodia'] || [12.5657, 104.9910];
+        index['rwanda'] = index['rwanda'] || [-1.9403, 29.8739];
+        index['thailand'] = index['thailand'] || [15.8700, 100.9925];
+        index['mali'] = index['mali'] || [17.5707, -3.9962];
+        index['cameroon'] = index['cameroon'] || [7.3697, 12.3547];
+
+        return index;
+    }
+
+    function initTerritoryMap() {
+        if (territoryMap || typeof L === 'undefined') return;
+
+        territoryMap = L.map('territoryMap', {
+            center: [25, 15],
+            zoom: 3,
+            attributionControl: false,
+            zoomControl: true
+        });
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(territoryMap);
+
+        territoryCountryLayer = L.layerGroup().addTo(territoryMap);
+        territoryAgencyLayer = L.layerGroup().addTo(territoryMap);
+        territoryCorporateLayer = L.layerGroup().addTo(territoryMap);
+        territoryOpsLayer = L.layerGroup().addTo(territoryMap);
+    }
+
+    function getTerritoryManagerColors() {
+        if (window.mapData && mapData.managerColors) return mapData.managerColors;
+        return {
+            "MR. RAJIV": "#f43f5e",
+            "MR. NADER": "#10b981",
+            "MR. ROWAN": "#f59e0b",
+            "MR. LYES": "#6366f1",
+            "MR. CRISTIAN": "#708090",
+            "MR. AZMI": "#06b6d4",
+            "MR. MARCOS": "#3b82f6",
+            "SUJITHA": "#ec4899",
+            "MR. RAHUL": "#8b5cf6",
+            "OPEN": "#ef4444"
+        };
+    }
+
+    function rebuildTerritoryOperationsData() {
+        const rows = Array.isArray(latestExplorerRows) ? latestExplorerRows : [];
+        const coordIndex = buildTerritoryCountryCoordIndex();
+
+        territoryOpsData = [];
+        territoryBdmStats = {};
+
+        const grouped = {};
+
+        rows.forEach(row => {
+            const country = String(row.country_name_final || '').trim();
+            if (!country) return;
+
+            const manager = mapTerritoryManagerName(row.bdm_name_final || 'OPEN');
+            const normCountry = normalizeTerritoryCountry(country);
+            const coords = coordIndex[normCountry];
+
+            if (!territoryBdmStats[manager]) {
+                territoryBdmStats[manager] = { leads: 0, opps: 0, proposals: 0, orders: 0 };
+            }
+
+            let leadCount = 1;
+            if (row['lead count'] !== undefined) {
+                if (String(row['lead count']).trim() === '') {
+                    leadCount = 0;
+                } else {
+                    leadCount = toInt(row['lead count'], 0);
+                }
+            }
+
+            if (leadCount > 0) territoryBdmStats[manager].leads += leadCount;
+            if (isOpportunity(row)) territoryBdmStats[manager].opps += 1;
+            if (isProposal(row)) territoryBdmStats[manager].proposals += 1;
+            if (isOrder(row)) territoryBdmStats[manager].orders += 1;
+
+            if (!coords) return;
+
+            const key = manager + '||' + country;
+            if (!grouped[key]) {
+                const latOffset = coords[0] + ((Object.keys(grouped).length % 7) - 3) * 0.18;
+                const lngOffset = coords[1] + ((Object.keys(grouped).length % 5) - 2) * 0.18;
+                grouped[key] = {
+                    name: country,
+                    manager,
+                    coords: [latOffset, lngOffset],
+                    leads: 0,
+                    opps: 0,
+                    proposals: 0,
+                    orders: 0
+                };
+            }
+
+            if (leadCount > 0) grouped[key].leads += leadCount;
+            if (isOpportunity(row)) grouped[key].opps += 1;
+            if (isProposal(row)) grouped[key].proposals += 1;
+            if (isOrder(row)) grouped[key].orders += 1;
+        });
+
+        territoryOpsData = Object.values(grouped);
+    }
+
+    function renderTerritoryManagerFilters() {
+        const wrap = document.getElementById('territoryManagerFilters');
+        if (!wrap) return;
+
+        let managers = [];
+
+        if (territorySourceMode === 'territory' && window.mapData) {
+            const managerSet = new Set();
+            [...(mapData.countries || []), ...(mapData.agencies || []), ...(mapData.corporates || [])]
+                .forEach(item => managerSet.add(item.manager));
+            managers = Array.from(managerSet).sort();
+        } else {
+            managers = Object.keys(territoryBdmStats).sort();
+        }
+
+        wrap.innerHTML = `
+            <button class="pill" onclick="setTerritoryManager('ALL')" style="${territoryActiveManager === 'ALL' ? 'background: var(--primary-color); color: #fff;' : ''}">
+                All Team
+            </button>
+            ${managers.map(name => `
+                <button class="pill" onclick="setTerritoryManager('${String(name).replace(/'/g, "\\'")}')" style="${territoryActiveManager === name ? 'background: var(--primary-color); color: #fff;' : ''}">
+                    ${escapeHtml(String(name).replace(/^MR\. /, ''))}
+                </button>
+            `).join('')}
+        `;
+    }
+
+    function setTerritoryManager(name) {
+        territoryActiveManager = name;
+        renderTerritoryPage();
+    }
+
+    function setTerritorySourceMode(mode) {
+    territorySourceMode = mode;
+
+    document.getElementById('territorySourceJson').classList.toggle('active', mode === 'territory');
+    document.getElementById('territorySourceCsv').classList.toggle('active', mode === 'operations');
+
+    document.getElementById('territoryLayerWrap').style.display = mode === 'territory' ? 'flex' : 'none';
+    document.getElementById('territoryOpsWrap').style.display = mode === 'operations' ? 'flex' : 'none';
+
+    renderTerritoryPage();
+}
+
+    function setTerritoryLayerMode(mode) {
+        territoryLayerMode = mode;
+        document.getElementById('territoryLayerAll').classList.toggle('active', mode === 'all');
+        document.getElementById('territoryLayerCountries').classList.toggle('active', mode === 'countries');
+        document.getElementById('territoryLayerAgencies').classList.toggle('active', mode === 'agencies');
+        document.getElementById('territoryLayerCorporates').classList.toggle('active', mode === 'corporates');
+        renderTerritoryPage();
+    }
+    function setTerritoryOpsMetric(mode) {
+    territoryOpsMetric = mode;
+
+    document.getElementById('territoryOpsAll').classList.toggle('active', mode === 'all');
+    document.getElementById('territoryOpsLeads').classList.toggle('active', mode === 'leads');
+    document.getElementById('territoryOpsOpps').classList.toggle('active', mode === 'opps');
+    document.getElementById('territoryOpsProposals').classList.toggle('active', mode === 'proposals');
+    document.getElementById('territoryOpsOrders').classList.toggle('active', mode === 'orders');
+
+    renderTerritoryPage();
+}
+function getTerritoryOpsMetricValue(item) {
+    if (territoryOpsMetric === 'leads') return item.leads || 0;
+    if (territoryOpsMetric === 'opps') return item.opps || 0;
+    if (territoryOpsMetric === 'proposals') return item.proposals || 0;
+    if (territoryOpsMetric === 'orders') return item.orders || 0;
+
+    return (item.leads || 0) + (item.opps || 0) + (item.proposals || 0) + (item.orders || 0);
+}
+
+    function renderTerritoryLegend() {
+        const el = document.getElementById('territoryLegend');
+        if (!el) return;
+
+        if (territorySourceMode === 'territory') {
+            el.innerHTML = `
+                <span><span class="legend-indicator" style="background:#64748b;"></span>Countries</span>
+                <span><span class="legend-indicator" style="background:#2563eb;"></span>Agencies</span>
+                <span><span class="legend-indicator" style="background:#111827;"></span>Corporates</span>
+            `;
+        } else {
+            const opsLegendLabelMap = {
+    all: 'total activity',
+    leads: 'lead volume',
+    opps: 'opportunity volume',
+    proposals: 'proposal volume',
+    orders: 'order volume'
+};
+
+el.innerHTML = `
+    <span><span class="legend-indicator" style="background:#2563eb;"></span>Operations from filtered CSV</span>
+    <span>Bubble size reflects ${opsLegendLabelMap[territoryOpsMetric]}</span>
+`;
+        }
+    }
+
+    function showTerritoryCrmPanel(manager) {
+        const panel = document.getElementById('territoryCrmPanel');
+        if (!panel) return;
+
+        if (territorySourceMode !== 'operations' || manager === 'ALL' || !territoryBdmStats[manager]) {
+            panel.style.display = 'none';
+            panel.innerHTML = '';
+            return;
+        }
+
+        const stats = territoryBdmStats[manager];
+        const colors = getTerritoryManagerColors();
+        const color = colors[manager] || '#64748b';
+
+        panel.innerHTML = `
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                <span style="width:10px; height:10px; border-radius:50%; background:${color}; display:inline-block;"></span>
+                <strong style="font-size:0.9rem;">${escapeHtml(manager.replace(/^MR\. /, ''))} PIPELINE</strong>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; text-align:center;">
+                <div style="background:#f8fafc; padding:10px; border-radius:8px;">
+                    <div style="font-size:0.65rem; color:#64748b; font-weight:700;">LEADS</div>
+                    <div style="font-weight:800;">${stats.leads}</div>
+                </div>
+                <div style="background:#eff6ff; padding:10px; border-radius:8px;">
+                    <div style="font-size:0.65rem; color:#2563eb; font-weight:700;">OPPS</div>
+                    <div style="font-weight:800; color:#2563eb;">${stats.opps}</div>
+                </div>
+                <div style="background:#fff7ed; padding:10px; border-radius:8px;">
+                    <div style="font-size:0.65rem; color:#f97316; font-weight:700;">PROPS</div>
+                    <div style="font-weight:800; color:#f97316;">${stats.proposals}</div>
+                </div>
+                <div style="background:#f0fdf4; padding:10px; border-radius:8px;">
+                    <div style="font-size:0.65rem; color:#16a34a; font-weight:700;">ORDERS</div>
+                    <div style="font-weight:800; color:#16a34a;">${stats.orders}</div>
+                </div>
+            </div>
+        `;
+        panel.style.display = 'block';
+    }
+
+    function renderTerritoryPage() {
+        initTerritoryMap();
+        if (!territoryMap) return;
+
+        rebuildTerritoryOperationsData();
+        renderTerritoryManagerFilters();
+        renderTerritoryLegend();
+
+        territoryCountryLayer.clearLayers();
+        territoryAgencyLayer.clearLayers();
+        territoryCorporateLayer.clearLayers();
+        territoryOpsLayer.clearLayers();
+
+        const colors = getTerritoryManagerColors();
+
+        if (territorySourceMode === 'territory' && window.mapData) {
+            const managerFilter = item => territoryActiveManager === 'ALL' || item.manager === territoryActiveManager;
+
+            const countries = (mapData.countries || []).filter(managerFilter);
+            const agencies = (mapData.agencies || []).filter(managerFilter);
+            const corporates = (mapData.corporates || []).filter(managerFilter);
+
+            countries.forEach(c => {
+                const color = colors[c.manager] || '#94a3b8';
+                L.circleMarker(c.coords, {
+                    radius: 6,
+                    fillColor: color,
+                    color: '#fff',
+                    weight: 2,
+                    fillOpacity: 0.9
+                }).addTo(territoryCountryLayer).bindPopup(`
+                    <div>
+                        <strong>${escapeHtml(c.name)}</strong><br>
+                        <span style="color:#64748b; font-size:12px;">${escapeHtml(c.manager)}</span>
+                    </div>
+                `);
+            });
+
+            agencies.forEach(a => {
+                const color = colors[a.manager] || '#94a3b8';
+                const icon = L.divIcon({
+                    html: `<div style="width:28px;height:28px;border-radius:8px;background:#fff;border:2px solid ${color};display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,0.08);font-size:14px;">🏛️</div>`,
+                    className: '',
+                    iconSize: [28, 28],
+                    iconAnchor: [14, 28],
+                    popupAnchor: [0, -28]
+                });
+                L.marker(a.coords, { icon }).addTo(territoryAgencyLayer).bindPopup(`
+                    <div>
+                        <strong>${escapeHtml(a.name)}</strong><br>
+                        <span style="color:#64748b; font-size:12px;">${escapeHtml(a.manager)}</span>
+                    </div>
+                `);
+            });
+
+            corporates.forEach(c => {
+                const color = colors[c.manager] || '#94a3b8';
+                const icon = L.divIcon({
+                    html: `<div style="width:28px;height:28px;border-radius:50%;background:#111827;border:2px solid ${color};display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,0.10);font-size:13px;color:#fff;">🏢</div>`,
+                    className: '',
+                    iconSize: [28, 28],
+                    iconAnchor: [14, 14],
+                    popupAnchor: [0, -14]
+                });
+                L.marker(c.coords, { icon }).addTo(territoryCorporateLayer).bindPopup(`
+                    <div>
+                        <strong>${escapeHtml(c.name)}</strong><br>
+                        <span style="color:#64748b; font-size:12px;">${escapeHtml(c.manager)}</span>
+                    </div>
+                `);
+            });
+
+            if (territoryLayerMode === 'all' || territoryLayerMode === 'countries') territoryCountryLayer.addTo(territoryMap);
+            else territoryMap.removeLayer(territoryCountryLayer);
+
+            if (territoryLayerMode === 'all' || territoryLayerMode === 'agencies') territoryAgencyLayer.addTo(territoryMap);
+            else territoryMap.removeLayer(territoryAgencyLayer);
+
+            if (territoryLayerMode === 'all' || territoryLayerMode === 'corporates') territoryCorporateLayer.addTo(territoryMap);
+            else territoryMap.removeLayer(territoryCorporateLayer);
+
+            territoryMap.removeLayer(territoryOpsLayer);
+
+            safeSetText('territoryModeValue', 'Territory');
+            safeSetText('territoryCountryValue', countries.length.toLocaleString());
+            safeSetText('territoryManagerValue', String(territoryActiveManager === 'ALL'
+                ? new Set([...countries, ...agencies, ...corporates].map(x => x.manager)).size
+                : 1));
+            safeSetText('territoryRecordValue', String(countries.length + agencies.length + corporates.length));
+            showTerritoryCrmPanel('ALL');
+        } else {
+            territoryMap.removeLayer(territoryCountryLayer);
+            territoryMap.removeLayer(territoryAgencyLayer);
+            territoryMap.removeLayer(territoryCorporateLayer);
+            territoryOpsLayer.addTo(territoryMap);
+
+            const ops = territoryActiveManager === 'ALL'
+    ? territoryOpsData
+    : territoryOpsData.filter(x => x.manager === territoryActiveManager);
+
+const metricLabelMap = {
+    all: 'Total Activity',
+    leads: 'Leads',
+    opps: 'Opportunities',
+    proposals: 'Proposals',
+    orders: 'Orders'
+};
+
+ops.forEach(c => {
+    const color = colors[c.manager] || '#ef4444';
+    const metricValue = getTerritoryOpsMetricValue(c);
+
+    if (territoryOpsMetric !== 'all' && metricValue <= 0) return;
+
+    const radius = territoryOpsMetric === 'all'
+        ? Math.max(6, Math.min(22, 6 + c.leads))
+        : Math.max(6, Math.min(24, 6 + metricValue * 2));
+
+    const popupHTML = `
+        <div style="min-width:180px;">
+            <div style="font-size:10px; color:#64748b; font-weight:700;">${escapeHtml(c.manager)}</div>
+            <div style="font-size:16px; font-weight:800; margin-bottom:8px;">${escapeHtml(c.name)}</div>
+            <div style="margin-bottom:8px; font-size:12px;">
+                <strong>${metricLabelMap[territoryOpsMetric]}:</strong> ${metricValue}
+            </div>
+            <div style="background:#f8fafc; border-radius:8px; padding:10px; font-size:12px;">
+                <div>Leads: <strong>${c.leads}</strong></div>
+                <div>Opps: <strong style="color:#2563eb;">${c.opps}</strong></div>
+                <div>Props: <strong style="color:#f97316;">${c.proposals}</strong></div>
+                <div>Orders: <strong style="color:#16a34a;">${c.orders}</strong></div>
+            </div>
+        </div>
+    `;
+
+    L.circleMarker(c.coords, {
+        radius,
+        fillColor: color,
+        color: '#fff',
+        weight: 2,
+        fillOpacity: 0.86
+    }).addTo(territoryOpsLayer).bindPopup(popupHTML);
+});
+
+            safeSetText('territoryModeValue', 'Operations');
+            safeSetText('territoryCountryValue', ops.length.toLocaleString());
+            safeSetText('territoryManagerValue', String(territoryActiveManager === 'ALL'
+                ? new Set(territoryOpsData.map(x => x.manager)).size
+                : 1));
+            safeSetText('territoryRecordValue', String(Array.isArray(latestExplorerRows) ? latestExplorerRows.length : 0));
+            showTerritoryCrmPanel(territoryActiveManager);
+        }
+
+        setTimeout(() => {
+            territoryMap.invalidateSize();
+
+            const fg = new L.featureGroup();
+            if (territoryMap.hasLayer(territoryCountryLayer)) territoryCountryLayer.eachLayer(l => fg.addLayer(l));
+            if (territoryMap.hasLayer(territoryAgencyLayer)) territoryAgencyLayer.eachLayer(l => fg.addLayer(l));
+            if (territoryMap.hasLayer(territoryCorporateLayer)) territoryCorporateLayer.eachLayer(l => fg.addLayer(l));
+            if (territoryMap.hasLayer(territoryOpsLayer)) territoryOpsLayer.eachLayer(l => fg.addLayer(l));
+
+            if (fg.getLayers().length > 0) {
+                territoryMap.fitBounds(fg.getBounds(), { padding: [40, 40], maxZoom: 5 });
+            } else {
+                territoryMap.setView([25, 15], 3);
+            }
+        }, 80);
+    }
+
+
+
+    function formatShortDate(dateObj) {
+        if (!(dateObj instanceof Date) || isNaN(dateObj.getTime())) return '-';
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const year = dateObj.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+
+    function getCompanyRecordDate(row) {
+        return parseSafeDate(row.lead_date_gmt)
+            || parseDateFlexible(row.opportunity_date_gmt)
+            || parseDateFlexible(row.proposal_created_at)
+            || parseDateFlexible(row.final_quotation_date)
+            || parseDateFlexible(row.lead_created_at)
+            || null;
+    }
+
+    function buildCompanyTrendGroups(rows) {
+        const countryMap = new Map();
+
+        rows.forEach(row => {
+            const country = (row.country_name_final || 'Unknown').trim() || 'Unknown';
+            const company = safeCompany(row).trim() || 'Unknown';
+
+            const countryKey = country.toLowerCase();
+            const companyKey = company.toLowerCase();
+
+            const recordDate = getCompanyRecordDate(row);
+            const leadCount = Math.max(toInt(row['lead count'], 1), 1);
+
+            if (!countryMap.has(countryKey)) {
+                countryMap.set(countryKey, {
+                    country,
+                    companies: new Map(),
+                    latestDate: null
+                });
+            }
+
+            const countryGroup = countryMap.get(countryKey);
+
+            if (!countryGroup.companies.has(companyKey)) {
+                countryGroup.companies.set(companyKey, {
+                    company,
+                    rows: [],
+                    leads: 0,
+                    opps: 0,
+                    props: 0,
+                    orders: 0,
+                    firstDate: null,
+                    latestDate: null,
+                    bdms: new Set(),
+                    countries: new Set()
+                });
+            }
+
+            const grp = countryGroup.companies.get(companyKey);
+
+            grp.rows.push(row);
+            grp.leads += leadCount;
+            if (isOpportunity(row)) grp.opps += 1;
+            if (isProposal(row)) grp.props += 1;
+            if (isOrder(row)) grp.orders += 1;
+            if (row.bdm_name_final) grp.bdms.add(row.bdm_name_final);
+            if (row.country_name_final) grp.countries.add(row.country_name_final);
+
+            if (recordDate) {
+                if (!grp.firstDate || recordDate < grp.firstDate) grp.firstDate = recordDate;
+                if (!grp.latestDate || recordDate > grp.latestDate) grp.latestDate = recordDate;
+                if (!countryGroup.latestDate || recordDate > countryGroup.latestDate) {
+                    countryGroup.latestDate = recordDate;
+                }
+            }
+        });
+
+        return Array.from(countryMap.values())
+            .map(countryGroup => {
+                countryGroup.companies = Array.from(countryGroup.companies.values())
+                    .map(grp => {
+                        grp.rows.sort((a, b) => {
+                            const da = getCompanyRecordDate(a);
+                            const db = getCompanyRecordDate(b);
+                            return (db ? db.getTime() : 0) - (da ? da.getTime() : 0);
+                        });
+                        grp.touchCount = grp.rows.length;
+                        grp.isRepeated = grp.touchCount > 1;
+                        grp.statusLabel = grp.isRepeated ? 'Nurtured' : 'New';
+                        return grp;
+                    })
+                    .sort((a, b) => {
+                        const aTime = a.latestDate ? a.latestDate.getTime() : 0;
+                        const bTime = b.latestDate ? b.latestDate.getTime() : 0;
+                        if (bTime !== aTime) return bTime - aTime;
+                        return b.touchCount - a.touchCount;
+                    });
+
+                return countryGroup;
+            })
+            .sort((a, b) => {
+                const aTime = a.latestDate ? a.latestDate.getTime() : 0;
+                const bTime = b.latestDate ? b.latestDate.getTime() : 0;
+                return bTime - aTime;
+            });
+    }
+
+    function companyTrendRowMeta(label, value) {
+        return `
+            <div class="company-meta-item">
+                <span class="company-meta-label">${label}</span>
+                <span class="company-meta-value">${escapeHtml(value)}</span>
+            </div>
+        `;
+    }
+
+    function renderCompanyTrends(rows) {
+        const listEl = document.getElementById('companyTrendsList');
+        if (!listEl) return;
+
+        companyTrendGroups = buildCompanyTrendGroups(Array.isArray(rows) ? rows : []);
+
+        const allCompanies = companyTrendGroups.flatMap(countryGrp => countryGrp.companies);
+
+        const uniqueCount = allCompanies.length;
+        const newCount = allCompanies.filter(x => !x.isRepeated).length;
+        const repeatCount = allCompanies.filter(x => x.isRepeated).length;
+        const avgTouches = uniqueCount
+            ? (allCompanies.reduce((sum, x) => sum + x.touchCount, 0) / uniqueCount)
+            : 0;
+
+        safeSetText('companyTrendUniqueCount', uniqueCount.toLocaleString());
+        safeSetText('companyTrendNewCount', newCount.toLocaleString());
+        safeSetText('companyTrendRepeatCount', repeatCount.toLocaleString());
+        safeSetText('companyTrendAvgTouches', uniqueCount ? avgTouches.toFixed(1) : '0');
+
+        if (!companyTrendGroups.length) {
+            listEl.innerHTML = '<div class="company-empty">No companies found in the current filtered report view.</div>';
+            return;
+        }
+
+        listEl.innerHTML = companyTrendGroups.map((countryGrp, countryIndex) => {
+            const companyHtml = countryGrp.companies.map((grp, index) => {
+                const recordCards = grp.rows.map(row => {
+                    const recordDate = getCompanyRecordDate(row);
+                    const stage = getCurrentStage(row);
+                    const proposalNo = firstNonEmpty(row, ['proposal_number', 'proposal_no', 'quotation_number', 'final_quotation_number']);
+                    const oppCode = firstNonEmpty(row, ['opportunity_code']);
+                    const source = row.lead_source_name || '-';
+                    const bdm = row.bdm_name_final || '-';
+                    const country = row.country_name_final || '-';
+                    const contact = firstNonEmpty(row, ['lead_name', 'opp_updated_contact_name', 'opportunity_name']) || '-';
+
+                    return `
+                    <div class="company-record-card">
+                        <div class="company-record-head">
+                            <div>
+                                <div class="company-record-stage">${escapeHtml(stage)}</div>
+                            </div>
+                            <div style="font-size:0.85rem; color: var(--text-muted); font-weight:700;">
+                                ${escapeHtml(formatShortDate(recordDate))}
+                            </div>
+                        </div>
+                        <div class="company-record-grid">
+                            ${companyTrendRowMeta('BDM', bdm)}
+                            ${companyTrendRowMeta('Country', country)}
+                            ${companyTrendRowMeta('Source', source)}
+                            ${companyTrendRowMeta('Opportunity', oppCode || '-')}
+                            ${companyTrendRowMeta('Proposal', proposalNo || '-')}
+                            ${companyTrendRowMeta('Contact', contact)}
+                        </div>
+                    </div>
+                `;
+                }).join('');
+
+                return `
+                <div class="company-accordion ${countryIndex === 0 && index === 0 ? 'open' : ''}"
+                     data-company-name="${escapeHtml(grp.company).toLowerCase()}"
+                     data-country-name="${escapeHtml(countryGrp.country).toLowerCase()}">
+                    <button type="button" class="company-accordion-header" onclick="toggleCompanyAccordion(this)">
+                        <div class="company-accordion-main">
+                            <div class="company-accordion-title">
+                                <strong>${escapeHtml(grp.company)}</strong>
+                                <div class="company-badges">
+                                    <span class="company-badge ${grp.isRepeated ? 'nurtured' : 'new'}">${grp.statusLabel}</span>
+                                    <span class="company-badge repeat">${grp.touchCount} touch${grp.touchCount === 1 ? '' : 'es'}</span>
+                                </div>
+                            </div>
+                            <div class="company-accordion-meta">
+                                ${companyTrendRowMeta('First Seen', formatShortDate(grp.firstDate))}
+                                ${companyTrendRowMeta('Latest Activity', formatShortDate(grp.latestDate))}
+                                ${companyTrendRowMeta('Leads', String(grp.leads))}
+                                ${companyTrendRowMeta('Opps', String(grp.opps))}
+                                ${companyTrendRowMeta('Proposals', String(grp.props))}
+                                ${companyTrendRowMeta('Orders', String(grp.orders))}
+                            </div>
+                        </div>
+                        <div class="company-accordion-toggle"><i class="ph ph-caret-down"></i></div>
+                    </button>
+                    <div class="company-accordion-body">
+                        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom: 14px; color: var(--text-muted); font-size: 0.88rem; font-weight:600;">
+                            <span><strong style="color:var(--text-main);">BDMs:</strong> ${escapeHtml(Array.from(grp.bdms).join(', ') || '-')}</span>
+                            <span><strong style="color:var(--text-main);">Countries:</strong> ${escapeHtml(Array.from(grp.countries).join(', ') || '-')}</span>
+                        </div>
+                        <div class="company-records">${recordCards}</div>
+                    </div>
+                </div>
+            `;
+            }).join('');
+
+            return `
+            <div class="country-accordion ${countryIndex === 0 ? 'open' : ''}" data-country-name="${escapeHtml(countryGrp.country).toLowerCase()}">
+                <button type="button" class="company-accordion-header" onclick="toggleCountryAccordion(this)">
+                    <div class="company-accordion-main">
+                        <div class="company-accordion-title">
+                            <strong>${escapeHtml(countryGrp.country)}</strong>
+                            <div class="company-badges">
+                                <span class="company-badge repeat">${countryGrp.companies.length} compan${countryGrp.companies.length === 1 ? 'y' : 'ies'}</span>
+                            </div>
+                        </div>
+                        <div class="company-accordion-meta">
+                            ${companyTrendRowMeta('Latest Activity', formatShortDate(countryGrp.latestDate))}
+                        </div>
+                    </div>
+                    <div class="company-accordion-toggle"><i class="ph ph-caret-down"></i></div>
+                </button>
+                <div class="company-accordion-body">
+                    <div class="company-records">${companyHtml}</div>
+                </div>
+            </div>
+        `;
+        }).join('');
+
+        filterCompanyTrendAccordions();
+    }
+
+    function toggleCountryAccordion(btn) {
+        const accordion = btn.closest('.country-accordion');
+        if (!accordion) return;
+        accordion.classList.toggle('open');
+    }
+
+    function toggleCompanyAccordion(btn) {
+        const accordion = btn.closest('.company-accordion');
+        if (!accordion) return;
+        accordion.classList.toggle('open');
+    }
+
+    function filterCompanyTrendAccordions() {
+        const input = document.getElementById('companyTrendSearch');
+        const query = input ? input.value.trim().toLowerCase() : '';
+
+        document.querySelectorAll('#companyTrendsList .country-accordion').forEach(countryEl => {
+            const countryName = countryEl.getAttribute('data-country-name') || '';
+            let hasVisibleCompany = false;
+
+            countryEl.querySelectorAll('.company-accordion').forEach(companyEl => {
+                const companyName = companyEl.getAttribute('data-company-name') || '';
+                const match = !query || companyName.includes(query) || countryName.includes(query);
+                companyEl.style.display = match ? '' : 'none';
+                if (match) hasVisibleCompany = true;
+            });
+
+            countryEl.style.display = hasVisibleCompany ? '' : 'none';
+        });
+    }
+
+    // Initialize the static LinkedIn page data immediately on load
+    initLinkedInData();
+    initLinkedInGroups();
+</script>
+-e 
+</body>
+</html>
