@@ -381,7 +381,106 @@
         .outline-meta-item.self::before { background: var(--linkedin-blue); }
         .outline-meta-item.other::before { background: #94A3B8; }
 
-        .outline-meta-item strong {
+        
+        .followup-meta-clickable {
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.15s ease, opacity 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+            border: 1px solid transparent;
+            border-radius: 999px;
+            padding: 4px 8px;
+            margin: -4px 0;
+        }
+        .followup-meta-clickable:hover {
+            background: rgba(15, 23, 42, 0.04);
+        }
+        .followup-meta-clickable.active {
+            background: rgba(15, 23, 42, 0.06);
+            border-color: var(--border-color);
+        }
+        .followup-source-drill {
+            margin-top: 14px;
+            padding: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            background: #fff;
+            display: none;
+        }
+        .followup-source-drill.show {
+            display: block;
+        }
+        .followup-source-drill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .followup-source-drill-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .followup-source-drill-sub {
+            font-size: 0.82rem;
+            color: var(--muted);
+        }
+        .followup-source-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .followup-source-stat {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px;
+            background: var(--panel-soft);
+        }
+        .followup-source-stat .k {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.82rem;
+            color: var(--muted);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        .followup-source-stat .k::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #94A3B8;
+            flex: 0 0 auto;
+        }
+        .followup-source-stat.comp .k::before { background: var(--accent); }
+        .followup-source-stat.self .k::before { background: var(--linkedin-blue); }
+        .followup-source-stat.other .k::before { background: #94A3B8; }
+        .followup-source-stat .v {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+        .followup-source-actions {
+            margin-top: 10px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .followup-source-open {
+            background: none;
+            border: none;
+            color: var(--info);
+            font-weight: 700;
+            cursor: pointer;
+            padding: 0;
+            font-size: 0.88rem;
+        }
+        .followup-source-open:hover {
+            text-decoration: underline;
+        }
+
+.outline-meta-item strong {
             font-weight: 600;
             color: var(--charcoal);
             font-variant-numeric: tabular-nums;
@@ -586,152 +685,183 @@
         .linkedin-final-eval { margin-top: 20px; padding: 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-alt); }
 
         /* ═══ COMPANY TRENDS ═══ */
-        .company-trends-list { flex: 1; overflow-y: auto; padding-right: 4px; }
-        .company-trend-search { width: 300px; max-width: 100%; height: 38px; border: 1px solid var(--border); border-radius: 8px; padding: 0 12px; font-size: 0.85rem; font-family: var(--font-sans); color: var(--charcoal); background: var(--surface); box-shadow: var(--shadow-sm); transition: border-color 0.2s; }
+        .company-trends-list { 
+            flex: 1; 
+            min-height: 0; 
+            overflow: hidden; 
+            border: 1px solid var(--border); 
+            border-radius: 18px; 
+            background: var(--surface); 
+            box-shadow: var(--shadow-md); 
+            position: relative;
+        }
+        .company-trend-search { width: 320px; max-width: 100%; height: 40px; border: 1px solid var(--border); border-radius: 10px; padding: 0 14px; font-size: 0.85rem; font-family: var(--font-sans); color: var(--charcoal); background: var(--surface); transition: border-color 0.2s; }
         .company-trend-search:focus { outline: none; border-color: var(--info); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
 
-        .country-accordion, .company-accordion { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); margin-bottom: 8px; flex-shrink: 0; box-shadow: var(--shadow-sm); }
-        .company-accordion-header { width: 100%; border: none; background: transparent; padding: 12px 16px; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; text-align: left; cursor: pointer; font-family: var(--font-sans); }
-        .country-accordion > .company-accordion-header { background: var(--surface-alt); border-bottom: 1px solid var(--border-light); border-radius: var(--radius) var(--radius) 0 0; }
-        
-        .company-accordion-title { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
-        .company-accordion-title strong { font-size: 0.85rem; font-weight: 600; color: var(--charcoal); }
-        .company-badges { display: flex; gap: 6px; flex-wrap: wrap; }
-        .company-badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; border: 1px solid var(--border); background: var(--surface-alt); color: var(--slate); }
-        .company-badge.new { background: #ECFDF5; color: #059669; border-color: #A7F3D0; }
-        .company-badge.nurtured { background: #FFF7ED; color: #C2410C; border-color: #FED7AA; }
-        .company-badge.repeat { background: #EFF6FF; color: #1D4ED8; border-color: #BFDBFE; }
-        
-        .company-accordion-meta { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
-        .company-meta-item { min-width: 0; background: var(--surface-alt); border: 1px solid var(--border-light); border-radius: 6px; padding: 8px 10px; }
-        .company-meta-label { display: block; font-size: 0.65rem; font-weight: 600; color: var(--muted); margin-bottom: 2px; }
-        .company-meta-value { display: block; font-size: 0.8rem; font-weight: 500; color: var(--charcoal); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        
-        .company-accordion-toggle { flex-shrink: 0; width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: var(--slate); background: var(--surface); transition: transform 0.2s ease; }
-        .company-accordion.open > .company-accordion-header .company-accordion-toggle,
-        .country-accordion.open > .company-accordion-header .company-accordion-toggle { transform: rotate(180deg); }
-        
-        .company-accordion-body { display: none; border-top: 1px solid var(--border-light); background: var(--surface); padding: 12px 16px 16px; border-radius: 0 0 var(--radius) var(--radius); }
-        .company-accordion.open > .company-accordion-body,
-        .country-accordion.open > .company-accordion-body { display: block; }
-        
-        .company-records { display: grid; gap: 8px; }
-        .company-record-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; box-shadow: var(--shadow-sm); }
-        .company-record-head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
-        .company-record-stage { display: inline-flex; padding: 4px 10px; border-radius: 4px; background: var(--surface-alt); color: var(--slate); font-size: 0.7rem; font-weight: 600; text-transform: uppercase; border: 1px solid var(--border); }
-        .company-record-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
-        .company-empty { border: 1px dashed #D4D4D8; border-radius: var(--radius); padding: 32px; text-align: center; color: var(--muted); background: var(--surface-alt); }
-        
-        .company-toolbar { margin-bottom: 16px; display: flex; justify-content: flex-end; align-items: center; gap: 16px; flex-wrap: wrap; }
+        .company-toolbar { margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; }
+        .company-toolbar-main { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
         .company-toolbar-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-        
         .company-filter-chipbar { display: inline-flex; align-items: center; gap: 4px; padding: 4px; border: 1px solid var(--border); background: var(--surface); border-radius: 999px; box-shadow: var(--shadow-sm); }
-        .company-filter-chip { border: 0; background: transparent; color: var(--muted); border-radius: 999px; padding: 8px 16px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
-        .company-filter-chip.active { background: #F1F5F9; color: var(--navy); box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        
-        .company-portfolio-strip { margin-bottom: 16px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); padding: 20px; box-shadow: var(--shadow-md); }
-        .company-portfolio-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-        .company-portfolio-title { font-size: 1rem; font-weight: 700; color: var(--charcoal); }
-        .company-portfolio-sub { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
-        .company-portfolio-bar { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-        .company-portfolio-segment { min-height: 64px; border-radius: 12px; padding: 12px 16px; color: #fff; display: flex; flex-direction: column; justify-content: space-between; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15); }
-        .company-portfolio-segment .k { font-size: 0.75rem; font-weight: 600; opacity: 0.9; }
-        .company-portfolio-segment .v { font-size: 1.25rem; font-weight: 700; line-height: 1; font-family: var(--font-numbers); }
-        .company-portfolio-segment .p { font-size: 0.8rem; font-weight: 500; opacity: 0.9; }
-        
-        .company-node-explorer { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(260px, 0.9fr) minmax(340px, 1.2fr) minmax(400px, 1.5fr); gap: 16px; }
-        .company-node-panel { min-height: 0; display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); overflow: hidden; box-shadow: var(--shadow-md); }
-        .company-node-panel-header { padding: 16px 20px; border-bottom: 1px solid var(--border); background: #F8FAFC; }
-        .company-node-panel-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
-        .company-node-panel-title strong { font-size: 0.9rem; color: var(--charcoal); }
-        .company-node-panel-sub { font-size: 0.8rem; color: var(--muted); line-height: 1.4; }
-        .company-node-list { flex: 1; min-height: 0; overflow-y: auto; padding: 16px; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 12px; background: var(--body-bg); }
-        .company-country-list { flex-direction: column; flex-wrap: nowrap; align-content: stretch; gap: 10px; padding: 16px; }
-        
-        .company-node { position: relative; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); padding: 16px; min-width: 120px; cursor: pointer; transition: all 0.2s ease; box-shadow: var(--shadow-sm); text-align: left; }
-        .company-node:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: #CBD5E1; }
-        .company-node.active { border-color: var(--info); background: #F0F9FF; box-shadow: 0 0 0 1px var(--info), var(--shadow-sm); }
-        .company-node::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 4px; border-radius: 12px 0 0 12px; background: #CBD5E1; }
-        
-        .company-node.country-node { min-width: 150px; }
-        .company-node.company-node-item { min-width: 240px; flex: 1 1 240px; min-height: 180px; display: flex; flex-direction: column; }
-        
-        .company-country-item { width: 100%; min-width: 0; border-radius: 12px; padding: 12px 16px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; }
-        .company-country-item:hover { transform: none; box-shadow: var(--shadow-sm); border-color: #CBD5E1; }
-        
-        .company-country-rank { width: 28px; height: 28px; border-radius: 50%; background: var(--body-bg); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: var(--slate); }
-        .company-country-main { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
-        .company-country-topline { display: flex; align-items: center; gap: 10px; min-width: 0; }
-        .company-country-name { min-width: 0; flex: 1; font-size: 0.9rem; font-weight: 600; color: var(--charcoal); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .company-country-meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.75rem; color: var(--muted); }
-        .company-country-meta span { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px; background: var(--body-bg); border: 1px solid var(--border); font-weight: 500; }
-        .company-country-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; height: 6px; }
-        .company-country-bar span, .company-node-bar span, .company-stage-progress span { border-radius: 999px; min-width: 0; }
-        .company-country-date { font-size: 0.75rem; color: var(--muted); font-weight: 500; white-space: nowrap; text-align: right; }
-        
-        .company-node.node-tone-new::before { background: #94A3B8; }
-        .company-node.node-tone-nurtured::before { background: #3B82F6; }
-        .company-node.node-tone-proposal::before { background: #F59E0B; }
-        .company-node.node-tone-order::before { background: #10B981; }
-        
-        .company-node-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
-        .company-node-header { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
-        .company-node-name { font-size: 0.95rem; font-weight: 600; color: var(--charcoal); line-height: 1.3; }
-        .company-node-micro { font-size: 0.75rem; color: var(--muted); font-weight: 500; }
-        .company-node-metric { text-align: right; display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
-        .company-node-metric .v { font-size: 1.2rem; font-weight: 700; color: var(--charcoal); line-height: 1; font-family: var(--font-numbers); }
-        .company-node-metric .k { font-size: 0.7rem; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.02em; }
-        
-        .company-node-statusline { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
-        .company-node-bar { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; height: 8px; margin-bottom: 12px; }
-        .company-node-kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
-        .company-node-kpi { border: 1px solid var(--border-light); border-radius: 8px; background: #F8FAFC; padding: 10px; }
-        .company-node-kpi .k { display: block; font-size: 0.7rem; color: var(--muted); font-weight: 500; margin-bottom: 4px; }
-        .company-node-kpi .v { display: block; font-size: 0.9rem; color: var(--charcoal); font-weight: 600; }
-        .company-node-summary { margin-top: auto; font-size: 0.8rem; color: var(--muted); line-height: 1.4; padding-top: 8px; border-top: 1px dashed var(--border); }
-        
-        .company-detail-wrap { flex: 1; min-height: 0; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; background: var(--body-bg); }
-        .company-detail-hero { border: 1px solid var(--border); border-radius: 16px; padding: 24px; background: var(--surface); box-shadow: var(--shadow-sm); }
-        .company-detail-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
-        .company-detail-title { font-size: 1.25rem; font-weight: 700; color: var(--charcoal); line-height: 1.2; letter-spacing: -0.01em; }
-        .company-detail-subtitle { font-size: 0.85rem; color: var(--muted); margin-top: 6px; }
-        .company-detail-badges { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
-        
-        .company-detail-story { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 16px; margin-bottom: 20px; }
-        .company-detail-summary { font-size: 0.9rem; line-height: 1.6; color: var(--slate); padding: 16px; border: 1px solid var(--border-light); border-radius: 12px; background: #F8FAFC; }
-        .company-detail-current { padding: 16px; border-radius: 12px; background: #F0F9FF; border: 1px solid #BAE6FD; }
-        .company-detail-current .k { display: block; font-size: 0.75rem; color: var(--info); font-weight: 600; margin-bottom: 6px; }
-        .company-detail-current .v { display: block; font-size: 1.1rem; color: #0369A1; font-weight: 700; }
-        
-        .company-detail-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-        .company-detail-metric { border: 1px solid var(--border); border-radius: 12px; background: var(--surface); padding: 12px; box-shadow: var(--shadow-sm); }
-        .company-detail-metric .k { display: block; font-size: 0.75rem; font-weight: 500; color: var(--muted); margin-bottom: 6px; }
-        .company-detail-metric .v { display: block; font-size: 1.25rem; font-weight: 700; color: var(--charcoal); font-family: var(--font-numbers); }
-        
-        .company-stage-progress { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; height: 8px; margin-bottom: 12px; }
-        .company-stage-rail { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-        .company-stage-chip { border: 1px dashed var(--border); border-radius: 8px; padding: 10px; font-size: 0.8rem; font-weight: 600; color: var(--muted); text-align: center; background: var(--surface-alt); }
-        .company-stage-chip.active { border-style: solid; border-color: #BAE6FD; color: #0369A1; background: #F0F9FF; }
-        
-        .company-detail-section { border: 1px solid var(--border); border-radius: 16px; background: var(--surface); padding: 20px; box-shadow: var(--shadow-sm); }
-        .company-detail-section-title { font-size: 0.9rem; font-weight: 700; color: var(--charcoal); margin-bottom: 16px; letter-spacing: -0.01em; }
-        .company-detail-inline { display: flex; flex-wrap: wrap; gap: 10px; }
-        .company-detail-pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: var(--surface-alt); color: var(--slate); font-size: 0.8rem; font-weight: 600; border: 1px solid var(--border); }
-        .company-node-empty { padding: 24px; color: var(--muted); font-size: 0.9rem; font-weight: 500; text-align: center; }
-        .final-note { background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+        .company-filter-chip { border: 0; background: transparent; color: var(--muted); border-radius: 999px; padding: 8px 14px; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; }
+        .company-filter-chip.active { background: var(--navy); color: #fff; box-shadow: var(--shadow-sm); }
+
+        .company-kpi-strip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
+        .company-kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; box-shadow: var(--shadow-sm); }
+        .company-kpi-card .k { display:block; font-size:0.74rem; color:var(--muted); font-weight:600; margin-bottom:6px; }
+        .company-kpi-card .v { display:block; font-size:1.35rem; color:var(--charcoal); font-weight:700; font-family:var(--font-numbers); line-height:1; }
+
+        .company-node-explorer {
+            display: flex;
+            height: 100%;
+            min-height: 0;
+            position: relative;
+            overflow: hidden;
+            background: var(--surface);
+            border-radius: 18px;
+        }
+        .company-sidebar-panel {
+            width: 260px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            border-right: 1px solid var(--border);
+            background: #FCFCFD;
+        }
+        .company-grid-panel {
+            flex: 1;
+            min-width: 0;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            transition: margin-right 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s ease, opacity 0.25s ease;
+        }
+        .company-node-explorer.drawer-open .company-grid-panel {
+            margin-right: 420px;
+            transform: scale(0.992);
+            opacity: 0.94;
+        }
+        .company-panel-head { padding: 16px 18px; border-bottom: 1px solid var(--border); background: var(--surface); }
+        .company-panel-title-row { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:6px; }
+        .company-panel-title-row strong { font-size:0.92rem; color:var(--charcoal); }
+        .company-panel-sub { font-size:0.78rem; line-height:1.45; color:var(--muted); }
+        .company-node-list { flex:1; min-height:0; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px; }
+        .company-grid-scroll { flex:1; min-height:0; overflow-y:auto; padding:16px; }
+        .company-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:14px; align-content:flex-start; }
+
+        .company-badge { display:inline-flex; align-items:center; padding:3px 9px; border-radius:999px; font-size:0.7rem; font-weight:700; border:1px solid var(--border); background:var(--surface-alt); color:var(--slate); }
+        .company-badge.new { background:#ECFDF5; color:#059669; border-color:#A7F3D0; }
+        .company-badge.nurtured { background:#EFF6FF; color:#1D4ED8; border-color:#BFDBFE; }
+        .company-badge.proposal { background:#FFF7ED; color:#C2410C; border-color:#FED7AA; }
+        .company-badge.order { background:#ECFDF5; color:#047857; border-color:#A7F3D0; }
+        .company-badge.repeat { background:var(--surface-alt); color:var(--slate); }
+
+        .company-node { position:relative; border:1px solid var(--border); border-radius:14px; background:var(--surface); text-align:left; transition:all 0.2s ease; }
+        .company-node:hover { border-color:#CBD5E1; box-shadow:var(--shadow-md); }
+        .company-node.active { border-color: var(--info); background:#F0F9FF; box-shadow:0 0 0 1px var(--info); }
+        .company-node::before { content:''; position:absolute; inset:0 auto 0 0; width:4px; border-radius:14px 0 0 14px; background:#CBD5E1; }
+        .company-node.node-tone-new::before { background:#94A3B8; }
+        .company-node.node-tone-nurtured::before { background:#3B82F6; }
+        .company-node.node-tone-proposal::before { background:#F59E0B; }
+        .company-node.node-tone-order::before { background:#10B981; }
+
+        .company-country-item { width:100%; min-width:0; display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; padding:12px 14px; cursor:pointer; }
+        .company-country-rank { width:28px; height:28px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; background:var(--body-bg); border:1px solid var(--border); color:var(--slate); font-size:0.74rem; font-weight:700; }
+        .company-country-main { min-width:0; display:flex; flex-direction:column; gap:8px; }
+        .company-country-topline { display:flex; align-items:center; gap:8px; min-width:0; }
+        .company-country-name { min-width:0; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:0.88rem; font-weight:700; color:var(--charcoal); }
+        .company-country-meta { display:flex; flex-wrap:wrap; gap:8px; font-size:0.73rem; color:var(--muted); }
+        .company-country-meta span { display:inline-flex; align-items:center; padding:2px 8px; border-radius:999px; background:var(--body-bg); border:1px solid var(--border); }
+        .company-country-bar, .company-node-bar, .company-stage-progress { display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap:4px; }
+        .company-country-bar { height:6px; }
+        .company-country-bar span, .company-node-bar span, .company-stage-progress span { border-radius:999px; min-width:0; }
+        .company-country-date { font-size:0.72rem; color:var(--muted); font-weight:600; white-space:nowrap; }
+
+        .company-node-item { min-height: 176px; padding: 16px; cursor:pointer; display:flex; flex-direction:column; }
+        .company-node-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:12px; }
+        .company-node-header { min-width:0; display:flex; flex-direction:column; gap:6px; }
+        .company-node-name { font-size:0.94rem; font-weight:700; color:var(--charcoal); line-height:1.3; }
+        .company-node-micro { font-size:0.74rem; color:var(--muted); font-weight:500; }
+        .company-node-metric { text-align:right; display:flex; flex-direction:column; gap:4px; align-items:flex-end; }
+        .company-node-metric .v { font-size:1.16rem; font-weight:700; color:var(--charcoal); line-height:1; font-family:var(--font-numbers); }
+        .company-node-metric .k { font-size:0.68rem; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:0.02em; }
+        .company-node-statusline { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
+        .company-node-bar { height:8px; margin-bottom:12px; }
+        .company-node-kpis { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:8px; margin-bottom:12px; }
+        .company-node-kpi { border:1px solid var(--border-light); border-radius:10px; background:#F8FAFC; padding:10px; }
+        .company-node-kpi .k { display:block; font-size:0.68rem; color:var(--muted); font-weight:600; margin-bottom:4px; }
+        .company-node-kpi .v { display:block; font-size:0.9rem; color:var(--charcoal); font-weight:700; }
+        .company-node-summary { margin-top:auto; font-size:0.78rem; color:var(--muted); line-height:1.4; padding-top:8px; border-top:1px dashed var(--border); }
+        .company-node-empty, .company-empty { padding:28px; color:var(--muted); font-size:0.9rem; font-weight:500; text-align:center; }
+
+        .company-detail-drawer {
+            position: absolute;
+            top: 0;
+            right: -440px;
+            width: 420px;
+            max-width: 92vw;
+            height: 100%;
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            box-shadow: -8px 0 24px rgba(0, 0, 0, 0.08), -1px 0 4px rgba(0, 0, 0, 0.04);
+            transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 30;
+            display: flex;
+            flex-direction: column;
+        }
+        .company-detail-drawer.is-open { right: 0; }
+        .company-drawer-backdrop {
+            position:absolute; inset:0 420px 0 260px; background:rgba(15,23,42,0.08); opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:20;
+        }
+        .company-node-explorer.drawer-open .company-drawer-backdrop { opacity:1; pointer-events:auto; }
+        .company-drawer-header { position:sticky; top:0; z-index:2; padding:18px 18px 16px; border-bottom:1px solid var(--border); background:rgba(255,255,255,0.96); backdrop-filter: blur(10px); }
+        .company-drawer-topline { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:12px; }
+        .company-drawer-title { font-size:1.12rem; font-weight:700; color:var(--charcoal); line-height:1.2; }
+        .company-drawer-subtitle { font-size:0.8rem; color:var(--muted); margin-top:6px; }
+        .company-drawer-close { width:34px; height:34px; border-radius:10px; border:1px solid var(--border); background:var(--surface); color:var(--slate); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; font-size:1rem; }
+        .company-drawer-close:hover { background:var(--surface-alt); color:var(--charcoal); }
+        .company-detail-wrap { flex:1; min-height:0; overflow-y:auto; padding:16px 18px 20px; display:flex; flex-direction:column; gap:14px; background:var(--body-bg); }
+        .company-detail-hero, .company-detail-section { border:1px solid var(--border); border-radius:16px; background:var(--surface); box-shadow:var(--shadow-sm); }
+        .company-detail-hero { padding:18px; }
+        .company-detail-summary { font-size:0.88rem; line-height:1.55; color:var(--slate); padding:14px; border:1px solid var(--border-light); border-radius:12px; background:#F8FAFC; }
+        .company-detail-current { padding:14px; border-radius:12px; background:#F0F9FF; border:1px solid #BAE6FD; }
+        .company-detail-current .k { display:block; font-size:0.73rem; color:var(--info); font-weight:700; margin-bottom:6px; }
+        .company-detail-current .v { display:block; font-size:1rem; color:#0369A1; font-weight:700; }
+        .company-detail-story { display:grid; grid-template-columns: 1fr; gap:12px; margin-bottom:16px; }
+        .company-detail-metrics { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:10px; }
+        .company-detail-metric { border:1px solid var(--border); border-radius:12px; background:var(--surface); padding:12px; }
+        .company-detail-metric .k { display:block; font-size:0.72rem; font-weight:600; color:var(--muted); margin-bottom:6px; }
+        .company-detail-metric .v { display:block; font-size:1.1rem; font-weight:700; color:var(--charcoal); font-family:var(--font-numbers); }
+        .company-detail-section { padding:16px; }
+        .company-detail-section-title { font-size:0.88rem; font-weight:700; color:var(--charcoal); margin-bottom:14px; }
+        .company-stage-progress { height:8px; margin-bottom:12px; }
+        .company-stage-rail { display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap:8px; }
+        .company-stage-chip { border:1px dashed var(--border); border-radius:10px; padding:9px; font-size:0.76rem; font-weight:700; color:var(--muted); text-align:center; background:var(--surface-alt); }
+        .company-stage-chip.active { border-style:solid; border-color:#BAE6FD; color:#0369A1; background:#F0F9FF; }
+        .company-records { display:flex; flex-direction:column; gap:12px; }
+        .company-record-card { position:relative; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px 14px 14px 18px; box-shadow:var(--shadow-sm); }
+        .company-record-card::before { content:''; position:absolute; left:0; top:12px; bottom:12px; width:4px; border-radius:999px; background:#CBD5E1; }
+        .company-record-card.stage-lead::before { background:#94A3B8; }
+        .company-record-card.stage-opportunity::before { background:#3B82F6; }
+        .company-record-card.stage-proposal::before { background:#F59E0B; }
+        .company-record-card.stage-order::before { background:#10B981; }
+        .company-record-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; margin-bottom:10px; }
+        .company-record-stage { display:inline-flex; padding:4px 10px; border-radius:999px; background:var(--surface-alt); color:var(--slate); font-size:0.7rem; font-weight:700; text-transform:uppercase; border:1px solid var(--border); }
+        .company-record-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:8px; }
+        .company-meta-item { min-width:0; background:var(--surface-alt); border:1px solid var(--border-light); border-radius:10px; padding:9px 10px; }
+        .company-meta-label { display:block; font-size:0.64rem; font-weight:700; color:var(--muted); margin-bottom:3px; text-transform:uppercase; letter-spacing:0.02em; }
+        .company-meta-value { display:block; font-size:0.79rem; font-weight:600; color:var(--charcoal); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
         /* ═══ RESPONSIVE ═══ */
         @media (max-width: 1280px) {
-            .company-portfolio-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .company-node-explorer { grid-template-columns: 1fr 1fr; }
-            .company-node-panel.detail-panel { grid-column: 1 / -1; }
+            .company-kpi-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .company-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
         }
         @media (max-width: 1100px) {
             .split-2 { grid-template-columns: 1fr; }
-            .company-accordion-meta, .company-record-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .company-detail-story { grid-template-columns: 1fr; }
-            .company-detail-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .company-stage-rail { grid-template-columns: repeat(2, 1fr); }
+            .company-kpi-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .company-sidebar-panel { width: 220px; }
+            .company-drawer-backdrop { inset:0 420px 0 220px; }
         }
         @media (max-width: 900px) {
             .content-area { padding: 16px 20px; }
@@ -740,14 +870,22 @@
             .conversion-strip { grid-template-columns: 1fr; }
             .nav-bar { padding: 0 16px; }
             .footer-actions { padding: 0 20px; }
-            .company-toolbar-controls { width: 100%; }
+            .company-toolbar { align-items: stretch; }
+            .company-toolbar-main, .company-toolbar-controls { width: 100%; }
             .company-filter-chipbar { width: 100%; justify-content: flex-start; overflow-x: auto; }
-            .company-portfolio-bar, .company-node-explorer { grid-template-columns: 1fr; }
-            .company-node-panel.detail-panel { grid-column: auto; }
+            .company-kpi-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .company-drawer-backdrop { display:none; }
+            .company-node-explorer.drawer-open .company-grid-panel { margin-right: 0; transform:none; opacity:1; }
+            .company-sidebar-panel { width: 200px; }
+            .company-detail-drawer { width: min(92vw, 380px); }
         }
         @media (max-width: 700px) {
-            .company-accordion-meta, .company-record-grid { grid-template-columns: 1fr; }
+            .company-kpi-strip, .company-detail-metrics, .company-stage-rail, .company-record-grid { grid-template-columns: 1fr; }
             .linkedin-metric-grid { grid-template-columns: 1fr; }
+            .company-node-explorer { display:block; }
+            .company-sidebar-panel { display:none; }
+            .company-grid-panel { min-height:100%; }
+            .company-detail-drawer { width: 100%; max-width: 100%; right: -100%; }
         }
         
         .conversion-meta {
@@ -1005,10 +1143,10 @@
                         <div class="outline-header"><i class="ph ph-check-circle"></i> Has Follow-Up</div>
                         <div class="outline-total" id="fyFuLoggedTotal">0</div>
                         <div class="outline-meta">
-                            <span class="outline-meta-item healthy">Recent <strong id="fyFuLoggedFresh">0</strong></span>
-                            <span class="outline-meta-item overdue">Overdue <strong id="fyFuLoggedOverdue">0</strong></span>
-                            <span class="outline-meta-item critical">Critical <strong id="fyFuLoggedCritical">0</strong></span>
-                            <span class="outline-meta-item dead">Dead <strong id="fyFuLoggedDead">0</strong></span>
+                            <span class="outline-meta-item healthy followup-meta-clickable" id="fyFuMetaLoggedFresh">Recent <strong id="fyFuLoggedFresh">0</strong></span>
+                            <span class="outline-meta-item overdue followup-meta-clickable" id="fyFuMetaLoggedOverdue">Overdue <strong id="fyFuLoggedOverdue">0</strong></span>
+                            <span class="outline-meta-item critical followup-meta-clickable" id="fyFuMetaLoggedCritical">Critical <strong id="fyFuLoggedCritical">0</strong></span>
+                            <span class="outline-meta-item dead followup-meta-clickable" id="fyFuMetaLoggedDead">Dead <strong id="fyFuLoggedDead">0</strong></span>
                         </div>
                         <div class="progress-bar-container">
                             <div class="progress-segment healthy" id="bar-logged-fresh" style="width:0%" title="Recent follow-up: 0"></div>
@@ -1016,22 +1154,54 @@
                             <div class="progress-segment critical" id="bar-logged-critical" style="width:0%" title="Critical 60-89 days: 0"></div>
                             <div class="progress-segment dead" id="bar-logged-dead" style="width:0%" title="Dead 90+ days: 0"></div>
                         </div>
+                        <div class="followup-source-drill" id="fyFuHasSourceDrill">
+                            <div class="followup-source-drill-header">
+                                <div>
+                                    <div class="followup-source-drill-title" id="fyFuHasSourceTitle">Source split</div>
+                                    <div class="followup-source-drill-sub" id="fyFuHasSourceSub">Click any bucket above to see company vs self vs other.</div>
+                                </div>
+                            </div>
+                            <div class="followup-source-grid">
+                                <div class="followup-source-stat comp"><div class="k">Company</div><div class="v" id="fyFuHasSourceComp">0</div></div>
+                                <div class="followup-source-stat self"><div class="k">Self</div><div class="v" id="fyFuHasSourceSelf">0</div></div>
+                                <div class="followup-source-stat other"><div class="k">Other</div><div class="v" id="fyFuHasSourceOther">0</div></div>
+                            </div>
+                            <div class="followup-source-actions">
+                                <button class="followup-source-open" id="fyFuHasSourceOpen" type="button">Open these rows in Raw Data</button>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="outline-card">
                         <div class="outline-header"><i class="ph ph-warning-circle"></i> No Follow-Up</div>
                         <div class="outline-total" id="fyFuNoLogTotal">0</div>
                         <div class="outline-meta">
-                            <span class="outline-meta-item healthy">Lead <strong id="fyFuNoLogLead">0</strong></span>
-                            <span class="outline-meta-item overdue">Opp <strong id="fyFuNoLogOpp">0</strong></span>
-                            <span class="outline-meta-item critical">Proposal <strong id="fyFuNoLogProposal">0</strong></span>
-                            <span class="outline-meta-item dead">Order <strong id="fyFuNoLogOrder">0</strong></span>
+                            <span class="outline-meta-item healthy followup-meta-clickable" id="fyFuMetaNoLogLead">Lead <strong id="fyFuNoLogLead">0</strong></span>
+                            <span class="outline-meta-item overdue followup-meta-clickable" id="fyFuMetaNoLogOpp">Opp <strong id="fyFuNoLogOpp">0</strong></span>
+                            <span class="outline-meta-item critical followup-meta-clickable" id="fyFuMetaNoLogProposal">Proposal <strong id="fyFuNoLogProposal">0</strong></span>
+                            <span class="outline-meta-item dead followup-meta-clickable" id="fyFuMetaNoLogOrder">Order <strong id="fyFuNoLogOrder">0</strong></span>
                         </div>
                         <div class="progress-bar-container">
                             <div class="progress-segment healthy" id="bar-nolog-lead" style="width:0%" title="Lead: 0"></div>
                             <div class="progress-segment overdue" id="bar-nolog-opp" style="width:0%" title="Opportunity: 0"></div>
                             <div class="progress-segment critical" id="bar-nolog-proposal" style="width:0%" title="Proposal: 0"></div>
                             <div class="progress-segment dead" id="bar-nolog-order" style="width:0%" title="Order: 0"></div>
+                        </div>
+                        <div class="followup-source-drill" id="fyFuNoSourceDrill">
+                            <div class="followup-source-drill-header">
+                                <div>
+                                    <div class="followup-source-drill-title" id="fyFuNoSourceTitle">Source split</div>
+                                    <div class="followup-source-drill-sub" id="fyFuNoSourceSub">Click any bucket above to see company vs self vs other.</div>
+                                </div>
+                            </div>
+                            <div class="followup-source-grid">
+                                <div class="followup-source-stat comp"><div class="k">Company</div><div class="v" id="fyFuNoSourceComp">0</div></div>
+                                <div class="followup-source-stat self"><div class="k">Self</div><div class="v" id="fyFuNoSourceSelf">0</div></div>
+                                <div class="followup-source-stat other"><div class="k">Other</div><div class="v" id="fyFuNoSourceOther">0</div></div>
+                            </div>
+                            <div class="followup-source-actions">
+                                <button class="followup-source-open" id="fyFuNoSourceOpen" type="button">Open these rows in Raw Data</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1178,24 +1348,26 @@
             </div>
 
             <div id="page8" class="page">
-                <div class="summary-strip" style="grid-template-columns: repeat(4, 1fr);">
-                    <div class="mini-stat"><div class="label">Unique Companies</div><div class="value" id="companyTrendUniqueCount">0</div></div>
-                    <div class="mini-stat"><div class="label">Single-Touch</div><div class="value" id="companyTrendNewCount">0</div></div>
-                    <div class="mini-stat"><div class="label">Nurtured</div><div class="value" id="companyTrendRepeatCount">0</div></div>
-                    <div class="mini-stat"><div class="label">Avg Touches</div><div class="value" id="companyTrendAvgTouches">0</div></div>
+                <div class="company-kpi-strip">
+                    <div class="company-kpi-card"><span class="k">Unique Companies</span><span class="v" id="companyTrendUniqueCount">0</span></div>
+                    <div class="company-kpi-card"><span class="k">Single-Touch</span><span class="v" id="companyTrendNewCount">0</span></div>
+                    <div class="company-kpi-card"><span class="k">Nurtured</span><span class="v" id="companyTrendRepeatCount">0</span></div>
+                    <div class="company-kpi-card"><span class="k">Avg Touches</span><span class="v" id="companyTrendAvgTouches">0</span></div>
+                    <div class="company-kpi-card"><span class="k">Selected Country</span><span class="v" id="companyTrendCountryCount">0</span></div>
                 </div>
                 <div class="company-toolbar">
-                    <div class="company-toolbar-controls">
+                    <div class="company-toolbar-main">
                         <div class="company-filter-chipbar">
                             <button type="button" id="companyFilterAll" class="company-filter-chip active" onclick="setCompanyTrendStageFilter('all')">All</button>
                             <button type="button" id="companyFilterNurtured" class="company-filter-chip" onclick="setCompanyTrendStageFilter('nurtured')">Nurtured</button>
                             <button type="button" id="companyFilterProposal" class="company-filter-chip" onclick="setCompanyTrendStageFilter('proposal')">Proposal</button>
                             <button type="button" id="companyFilterOrder" class="company-filter-chip" onclick="setCompanyTrendStageFilter('order')">Order</button>
                         </div>
-                        <input id="companyTrendSearch" class="company-trend-search" type="text" placeholder="Search country, company or BDM..." oninput="filterCompanyTrendAccordions()" />
+                    </div>
+                    <div class="company-toolbar-controls">
+                        <input id="companyTrendSearch" class="company-trend-search" type="text" placeholder="Search country, company or BDM..." oninput="refreshCompanyTrendView()" />
                     </div>
                 </div>
-                <div id="companyPortfolioStrip" class="company-portfolio-strip"></div>
                 <div id="companyTrendsList" class="company-trends-list"></div>
             </div>
 
@@ -1244,6 +1416,8 @@
     let companyTrendSelectedCountry = null;
     let companyTrendSelectedCompany = null;
     let companyTrendStageFilter = 'all';
+    let companyTrendDrawerOpen = false;
+    let companyTrendLastFocusedKey = null;
     
     // --- LINKEDIN GROUPS ANALYSIS LOGIC ---
     const bdmGroupsData = {
@@ -1615,44 +1789,45 @@
     }
 
     function buildEntryTrendData(data) {
-        const FY_START = new Date('2025-04-01');
-        const FY_END = new Date('2026-03-31');
+    const startDateStr = document.getElementById('startDate')?.value || '2025-04-01';
+    const endDateStr = document.getElementById('endDate')?.value || '2026-03-31';
 
-        const monthMap = new Map();
-        let cursor = new Date(FY_START);
+    const fyStart = new Date(startDateStr);
+    const fyEnd = new Date(endDateStr);
+    fyEnd.setHours(23, 59, 59, 999);
 
-        while (cursor <= FY_END) {
-            const key = monthKeyFromDate(cursor);
-            monthMap.set(key, { monthKey: key, leads: 0, opps: 0, props: 0, orders: 0 });
-            cursor.setMonth(cursor.getMonth() + 1);
-        }
+    const monthMap = new Map();
+    const cursor = new Date(fyStart.getFullYear(), fyStart.getMonth(), 1);
+    const lastMonth = new Date(fyEnd.getFullYear(), fyEnd.getMonth(), 1);
 
-        data.forEach(row => {
-            const leadDate = parseDateFlexible(row.lead_date_gmt);
-            const oppDate = parseDateFlexible(row.opportunity_created_at) || parseDateFlexible(row.opportunity_date_gmt);
-            const propDate = parseDateFlexible(row.proposal_created_at);
-            const orderDate = getOrderDate(row);
-
-            let leadCount = 1;
-            if (row['lead count'] !== undefined) {
-                if (String(row['lead count']).trim() === '') leadCount = 0;
-                else leadCount = toInt(row['lead count'], 0);
-            }
-
-            const leadMonth = monthKeyFromDate(leadDate);
-            const oppMonth = monthKeyFromDate(oppDate);
-            const propMonth = monthKeyFromDate(propDate);
-            const orderMonth = monthKeyFromDate(orderDate);
-
-            if (leadMonth && monthMap.has(leadMonth) && leadCount > 0) monthMap.get(leadMonth).leads += leadCount;
-            if (oppMonth && monthMap.has(oppMonth) && isOpportunity(row)) monthMap.get(oppMonth).opps += 1;
-            if (propMonth && monthMap.has(propMonth) && isProposal(row)) monthMap.get(propMonth).props += 1;
-            if (orderMonth && monthMap.has(orderMonth) && isOrder(row)) monthMap.get(orderMonth).orders += 1;
-        });
-
-        return Array.from(monthMap.values()).sort((a, b) => a.monthKey.localeCompare(b.monthKey));
+    while (cursor <= lastMonth) {
+        const key = monthKeyFromDate(cursor);
+        monthMap.set(key, { monthKey: key, leads: 0, opps: 0, props: 0, orders: 0 });
+        cursor.setMonth(cursor.getMonth() + 1);
     }
 
+    data.forEach(row => {
+        // Match Outline exactly: use ONLY lead_date_gmt for monthly inclusion and month bucketing
+        const rowDate = parseSafeDate(row.lead_date_gmt);
+        if (!rowDate || rowDate < fyStart || rowDate > fyEnd) return;
+
+        const leadMonth = monthKeyFromDate(rowDate);
+        if (!leadMonth || !monthMap.has(leadMonth)) return;
+
+        let leadCount = 1;
+        if (row['lead count'] !== undefined) {
+            leadCount = String(row['lead count']).trim() === '' ? 0 : toInt(row['lead count'], 0);
+        }
+
+        const bucket = monthMap.get(leadMonth);
+        if (leadCount > 0) bucket.leads += leadCount;
+        if (isOpportunity(row)) bucket.opps += 1;
+        if (isProposal(row)) bucket.props += 1;
+        if (isOrder(row)) bucket.orders += 1;
+    });
+
+    return Array.from(monthMap.values()).sort((a, b) => a.monthKey.localeCompare(b.monthKey));
+}
     function renderEntryTrend(data) {
         const trendRows = buildEntryTrendData(data);
         renderEntryTrendChart(trendRows);
@@ -1858,9 +2033,9 @@
         renderVehicleTrend();
     }
 
-    function getOpportunityDate(row) { return parseDateFlexible(row.opportunity_created_at) || parseDateFlexible(row.opportunity_date_gmt); }
-    function getProposalDate(row) { return parseDateFlexible(row.proposal_created_at); }
-    function getLeadDate(row) { return parseDateFlexible(row.lead_date_gmt); }
+    function getOpportunityDate(row) { return parseDateFlexible(row.opportunity_created_at) || parseDateFlexible(row.opportunity_date_gmt) || getLeadDate(row); }
+    function getProposalDate(row) { return parseDateFlexible(row.proposal_created_at) || getOrderDate(row) || getOpportunityDate(row) || getLeadDate(row); }
+    function getLeadDate(row) { return parseDateFlexible(row.lead_date_gmt) || parseDateFlexible(row.lead_created_at); }
     function cleanText(value, fallback = 'Unknown') { const v = String(value ?? '').trim(); return v ? v : fallback; }
     function getVehicleName(row) { return cleanText(row.vehicle_names, 'Unknown'); }
     function getVehicleBrand(row) { return cleanText(row.vehicle_brands, 'Unknown'); }
@@ -1875,44 +2050,60 @@
         if (vehicleTrendLevel === 'type' && vehicleTrendSelectedBrand) rows = rows.filter(r => getVehicleBrand(r) === vehicleTrendSelectedBrand);
         return rows.filter(row => { const name = getVehicleName(row); return name && name !== 'Unknown' && name.trim() !== ''; });
     }
+function rowMatchesDrillFilter(row, filter) {
+    if (!filter) return true;
 
-    function rowMatchesDrillFilter(row, filter) {
-        if (!filter) return true;
-        if (filter.monthKey && filter.stage === 'lead') { const dt = getLeadDate(row); return dt && monthKeyFromDate(dt) === filter.monthKey; }
-        if (filter.monthKey && filter.stage === 'opportunity') { if (!isOpportunity(row)) return false; const dt = getOpportunityDate(row); return dt && monthKeyFromDate(dt) === filter.monthKey; }
-        if (filter.monthKey && filter.stage === 'proposal') { if (!isProposal(row)) return false; const dt = getProposalDate(row); return dt && monthKeyFromDate(dt) === filter.monthKey; }
-        if (filter.monthKey && filter.stage === 'order') { if (!isOrder(row)) return false; const dt = getOrderDate(row); return dt && monthKeyFromDate(dt) === filter.monthKey; }
-        if (filter.stage && !filter.monthKey) {
-            if (filter.stage === 'lead' && !isLeadRow(row)) return false;
-            if (filter.stage === 'opportunity' && !isOpportunity(row)) return false;
-            if (filter.stage === 'proposal' && !isProposal(row)) return false;
-            if (filter.stage === 'order' && !isOrder(row)) return false;
-        }
-        if (filter.source && getLeadSourceBucket(row) !== filter.source) return false;
-        if (filter.openOnly && !isOpenPipelineRow(row)) return false;
-        if (filter.proposalOnly && !(isProposal(row) || isOrder(row))) return false;
-        if (filter.openProposalOnly) { if (!(isProposal(row) || isOrder(row))) return false; if (isOrder(row)) return false; }
-        if (filter.orderOnly && !isOrder(row)) return false;
-        if (filter.hasVehicle) { const name = getVehicleName(row); if (!name || name === 'Unknown' || !String(name).trim()) return false; }
-        if (filter.vehicleArmour && getArmourLevel(row) !== filter.vehicleArmour) return false;
-        if (filter.vehicleName && getVehicleName(row) !== filter.vehicleName) return false;
-        if (filter.vehicleBrand && getVehicleBrand(row) !== filter.vehicleBrand) return false;
-        if (filter.vehicleType && getVehicleType(row) !== filter.vehicleType) return false;
-        if (filter.proposal) {
-            const proposal = row.proposal_number || row.proposal_no || row.quotation_number || row.final_quotation_number;
-            if (String(proposal) !== String(filter.proposal)) return false;
-        }
-        if (filter.followupStatus || filter.followupStage || filter.agingGroup || filter.heatGroup) {
-            const meta = getFollowupDrillMeta(row);
-            if (!meta) return false;
-            if (filter.followupStatus === 'has' && !meta.followupAdded) return false;
-            if (filter.followupStatus === 'none' && !meta.noFU) return false;
-            if (filter.followupStage && meta.stage !== filter.followupStage) return false;
-            if (filter.agingGroup && meta.agingGroup !== filter.agingGroup) return false;
-            if (filter.heatGroup && meta.heatGroup !== filter.heatGroup) return false;
-        }
-        return true;
+    if (filter.monthKey) {
+        // Match Monthly totals exactly: month is based only on lead_date_gmt
+        const rowDate = parseSafeDate(row.lead_date_gmt);
+        if (!rowDate || monthKeyFromDate(rowDate) !== filter.monthKey) return false;
+
+        if (filter.stage === 'lead' && !isLeadRow(row)) return false;
+        if (filter.stage === 'opportunity' && !isOpportunity(row)) return false;
+        if (filter.stage === 'proposal' && !isProposal(row)) return false;
+        if (filter.stage === 'order' && !isOrder(row)) return false;
+    } else if (filter.stage) {
+        if (filter.stage === 'lead' && !isLeadRow(row)) return false;
+        if (filter.stage === 'opportunity' && !isOpportunity(row)) return false;
+        if (filter.stage === 'proposal' && !isProposal(row)) return false;
+        if (filter.stage === 'order' && !isOrder(row)) return false;
     }
+
+    if (filter.source && getLeadSourceBucket(row) !== filter.source) return false;
+    if (filter.openOnly && !isOpenPipelineRow(row)) return false;
+    if (filter.proposalOnly && !(isProposal(row) || isOrder(row))) return false;
+    if (filter.openProposalOnly) {
+        if (!(isProposal(row) || isOrder(row))) return false;
+        if (isOrder(row)) return false;
+    }
+    if (filter.orderOnly && !isOrder(row)) return false;
+
+    if (filter.hasVehicle) {
+        const name = getVehicleName(row);
+        if (!name || name === 'Unknown' || !String(name).trim()) return false;
+    }
+    if (filter.vehicleArmour && getArmourLevel(row) !== filter.vehicleArmour) return false;
+    if (filter.vehicleName && getVehicleName(row) !== filter.vehicleName) return false;
+    if (filter.vehicleBrand && getVehicleBrand(row) !== filter.vehicleBrand) return false;
+    if (filter.vehicleType && getVehicleType(row) !== filter.vehicleType) return false;
+
+    if (filter.proposal) {
+        const proposal = row.proposal_number || row.proposal_no || row.quotation_number || row.final_quotation_number;
+        if (String(proposal) !== String(filter.proposal)) return false;
+    }
+
+    if (filter.followupStatus || filter.followupStage || filter.agingGroup || filter.heatGroup) {
+        const meta = getFollowupDrillMeta(row);
+        if (!meta) return false;
+        if (filter.followupStatus === 'has' && !meta.followupAdded) return false;
+        if (filter.followupStatus === 'none' && !meta.noFU) return false;
+        if (filter.followupStage && meta.stage !== filter.followupStage) return false;
+        if (filter.agingGroup && meta.agingGroup !== filter.agingGroup) return false;
+        if (filter.heatGroup && meta.heatGroup !== filter.heatGroup) return false;
+    }
+
+    return true;
+}
 
     function applyRawDataDrillFilter() {
         const baseRows = latestExplorerRows || [];
@@ -2118,16 +2309,6 @@
         bindMetricDrillEl(document.getElementById('fyFuOpenTotal'), { label: 'All valid CRM records' });
         bindMetricDrillEl(document.getElementById('fyFuLoggedTotal'), { followupStatus: 'has', label: 'Records with follow-up' });
         bindMetricDrillEl(document.getElementById('fyFuNoLogTotal'), { followupStatus: 'none', label: 'Records without follow-up' });
-
-        bindMetricDrillEl(document.getElementById('fyFuLoggedFresh'), { followupStatus: 'has', agingGroup: 'fresh', label: 'Has follow-up | Recent' });
-        bindMetricDrillEl(document.getElementById('fyFuLoggedOverdue'), { followupStatus: 'has', agingGroup: 'overdue', label: 'Has follow-up | Overdue 30-59 days' });
-        bindMetricDrillEl(document.getElementById('fyFuLoggedCritical'), { followupStatus: 'has', agingGroup: 'critical', label: 'Has follow-up | Critical 60-89 days' });
-        bindMetricDrillEl(document.getElementById('fyFuLoggedDead'), { followupStatus: 'has', agingGroup: 'dead', label: 'Has follow-up | Dead 90+ days' });
-
-        bindMetricDrillEl(document.getElementById('fyFuNoLogLead'), { followupStatus: 'none', followupStage: 'Lead', label: 'No follow-up | Lead' });
-        bindMetricDrillEl(document.getElementById('fyFuNoLogOpp'), { followupStatus: 'none', followupStage: 'Opportunity', label: 'No follow-up | Opportunity' });
-        bindMetricDrillEl(document.getElementById('fyFuNoLogProposal'), { followupStatus: 'none', followupStage: 'Proposal', label: 'No follow-up | Proposal' });
-        bindMetricDrillEl(document.getElementById('fyFuNoLogOrder'), { followupStatus: 'none', followupStage: 'Order', label: 'No follow-up | Order' });
     }
 
     function bindPipelineDrills() {
@@ -2204,7 +2385,99 @@
         });
     }
 
-    let followupHasChartInstance = null;
+    
+    let followupSourceRows = [];
+    let followupSourceSelection = { has: null, none: null };
+
+    function countRowsBySource(rows) {
+        return rows.reduce((acc, item) => {
+            const sourceKey = getLeadSourceBucket(item.row || item);
+            acc[sourceKey] = (acc[sourceKey] || 0) + 1;
+            return acc;
+        }, { comp: 0, self: 0, other: 0 });
+    }
+
+    function setFollowupMetaActive(group, activeId) {
+        const ids = group === 'has'
+            ? ['fyFuMetaLoggedFresh', 'fyFuMetaLoggedOverdue', 'fyFuMetaLoggedCritical', 'fyFuMetaLoggedDead']
+            : ['fyFuMetaNoLogLead', 'fyFuMetaNoLogOpp', 'fyFuMetaNoLogProposal', 'fyFuMetaNoLogOrder'];
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.toggle('active', id === activeId);
+        });
+    }
+
+    function renderFollowupSourceDrill(group, config, rows) {
+        const drillId = group === 'has' ? 'fyFuHasSourceDrill' : 'fyFuNoSourceDrill';
+        const titleId = group === 'has' ? 'fyFuHasSourceTitle' : 'fyFuNoSourceTitle';
+        const subId = group === 'has' ? 'fyFuHasSourceSub' : 'fyFuNoSourceSub';
+        const compId = group === 'has' ? 'fyFuHasSourceComp' : 'fyFuNoSourceComp';
+        const selfId = group === 'has' ? 'fyFuHasSourceSelf' : 'fyFuNoSourceSelf';
+        const otherId = group === 'has' ? 'fyFuHasSourceOther' : 'fyFuNoSourceOther';
+        const openId = group === 'has' ? 'fyFuHasSourceOpen' : 'fyFuNoSourceOpen';
+        const drillEl = document.getElementById(drillId);
+        if (!drillEl) return;
+
+        const counts = countRowsBySource(rows);
+        safeSetText(titleId, `${config.title} source split`);
+        safeSetText(subId, `${rows.length.toLocaleString()} record${rows.length === 1 ? '' : 's'} in this bucket`);
+        safeSetText(compId, (counts.comp || 0).toLocaleString());
+        safeSetText(selfId, (counts.self || 0).toLocaleString());
+        safeSetText(otherId, (counts.other || 0).toLocaleString());
+        drillEl.classList.add('show');
+
+        const openBtn = document.getElementById(openId);
+        if (openBtn) {
+            openBtn.onclick = () => openRawDataCustom({ ...config.filter, label: `${config.title} | Source split` });
+        }
+    }
+
+    function clearFollowupSourceDrill(group) {
+        const drillEl = document.getElementById(group === 'has' ? 'fyFuHasSourceDrill' : 'fyFuNoSourceDrill');
+        if (drillEl) drillEl.classList.remove('show');
+        setFollowupMetaActive(group, null);
+        followupSourceSelection[group] = null;
+    }
+
+    function toggleFollowupSourceDrill(group, config) {
+        if (!config || !Array.isArray(followupSourceRows) || !followupSourceRows.length) return;
+        if (followupSourceSelection[group] && followupSourceSelection[group].id === config.id) {
+            clearFollowupSourceDrill(group);
+            return;
+        }
+        const rows = followupSourceRows.filter(config.predicate);
+        followupSourceSelection[group] = config;
+        setFollowupMetaActive(group, config.metaId);
+        renderFollowupSourceDrill(group, config, rows);
+    }
+
+    function bindFollowupSourceBreakdowns(rows) {
+        followupSourceRows = Array.isArray(rows) ? rows : [];
+        followupSourceSelection = { has: null, none: null };
+        clearFollowupSourceDrill('has');
+        clearFollowupSourceDrill('none');
+
+        const configs = [
+            { group: 'has', id: 'fresh', metaId: 'fyFuMetaLoggedFresh', title: 'Recent follow-up', filter: { followupStatus: 'has', agingGroup: 'fresh' }, predicate: r => r.followupAdded && r.agingGroup === 'fresh' },
+            { group: 'has', id: 'overdue', metaId: 'fyFuMetaLoggedOverdue', title: 'Overdue follow-up', filter: { followupStatus: 'has', agingGroup: 'overdue' }, predicate: r => r.followupAdded && r.agingGroup === 'overdue' },
+            { group: 'has', id: 'critical', metaId: 'fyFuMetaLoggedCritical', title: 'Critical follow-up', filter: { followupStatus: 'has', agingGroup: 'critical' }, predicate: r => r.followupAdded && r.agingGroup === 'critical' },
+            { group: 'has', id: 'dead', metaId: 'fyFuMetaLoggedDead', title: 'Dead follow-up', filter: { followupStatus: 'has', agingGroup: 'dead' }, predicate: r => r.followupAdded && r.agingGroup === 'dead' },
+            { group: 'none', id: 'lead', metaId: 'fyFuMetaNoLogLead', title: 'No follow-up | Lead', filter: { followupStatus: 'none', followupStage: 'Lead' }, predicate: r => r.noFU && r.stage === 'Lead' },
+            { group: 'none', id: 'opp', metaId: 'fyFuMetaNoLogOpp', title: 'No follow-up | Opportunity', filter: { followupStatus: 'none', followupStage: 'Opportunity' }, predicate: r => r.noFU && r.stage === 'Opportunity' },
+            { group: 'none', id: 'proposal', metaId: 'fyFuMetaNoLogProposal', title: 'No follow-up | Proposal', filter: { followupStatus: 'none', followupStage: 'Proposal' }, predicate: r => r.noFU && r.stage === 'Proposal' },
+            { group: 'none', id: 'order', metaId: 'fyFuMetaNoLogOrder', title: 'No follow-up | Order', filter: { followupStatus: 'none', followupStage: 'Order' }, predicate: r => r.noFU && r.stage === 'Order' }
+        ];
+
+        configs.forEach(config => {
+            const el = document.getElementById(config.metaId);
+            if (!el) return;
+            el.title = 'Click to view source split';
+            el.onclick = () => toggleFollowupSourceDrill(config.group, config);
+        });
+    }
+
+
+let followupHasChartInstance = null;
     let followupNoChartInstance = null;
     let pipelineOverviewChartInstance = null;
     let pipelineVehicleMixChartInstance = null;
@@ -2285,6 +2558,7 @@
 
         renderFollowupStageChart(validRows);
         bindFollowupDrills();
+        bindFollowupSourceBreakdowns(validRows);
     }
 
     function renderFollowupStageChart(rows) {
@@ -2641,44 +2915,163 @@
         el.innerHTML = `<div class="company-portfolio-head"><div><div class="company-portfolio-title">Portfolio mix snapshot</div><div class="company-portfolio-sub">How the visible account base is distributed right now.</div></div><div class="company-portfolio-sub">${total} account${total === 1 ? '' : 's'} in current view</div></div><div class="company-portfolio-bar">${segs.map(s => `<div class="company-portfolio-segment" style="background:${s.color};"><span class="k">${s.label}</span><span class="v">${s.value}</span><span class="p">${Math.round((s.value/total)*100)}%</span></div>`).join('')}</div>`;
     }
 
-    function setCompanyTrendStageFilter(mode) { companyTrendStageFilter = mode; ['all', 'nurtured', 'proposal', 'order'].forEach(k => document.getElementById(`companyFilter${k.charAt(0).toUpperCase()+k.slice(1)}`)?.classList.toggle('active', k === mode)); filterCompanyTrendAccordions(); }
-    function selectCompanyTrendCountry(c) { companyTrendSelectedCountry = c; const g = companyTrendGroups.find(x => x.country === c); companyTrendSelectedCompany = g && g.companies.length ? g.companies[0].company : null; filterCompanyTrendAccordions(); }
-    function selectCompanyTrendCompany(cty, cmp) { companyTrendSelectedCountry = cty; companyTrendSelectedCompany = cmp; filterCompanyTrendAccordions(); }
-    function filterCompanyTrendAccordions() { renderCompanyTrendExplorer(document.getElementById('companyTrendSearch')?.value || ''); }
+   function refreshCompanyTrendView() {
+    renderCompanyTrendExplorer(document.getElementById('companyTrendSearch')?.value || '');
+}
+
+function setCompanyTrendStageFilter(mode) {
+    companyTrendStageFilter = mode;
+    ['all', 'nurtured', 'proposal', 'order'].forEach(k =>
+        document.getElementById(`companyFilter${k.charAt(0).toUpperCase() + k.slice(1)}`)?.classList.toggle('active', k === mode)
+    );
+    refreshCompanyTrendView();
+}
+
+function selectCompanyTrendCountry(c) {
+    companyTrendSelectedCountry = c;
+    const g = companyTrendGroups.find(x => x.country === c);
+    companyTrendSelectedCompany = g && g.companies.length ? g.companies[0].company : null;
+    companyTrendDrawerOpen = false;
+    refreshCompanyTrendView();
+}
+
+function selectCompanyTrendCompany(cty, cmp) {
+    companyTrendSelectedCountry = cty;
+    companyTrendSelectedCompany = cmp;
+    companyTrendDrawerOpen = true;
+    companyTrendLastFocusedKey = `${cty}|||${cmp}`;
+    refreshCompanyTrendView();
+    requestAnimationFrame(() => {
+        const btn = document.getElementById('companyDrawerCloseBtn');
+        if (btn) btn.focus();
+    });
+}
+
+function closeCompanyTrendDrawer(restoreFocus = true) {
+    companyTrendDrawerOpen = false;
+    refreshCompanyTrendView();
+    if (restoreFocus && companyTrendLastFocusedKey) {
+        requestAnimationFrame(() => {
+            const el = document.querySelector(`[data-company-key="${CSS.escape(companyTrendLastFocusedKey)}"]`);
+            if (el) el.focus();
+        });
+    }
+}
+    function bindCompanyDrawerInteractions() {
+        const host = document.getElementById('companyTrendsList');
+        if (!host || host.dataset.drawerBound === '1') return;
+        host.dataset.drawerBound = '1';
+        document.addEventListener('keydown', function(ev) {
+            if (ev.key === 'Escape' && companyTrendDrawerOpen) closeCompanyTrendDrawer();
+        });
+    }
 
     function renderCompanyTrendExplorer(query) {
-        const listEl = document.getElementById('companyTrendsList'); if (!listEl) return;
-        const q = (query || '').trim().toLowerCase();
-        const filteredGroups = companyTrendGroups.map(cg => { const comps = cg.companies.filter(g => (!q || [cg.country, g.company, Array.from(g.bdms).join(' '), Array.from(g.countries).join(' ')].join(' ').toLowerCase().includes(q)) && companyTrendFilterMatch(g)); return comps.length ? { ...cg, companies: comps } : null; }).filter(Boolean);
+        const q = String(query || '').trim().toLowerCase();
+        let filteredGroups = companyTrendGroups.map(cg => ({
+            ...cg,
+            companies: cg.companies.filter(g => {
+                const stagePass = companyTrendStageFilter === 'all'
+                    || (companyTrendStageFilter === 'nurtured' && g.isRepeated)
+                    || (companyTrendStageFilter === 'proposal' && g.reachedProposal)
+                    || (companyTrendStageFilter === 'order' && g.reachedOrder);
+                if (!stagePass) return false;
+                if (!q) return true;
+                const hay = [cg.country, g.company, ...(g.bdms || [])].join(' ').toLowerCase();
+                return hay.includes(q);
+            })
+        })).filter(cg => cg.companies.length);
 
-        renderCompanyPortfolioStrip(filteredGroups);
-        if (!filteredGroups.length) { listEl.innerHTML = '<div class="company-empty">No companies found in the current filtered report view.</div>'; return; }
+        const listEl = document.getElementById('companyTrendsList');
+        if (!filteredGroups.length) {
+            companyTrendDrawerOpen = false;
+            safeSetText('companyTrendCountryCount', '0');
+            listEl.innerHTML = '<div class="company-empty">No companies found in the current filtered report view.</div>';
+            return;
+        }
 
         const selCountry = filteredGroups.find(x => x.country === companyTrendSelectedCountry) || filteredGroups[0];
         const selComp = selCountry.companies.find(x => x.company === companyTrendSelectedCompany) || selCountry.companies[0];
-        companyTrendSelectedCountry = selCountry.country; companyTrendSelectedCompany = selComp.company;
+        companyTrendSelectedCountry = selCountry.country;
+        companyTrendSelectedCompany = selComp ? selComp.company : null;
+        safeSetText('companyTrendCountryCount', selCountry.companies.length.toLocaleString());
 
         const countryNodes = filteredGroups.map((cg, i) => {
             const isActive = cg.country === companyTrendSelectedCountry;
             const maxTone = cg.companies.some(x => x.ordersConfirmed > 0) ? 'order' : cg.companies.some(x => x.proposalSubmitted > 0) ? 'proposal' : cg.companies.some(x => x.isRepeated) ? 'nurtured' : 'new';
             const st = cg.companies.reduce((a, g) => { a.leads += g.leadOnly; a.opps += g.oppOnly; a.props += g.proposalSubmitted; a.orders += g.ordersConfirmed; return a; }, { leads: 0, opps: 0, props: 0, orders: 0 });
             const tot = Math.max(1, st.leads + st.opps + st.props + st.orders);
-            return `<button type="button" class="company-node country-node company-country-item node-tone-${maxTone} ${isActive ? 'active' : ''}" onclick="selectCompanyTrendCountry(decodeURIComponent('${encodeURIComponent(cg.country)}'))"><span class="company-country-rank">${i+1}</span><div class="company-country-main"><div class="company-country-topline"><div class="company-country-name">${escapeHtml(cg.country)}</div><span class="company-badge repeat">${cg.companies.length}</span></div><div class="company-country-meta"><span>${cg.companies.reduce((s, g) => s + g.touchCount, 0)} touches</span></div><div class="company-country-bar"><span style="background:#94A3B8;width:${Math.max(6,(st.leads/tot)*100)}%"></span><span style="background:#3B82F6;width:${Math.max(6,(st.opps/tot)*100)}%"></span><span style="background:#F59E0B;width:${Math.max(6,(st.props/tot)*100)}%"></span><span style="background:#10B981;width:${Math.max(6,(st.orders/tot)*100)}%"></span></div></div><div class="company-country-date">${escapeHtml(formatShortDate(cg.latestDate))}</div></button>`;
+            return `<button type="button" class="company-node company-country-item node-tone-${maxTone} ${isActive ? 'active' : ''}" aria-selected="${isActive}" onclick="selectCompanyTrendCountry(decodeURIComponent('${encodeURIComponent(cg.country)}'))"><span class="company-country-rank">${i+1}</span><div class="company-country-main"><div class="company-country-topline"><div class="company-country-name">${escapeHtml(cg.country)}</div><span class="company-badge repeat">${cg.companies.length}</span></div><div class="company-country-meta"><span>${cg.companies.reduce((s, g) => s + g.touchCount, 0)} touches</span></div><div class="company-country-bar"><span style="background:#94A3B8;width:${Math.max(6,(st.leads/tot)*100)}%"></span><span style="background:#3B82F6;width:${Math.max(6,(st.opps/tot)*100)}%"></span><span style="background:#F59E0B;width:${Math.max(6,(st.props/tot)*100)}%"></span><span style="background:#10B981;width:${Math.max(6,(st.orders/tot)*100)}%"></span></div></div><div class="company-country-date">${escapeHtml(formatShortDate(cg.latestDate))}</div></button>`;
         }).join('');
 
         const companyNodes = selCountry.companies.map(g => {
             const hVal = g.ordersConfirmed > 0 ? g.ordersConfirmed : g.proposalSubmitted > 0 ? g.proposalSubmitted : g.oppOnly > 0 ? g.oppOnly : g.leadOnly || g.totalEntries;
             const hLbl = g.ordersConfirmed > 0 ? 'Orders' : g.proposalSubmitted > 0 ? 'Proposals' : g.oppOnly > 0 ? 'Opps' : 'Leads';
-            return `<button type="button" class="company-node company-node-item node-tone-${companyTrendNodeTone(g)} ${g.company === companyTrendSelectedCompany ? 'active' : ''}" onclick="selectCompanyTrendCompany(decodeURIComponent('${encodeURIComponent(selCountry.country)}'), decodeURIComponent('${encodeURIComponent(g.company)}'))"><div class="company-node-top"><div class="company-node-header"><div class="company-node-name">${escapeHtml(g.company)}</div><div class="company-node-micro">${escapeHtml(selCountry.country)}</div></div><div class="company-node-metric"><span class="v">${hVal}</span><span class="k">${hLbl}</span></div></div><div class="company-node-statusline"><span class="company-badge ${g.isRepeated ? 'nurtured' : 'new'}">${escapeHtml(companyTrendCurrentState(g))}</span><span class="company-badge repeat">${g.touchCount} touches</span></div><div class="company-node-bar">${companyTrendStageSegments(g).map(s => `<span title="${s.label}: ${s.value}" style="background:${s.color};width:${Math.max(s.value > 0 ? 10 : 4, s.pct)}%"></span>`).join('')}</div><div class="company-node-kpis"><div class="company-node-kpi"><span class="k">Total entries</span><span class="v">${g.totalEntries}</span></div><div class="company-node-kpi"><span class="k">Latest stage</span><span class="v" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(companyTrendCurrentState(g))}</span></div></div><div class="company-node-summary">${escapeHtml(companyTrendActivityText(g.latestDate))}</div></button>`;
+            const isActive = g.company === companyTrendSelectedCompany;
+            const key = `${selCountry.country}|||${g.company}`;
+            return `<button type="button" class="company-node company-node-item node-tone-${companyTrendNodeTone(g)} ${isActive ? 'active' : ''}" data-company-key="${escapeHtml(key)}" aria-selected="${isActive}" onclick="selectCompanyTrendCompany(decodeURIComponent('${encodeURIComponent(selCountry.country)}'), decodeURIComponent('${encodeURIComponent(g.company)}'))"><div class="company-node-top"><div class="company-node-header"><div class="company-node-name">${escapeHtml(g.company)}</div><div class="company-node-micro">${escapeHtml(selCountry.country)}</div></div><div class="company-node-metric"><span class="v">${hVal}</span><span class="k">${hLbl}</span></div></div><div class="company-node-statusline"><span class="company-badge ${g.ordersConfirmed > 0 ? 'order' : g.proposalSubmitted > 0 ? 'proposal' : g.isRepeated ? 'nurtured' : 'new'}">${escapeHtml(companyTrendCurrentState(g))}</span><span class="company-badge repeat">${g.touchCount} touches</span></div><div class="company-node-bar">${companyTrendStageSegments(g).map(s => `<span title="${s.label}: ${s.value}" style="background:${s.color};width:${Math.max(s.value > 0 ? 10 : 4, s.pct)}%"></span>`).join('')}</div><div class="company-node-kpis"><div class="company-node-kpi"><span class="k">Total entries</span><span class="v">${g.totalEntries}</span></div><div class="company-node-kpi"><span class="k">Latest stage</span><span class="v" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(companyTrendCurrentState(g))}</span></div></div><div class="company-node-summary">${escapeHtml(companyTrendActivityText(g.latestDate))}</div></button>`;
         }).join('');
 
+        const drawerOpen = companyTrendDrawerOpen && !!selComp;
+        const detailHtml = selComp ? `
+            <aside class="company-detail-drawer ${drawerOpen ? 'is-open' : ''}" role="dialog" aria-modal="false" aria-label="Company detail drawer">
+                <div class="company-drawer-header">
+                    <div class="company-drawer-topline">
+                        <div>
+                            <div class="company-drawer-title">${escapeHtml(selComp.company)}</div>
+                            <div class="company-drawer-subtitle">${escapeHtml(selCountry.country)} · latest activity ${escapeHtml(formatShortDate(selComp.latestDate))}</div>
+                        </div>
+                        <button id="companyDrawerCloseBtn" type="button" class="company-drawer-close" onclick="closeCompanyTrendDrawer()" aria-label="Close company details"><i class="ph ph-x"></i></button>
+                    </div>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                        <span class="company-badge ${selComp.ordersConfirmed > 0 ? 'order' : selComp.proposalSubmitted > 0 ? 'proposal' : selComp.isRepeated ? 'nurtured' : 'new'}">${escapeHtml(selComp.statusLabel)}</span>
+                        <span class="company-badge repeat">${selComp.touchCount} touches</span>
+                    </div>
+                </div>
+                <div class="company-detail-wrap">
+                    <div class="company-detail-hero node-tone-${companyTrendNodeTone(selComp)}">
+                        <div class="company-detail-story">
+                            <div class="company-detail-summary">${escapeHtml(companyTrendSummary(selComp))}</div>
+                            <div class="company-detail-current"><span class="k">Current status</span><span class="v">${escapeHtml(companyTrendCurrentState(selComp))}</span></div>
+                        </div>
+                        <div class="company-detail-metrics">
+                            <div class="company-detail-metric"><span class="k">Total Entries</span><span class="v">${selComp.totalEntries}</span></div>
+                            <div class="company-detail-metric"><span class="k">Lead Only</span><span class="v">${selComp.leadOnly || 0}</span></div>
+                            <div class="company-detail-metric"><span class="k">Opportunity Only</span><span class="v">${selComp.oppOnly || 0}</span></div>
+                            <div class="company-detail-metric"><span class="k">Orders Confirmed</span><span class="v">${selComp.ordersConfirmed || 0}</span></div>
+                        </div>
+                    </div>
+                    <div class="company-detail-section">
+                        <div class="company-detail-section-title">Stage progression</div>
+                        <div class="company-stage-progress">${companyTrendStageSegments(selComp).map(s => `<span style="background:${s.color};width:${Math.max(s.value > 0 ? 10 : 4, s.pct)}%"></span>`).join('')}</div>
+                        <div class="company-stage-rail"><div class="company-stage-chip ${(selComp.leadOnly || 0) > 0 ? 'active' : ''}">Lead Only</div><div class="company-stage-chip ${selComp.reachedOpportunity ? 'active' : ''}">Opportunity</div><div class="company-stage-chip ${selComp.reachedProposal ? 'active' : ''}">Proposal</div><div class="company-stage-chip ${selComp.reachedOrder ? 'active' : ''}">Order</div></div>
+                    </div>
+                    <div class="company-detail-section">
+                        <div class="company-detail-section-title">Activity trail</div>
+                        <div class="company-records">${selComp.rows.map(r => {
+                            const stage = String(getCurrentStage(r) || '').toLowerCase();
+                            const stageClass = stage.includes('order') ? 'stage-order' : stage.includes('proposal') ? 'stage-proposal' : stage.includes('opp') ? 'stage-opportunity' : 'stage-lead';
+                            return `<div class="company-record-card ${stageClass}"><div class="company-record-head"><div><div class="company-record-stage">${escapeHtml(getCurrentStage(r))}</div></div><div style="font-size:0.82rem; color: var(--muted); font-weight:700;">${escapeHtml(formatShortDate(getCompanyRecordDate(r)))}</div></div><div class="company-record-grid">${companyTrendRowMeta('BDM', r.bdm_name_final || '-')}${companyTrendRowMeta('Country', r.country_name_final || '-')}${companyTrendRowMeta('Source', r.lead_source_name || '-')}${companyTrendRowMeta('Opportunity', firstNonEmpty(r, ['opportunity_code']) || '-')}${companyTrendRowMeta('Proposal', firstNonEmpty(r, ['proposal_number', 'proposal_no', 'quotation_number', 'final_quotation_number']) || '-')}${companyTrendRowMeta('Contact', firstNonEmpty(r, ['lead_name', 'opp_updated_contact_name', 'opportunity_name']) || '-')}</div></div>`;
+                        }).join('')}</div>
+                    </div>
+                </div>
+            </aside>` : '';
+
         listEl.innerHTML = `
-            <div class="company-node-explorer">
-                <section class="company-node-panel"><div class="company-node-panel-header"><div class="company-node-panel-title"><strong>1. Countries</strong><span class="company-badge repeat">${filteredGroups.length}</span></div><div class="company-node-panel-sub">Start from geography. The mini bar shows visible stage mix for each country.</div></div><div class="company-node-list company-country-list">${countryNodes}</div></section>
-                <section class="company-node-panel"><div class="company-node-panel-header"><div class="company-node-panel-title"><strong>2. Companies in ${escapeHtml(selCountry.country)}</strong><span class="company-badge repeat">${selCountry.companies.length}</span></div><div class="company-node-panel-sub">Cards now highlight account maturity, touch depth, and current stage.</div></div><div class="company-node-list">${companyNodes || '<div class="company-node-empty">No company nodes.</div>'}</div></section>
-                <section class="company-node-panel detail-panel"><div class="company-node-panel-header"><div class="company-node-panel-title"><strong>3. Account detail</strong><span class="company-badge ${selComp.isRepeated ? 'nurtured' : 'new'}">${escapeHtml(selComp.statusLabel)}</span></div><div class="company-node-panel-sub">A stronger hero, clearer current state, and cleaner activity trail.</div></div><div class="company-detail-wrap"><div class="company-detail-hero node-tone-${companyTrendNodeTone(selComp)}"><div class="company-detail-header"><div><div class="company-detail-title">${escapeHtml(selComp.company)}</div><div class="company-detail-subtitle">${escapeHtml(selCountry.country)} · latest activity ${escapeHtml(formatShortDate(selComp.latestDate))}</div></div></div><div class="company-detail-story"><div class="company-detail-summary">${escapeHtml(companyTrendSummary(selComp))}</div><div class="company-detail-current"><span class="k">Current status</span><span class="v">${escapeHtml(companyTrendCurrentState(selComp))}</span></div></div><div class="company-detail-metrics"><div class="company-detail-metric"><span class="k">Total Entries</span><span class="v">${selComp.totalEntries}</span></div><div class="company-detail-metric"><span class="k">Lead Only</span><span class="v">${selComp.leadOnly || 0}</span></div><div class="company-detail-metric"><span class="k">Opportunity Only</span><span class="v">${selComp.oppOnly || 0}</span></div><div class="company-detail-metric"><span class="k">Orders Confirmed</span><span class="v">${selComp.ordersConfirmed || 0}</span></div></div></div><div class="company-detail-section"><div class="company-detail-section-title">Stage progression</div><div class="company-stage-progress">${companyTrendStageSegments(selComp).map(s => `<span style="background:${s.color};width:${Math.max(s.value > 0 ? 10 : 4, s.pct)}%"></span>`).join('')}</div><div class="company-stage-rail"><div class="company-stage-chip ${(selComp.leadOnly || 0) > 0 ? 'active' : ''}">Lead Only</div><div class="company-stage-chip ${selComp.reachedOpportunity ? 'active' : ''}">Opportunity</div><div class="company-stage-chip ${selComp.reachedProposal ? 'active' : ''}">Proposal</div><div class="company-stage-chip ${selComp.reachedOrder ? 'active' : ''}">Order</div></div></div><div class="company-detail-section"><div class="company-detail-section-title">Activity trail</div><div class="company-records">${selComp.rows.map(r => `<div class="company-record-card"><div class="company-record-head"><div><div class="company-record-stage">${escapeHtml(getCurrentStage(r))}</div></div><div style="font-size:0.85rem; color: var(--muted); font-weight:600;">${escapeHtml(formatShortDate(getCompanyRecordDate(r)))}</div></div><div class="company-record-grid">${companyTrendRowMeta('BDM', r.bdm_name_final || '-')}${companyTrendRowMeta('Country', r.country_name_final || '-')}${companyTrendRowMeta('Source', r.lead_source_name || '-')}${companyTrendRowMeta('Opportunity', firstNonEmpty(r, ['opportunity_code']) || '-')}${companyTrendRowMeta('Proposal', firstNonEmpty(r, ['proposal_number', 'proposal_no', 'quotation_number', 'final_quotation_number']) || '-')}${companyTrendRowMeta('Contact', firstNonEmpty(r, ['lead_name', 'opp_updated_contact_name', 'opportunity_name']) || '-')}</div></div>`).join('')}</div></div></div></section>
+            <div class="company-node-explorer ${drawerOpen ? 'drawer-open' : ''}">
+                <section class="company-sidebar-panel">
+                    <div class="company-panel-head"><div class="company-panel-title-row"><strong>Countries</strong><span class="company-badge repeat">${filteredGroups.length}</span></div><div class="company-panel-sub">Browse geography first. The mini bar shows the visible stage mix by country.</div></div>
+                    <div class="company-node-list">${countryNodes}</div>
+                </section>
+                <section class="company-grid-panel">
+                    <div class="company-panel-head"><div class="company-panel-title-row"><strong>Companies in ${escapeHtml(selCountry.country)}</strong><span class="company-badge repeat">${selCountry.companies.length}</span></div><div class="company-panel-sub">Select any account to open a right-side deep dive without losing your browsing context.</div></div>
+                    <div class="company-grid-scroll"><div class="company-grid">${companyNodes || '<div class="company-node-empty">No company nodes.</div>'}</div></div>
+                </section>
+                <div class="company-drawer-backdrop" onclick="closeCompanyTrendDrawer(false)"></div>
+                ${detailHtml}
             </div>
         `;
+        bindCompanyDrawerInteractions();
     }
 
     function renderCompanyTrends(rows) {
@@ -2689,13 +3082,13 @@
         safeSetText('companyTrendRepeatCount', allComps.filter(x => x.isRepeated).length.toLocaleString());
         safeSetText('companyTrendAvgTouches', allComps.length ? (allComps.reduce((s, x) => s + x.touchCount, 0) / allComps.length).toFixed(1) : '0');
         
-        if (!companyTrendGroups.length) return document.getElementById('companyTrendsList').innerHTML = '<div class="company-empty">No companies found in the current filtered report view.</div>';
+        if (!companyTrendGroups.length) { companyTrendDrawerOpen = false; safeSetText('companyTrendCountryCount', '0'); return document.getElementById('companyTrendsList').innerHTML = '<div class="company-empty">No companies found in the current filtered report view.</div>'; }
         
         if (!companyTrendSelectedCountry || !companyTrendGroups.some(x => x.country === companyTrendSelectedCountry)) companyTrendSelectedCountry = companyTrendGroups[0].country;
         const ac = companyTrendGroups.find(x => x.country === companyTrendSelectedCountry);
         if (!companyTrendSelectedCompany || !ac.companies.some(x => x.company === companyTrendSelectedCompany)) companyTrendSelectedCompany = ac.companies[0]?.company;
         
-        filterCompanyTrendAccordions();
+        refreshCompanyTrendView();
     }
 
     // Initialize static data immediately
