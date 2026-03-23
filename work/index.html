@@ -1636,9 +1636,7 @@ function buildEntryTrendData(data) {
     }
 
     data.forEach(row => {
-        const leadDate =
-            parseDateFlexible(row.lead_created_at) ||
-            parseDateFlexible(row.lead_date_gmt);
+        const leadDate = parseDateFlexible(row.lead_date_gmt);
 
         const oppDate =
             parseDateFlexible(row.opportunity_created_at) ||
@@ -1692,6 +1690,7 @@ function renderEntryTrend(data) {
     safeSetText('trendLeadTotal', trendRows.reduce((s, r) => s + r.leads, 0).toLocaleString());
     safeSetText('trendProposalTotal', trendRows.reduce((s, r) => s + r.props, 0).toLocaleString());
     safeSetText('trendOrderTotal', trendRows.reduce((s, r) => s + r.orders, 0).toLocaleString());
+    bindTrendDrills();
 }
 
 function renderEntryTrendChart(rows) {
@@ -1835,6 +1834,7 @@ function renderVehicleTrend() {
 renderVehicleTrendChart(data);
 renderVehicleTrendTable(rows);
 renderVehicleTrendMeta(data, rows);
+bindVehicleDrills();
 }
 function populateVehicleArmourFilter() {
     const select = document.getElementById('vehicleArmourFilter');
@@ -2059,10 +2059,7 @@ function getProposalDate(row) {
 }
 
 function getLeadDate(row) {
-    return (
-        parseDateFlexible(row.lead_created_at) ||
-        parseDateFlexible(row.lead_date_gmt)
-    );
+    return parseDateFlexible(row.lead_date_gmt);
 }
 function cleanText(value, fallback = 'Unknown') {
     const v = String(value ?? '').trim();
@@ -2122,43 +2119,83 @@ function getVehicleTrendBaseRows() {
 function rowMatchesDrillFilter(row, filter) {
     if (!filter) return true;
 
-    if (filter.stage === 'lead') {
-        if (!getLeadDate(row)) return false;
-        if (monthKeyFromDate(getLeadDate(row)) !== filter.monthKey) return false;
-        return true;
+    if (filter.monthKey && filter.stage === 'lead') {
+        const dt = getLeadDate(row);
+        if (!dt) return false;
+        return monthKeyFromDate(dt) === filter.monthKey;
     }
 
-    if (filter.stage === 'opportunity') {
+    if (filter.monthKey && filter.stage === 'opportunity') {
         if (!isOpportunity(row)) return false;
         const dt = getOpportunityDate(row);
         if (!dt) return false;
         return monthKeyFromDate(dt) === filter.monthKey;
     }
 
-    if (filter.stage === 'proposal') {
+    if (filter.monthKey && filter.stage === 'proposal') {
         if (!isProposal(row)) return false;
         const dt = getProposalDate(row);
         if (!dt) return false;
         return monthKeyFromDate(dt) === filter.monthKey;
     }
 
-    if (filter.stage === 'order') {
+    if (filter.monthKey && filter.stage === 'order') {
         if (!isOrder(row)) return false;
         const dt = getOrderDate(row);
         if (!dt) return false;
         return monthKeyFromDate(dt) === filter.monthKey;
     }
+
+    if (filter.stage && !filter.monthKey) {
+        if (filter.stage === 'lead' && !isLeadRow(row)) return false;
+        if (filter.stage === 'opportunity' && !isOpportunity(row)) return false;
+        if (filter.stage === 'proposal' && !isProposal(row)) return false;
+        if (filter.stage === 'order' && !isOrder(row)) return false;
+    }
+
+    if (filter.source && getLeadSourceBucket(row) !== filter.source) return false;
+
+    if (filter.openOnly && !isOpenPipelineRow(row)) return false;
+
+    if (filter.proposalOnly && !(isProposal(row) || isOrder(row))) return false;
+
+    if (filter.openProposalOnly) {
+        if (!(isProposal(row) || isOrder(row))) return false;
+        if (isOrder(row)) return false;
+    }
+
+    if (filter.orderOnly && !isOrder(row)) return false;
+
+    if (filter.hasVehicle) {
+        const name = getVehicleName(row);
+        if (!name || name === 'Unknown' || !String(name).trim()) return false;
+    }
+
+    if (filter.vehicleArmour && getArmourLevel(row) !== filter.vehicleArmour) return false;
+    if (filter.vehicleName && getVehicleName(row) !== filter.vehicleName) return false;
+    if (filter.vehicleBrand && getVehicleBrand(row) !== filter.vehicleBrand) return false;
+    if (filter.vehicleType && getVehicleType(row) !== filter.vehicleType) return false;
+
     if (filter.proposal) {
+        const proposal =
+            row.proposal_number ||
+            row.proposal_no ||
+            row.quotation_number ||
+            row.final_quotation_number;
 
-    const proposal =
-        row.proposal_number ||
-        row.proposal_no ||
-        row.quotation_number ||
-        row.final_quotation_number;
+        if (String(proposal) !== String(filter.proposal)) return false;
+    }
 
-    if (String(proposal) !== String(filter.proposal)) return false;
+    if (filter.followupStatus || filter.followupStage || filter.agingGroup || filter.heatGroup) {
+        const meta = getFollowupDrillMeta(row);
+        if (!meta) return false;
 
-}
+        if (filter.followupStatus === 'has' && !meta.followupAdded) return false;
+        if (filter.followupStatus === 'none' && !meta.noFU) return false;
+        if (filter.followupStage && meta.stage !== filter.followupStage) return false;
+        if (filter.agingGroup && meta.agingGroup !== filter.agingGroup) return false;
+        if (filter.heatGroup && meta.heatGroup !== filter.heatGroup) return false;
+    }
 
     return true;
 }
@@ -2182,6 +2219,11 @@ function updateRawDataDrillLabel(count) {
         return;
     }
 
+    if (rawDataDrillFilter.label) {
+        el.innerHTML = `Drill filter: <strong>${escapeHtml(rawDataDrillFilter.label)}</strong> · ${count.toLocaleString()} rows`;
+        return;
+    }
+
     const stageMap = {
         lead: 'Leads',
         opportunity: 'Opportunities',
@@ -2189,22 +2231,24 @@ function updateRawDataDrillLabel(count) {
         order: 'Orders'
     };
 
-    el.innerHTML = `Drill filter: <strong>${stageMap[rawDataDrillFilter.stage] || rawDataDrillFilter.stage}</strong> for <strong>${formatMonthLabel(rawDataDrillFilter.monthKey)}</strong> · ${count.toLocaleString()} rows`;
+    if (rawDataDrillFilter.proposal) {
+        el.innerHTML = `Drill filter: <strong>Proposal ${escapeHtml(String(rawDataDrillFilter.proposal))}</strong> · ${count.toLocaleString()} rows`;
+        return;
+    }
+
+    if (rawDataDrillFilter.monthKey && rawDataDrillFilter.stage) {
+        el.innerHTML = `Drill filter: <strong>${stageMap[rawDataDrillFilter.stage] || rawDataDrillFilter.stage}</strong> for <strong>${formatMonthLabel(rawDataDrillFilter.monthKey)}</strong> · ${count.toLocaleString()} rows`;
+        return;
+    }
+
+    el.innerHTML = `Drill filter active · ${count.toLocaleString()} rows`;
 }
 
 function openRawDataDrill(stage, monthKey) {
-    rawDataDrillFilter = { stage, monthKey };
-    applyRawDataDrillFilter();
-    goToStep(7); // Raw Data page number
+    openRawDataCustom({ stage, monthKey, label: `${(stage || '').charAt(0).toUpperCase() + (stage || '').slice(1)}s in ${formatMonthLabel(monthKey)}` });
 }
 function openRawDataProposal(proposalNo) {
-
-    rawDataDrillFilter = { proposal: proposalNo };
-
-    applyRawDataDrillFilter();
-
-    goToStep(7); // Raw Data page
-
+    openRawDataCustom({ proposal: proposalNo, label: `Proposal ${proposalNo}` });
 }
 function clearRawDataDrill() {
     rawDataDrillFilter = null;
@@ -2420,6 +2464,7 @@ safeSetText('conv-prop-order-other', calcRate(stats.orders.other, stats.props.ot
         renderOutlineStackedBarChart(perfMap);
         renderOutlineSourceMixChart(stats);
         renderOutlineCountryChart(filteredRows);
+        bindOutlineDrills();
         safeSetText('selectedBdmCount', selectedBdms.length.toLocaleString());
         safeSetText('filteredRecordCount', filteredRows.length.toLocaleString());
         safeSetText('proposalRate', stats.opps.total > 0 ? Math.round((stats.props.total / stats.opps.total) * 100) + '%' : '0%');
@@ -2448,6 +2493,100 @@ safeSetText('conv-prop-order-other', calcRate(stats.orders.other, stats.props.ot
         const el = document.getElementById(id);
         if (el) el.style.width = width;
     }
+
+    function getLeadSourceBucket(row) {
+        return categorizeSource(row?.lead_source_name);
+    }
+
+    function isLeadRow(row) {
+        let leadCount = 1;
+        if (row['lead count'] !== undefined) {
+            if (String(row['lead count']).trim() === '') {
+                leadCount = 0;
+            } else {
+                leadCount = toInt(row['lead count'], 0);
+            }
+        }
+        return leadCount > 0;
+    }
+
+    function isOpenPipelineRow(row) {
+        return !isOrder(row) && safeCompany(row) !== 'Unknown';
+    }
+
+    function getFollowupDrillMeta(row) {
+        if (!isOpenPipelineRow(row)) return null;
+
+        const stage = isProposal(row) ? 'Proposal' : isOpportunity(row) ? 'Opportunity' : 'Lead';
+        const ctx = stage === 'Lead'
+            ? {
+                total: toInt(row.lead_followup_count, 0),
+                last: parseSafeDate(row.last_lead_followup_date)
+            }
+            : {
+                total: toInt(row.opp_followup_count, 0),
+                last: parseSafeDate(row.last_opp_followup_date)
+            };
+
+        let daysLast = null;
+        if (ctx.last) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const lastDate = new Date(ctx.last);
+            lastDate.setHours(0, 0, 0, 0);
+            daysLast = Math.floor((today - lastDate) / 86400000);
+        }
+
+        const followupAdded = ctx.total > 0;
+        const noFU = !followupAdded;
+        const overdue30 = daysLast !== null && daysLast > 30;
+        const critical60 = daysLast !== null && daysLast > 60;
+        const dead90 = daysLast !== null && daysLast > 90;
+
+        let agingGroup = 'fresh';
+        if (dead90) agingGroup = 'dead';
+        else if (critical60) agingGroup = 'critical';
+        else if (overdue30) agingGroup = 'overdue';
+
+        let heatGroup = 'hot';
+        if (daysLast !== null && daysLast > 60) heatGroup = 'cold';
+        else if (daysLast !== null && daysLast > 30) heatGroup = 'warm';
+
+        return {
+            stage,
+            daysLast,
+            followupAdded,
+            noFU,
+            overdue30,
+            critical60,
+            dead90,
+            agingGroup,
+            heatGroup
+        };
+    }
+
+    function setDrillClickable(element, filter) {
+        if (!element) return;
+        element.style.cursor = 'pointer';
+        element.style.textDecoration = 'underline';
+        element.style.textUnderlineOffset = '2px';
+        element.title = 'Open matching rows in Raw Data';
+        element.onclick = function() {
+            openRawDataCustom(filter);
+        };
+    }
+
+    function bindMetricDrill(id, filter) {
+        const el = document.getElementById(id);
+        setDrillClickable(el, filter);
+    }
+
+    function openRawDataCustom(filter) {
+        rawDataDrillFilter = filter;
+        applyRawDataDrillFilter();
+        goToStep(8);
+    }
+
    function calcRate(part, whole) {
     if (!whole || whole <= 0) return '0%';
     return ((part / whole) * 100).toFixed(1) + '%';
@@ -2470,6 +2609,84 @@ safeSetText('conv-prop-order-other', calcRate(stats.orders.other, stats.props.ot
         }
     }
 
+    function bindOutlineDrills() {
+        bindMetricDrill('out-leads-total', { stage: 'lead', label: 'All Leads' });
+        bindMetricDrill('out-leads-comp', { stage: 'lead', source: 'comp', label: 'Company Leads' });
+        bindMetricDrill('out-leads-self', { stage: 'lead', source: 'self', label: 'Self Leads' });
+        bindMetricDrill('out-leads-other', { stage: 'lead', source: 'other', label: 'Other Leads' });
+
+        bindMetricDrill('out-opps-total', { stage: 'opportunity', label: 'All Opportunities' });
+        bindMetricDrill('out-opps-comp', { stage: 'opportunity', source: 'comp', label: 'Company Opportunities' });
+        bindMetricDrill('out-opps-self', { stage: 'opportunity', source: 'self', label: 'Self Opportunities' });
+        bindMetricDrill('out-opps-other', { stage: 'opportunity', source: 'other', label: 'Other Opportunities' });
+
+        bindMetricDrill('out-props-total', { stage: 'proposal', label: 'All Proposals' });
+        bindMetricDrill('out-props-comp', { stage: 'proposal', source: 'comp', label: 'Company Proposals' });
+        bindMetricDrill('out-props-self', { stage: 'proposal', source: 'self', label: 'Self Proposals' });
+        bindMetricDrill('out-props-other', { stage: 'proposal', source: 'other', label: 'Other Proposals' });
+
+        bindMetricDrill('out-orders-total', { stage: 'order', label: 'All Orders' });
+        bindMetricDrill('out-orders-comp', { stage: 'order', source: 'comp', label: 'Company Orders' });
+        bindMetricDrill('out-orders-self', { stage: 'order', source: 'self', label: 'Self Orders' });
+        bindMetricDrill('out-orders-other', { stage: 'order', source: 'other', label: 'Other Orders' });
+    }
+
+    function bindFollowupDrills() {
+        bindMetricDrill('fyFuOpenTotal', { openOnly: true, label: 'All Open Records' });
+        bindMetricDrill('fyFuLoggedTotal', { followupStatus: 'has', label: 'Open Records with Follow-Up' });
+        bindMetricDrill('fyFuNoLogTotal', { followupStatus: 'none', label: 'Open Records without Follow-Up' });
+
+        bindMetricDrill('fyFuLoggedFresh', { followupStatus: 'has', agingGroup: 'fresh', label: 'Has Follow-Up | Fresh' });
+        bindMetricDrill('fyFuLoggedOverdue', { followupStatus: 'has', agingGroup: 'overdue', label: 'Has Follow-Up | 30+ Overdue' });
+        bindMetricDrill('fyFuLoggedCritical', { followupStatus: 'has', agingGroup: 'critical', label: 'Has Follow-Up | 60+ Critical' });
+        bindMetricDrill('fyFuLoggedDead', { followupStatus: 'has', agingGroup: 'dead', label: 'Has Follow-Up | 90+ Dead' });
+
+        bindMetricDrill('fyFuNoLogFresh', { followupStatus: 'none', agingGroup: 'fresh', label: 'No Follow-Up | Fresh' });
+        bindMetricDrill('fyFuNoLogOverdue', { followupStatus: 'none', agingGroup: 'overdue', label: 'No Follow-Up | 30+ Overdue' });
+        bindMetricDrill('fyFuNoLogCritical', { followupStatus: 'none', agingGroup: 'critical', label: 'No Follow-Up | 60+ Critical' });
+        bindMetricDrill('fyFuNoLogDead', { followupStatus: 'none', agingGroup: 'dead', label: 'No Follow-Up | 90+ Dead' });
+    }
+
+    function bindPipelineDrills() {
+        bindMetricDrill('pipelineProposalCount', { proposalOnly: true, label: 'All Proposal Rows' });
+        bindMetricDrill('pipelineProposalValue', { proposalOnly: true, label: 'All Proposal Rows' });
+        bindMetricDrill('pipelineOpenProposalCount', { openProposalOnly: true, label: 'Open Proposal Rows' });
+        bindMetricDrill('pipelineOpenRevenue', { openProposalOnly: true, label: 'Open Proposal Rows' });
+        bindMetricDrill('pipelineOrderCount', { orderOnly: true, label: 'Order Rows' });
+        bindMetricDrill('pipelineAchievedRevenue2', { orderOnly: true, label: 'Order Rows' });
+    }
+
+    function bindTrendDrills() {
+        bindMetricDrill('trendLeadTotal', { stage: 'lead', label: 'All Leads' });
+        bindMetricDrill('trendProposalTotal', { stage: 'proposal', label: 'All Proposals' });
+        bindMetricDrill('trendOrderTotal', { stage: 'order', label: 'All Orders' });
+    }
+
+    function bindVehicleDrills() {
+        const filter = {
+            hasVehicle: true,
+            label: 'Vehicle Rows'
+        };
+
+        if (vehicleTrendArmourFilter !== 'all') {
+            filter.vehicleArmour = vehicleTrendArmourFilter;
+            filter.label += ` | Armour ${vehicleTrendArmourFilter}`;
+        }
+        if (vehicleTrendSelectedName) {
+            filter.vehicleName = vehicleTrendSelectedName;
+            filter.label += ` | ${vehicleTrendSelectedName}`;
+        }
+        if (vehicleTrendSelectedBrand) {
+            filter.vehicleBrand = vehicleTrendSelectedBrand;
+            filter.label += ` | ${vehicleTrendSelectedBrand}`;
+        }
+        if (vehicleTrendLevel === 'type') {
+            filter.vehicleType = null;
+        }
+
+        bindMetricDrill('vehicleTrendRecordCount', filter);
+        bindMetricDrill('vehicleTrendQty', filter);
+    }
 
 function renderOutlineSourceMixChart(stats) {
     const canvas = document.getElementById('outlineSourceMixChart');
@@ -2960,6 +3177,7 @@ setAgingStrip('logged', totalLogged, loggedFresh, loggedOverdue, loggedCritical,
 setAgingStrip('nolog', totalNoLog, noLogFresh, noLogOverdue, noLogCritical, noLogDead);
 
 renderFollowupStageChart(validOpenRows);
+bindFollowupDrills();
 }
 function renderFollowupStatusChart(rows) {
     const canvas = document.getElementById('followupStatusChart');
@@ -3303,6 +3521,7 @@ function renderPipelinePage(data) {
     renderPipelineOverviewChart(bdmRows);
     renderPipelineVehicleMixChart(normalized);
     renderPipelineRevenueSplitChart(openRevenue, achievedRevenue);
+    bindPipelineDrills();
 }
 function renderPipelineOverviewChart(rows) {
     const canvas = document.getElementById('pipelineOverviewChart');
