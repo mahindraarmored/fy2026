@@ -993,11 +993,11 @@
             </div>
 
             <div id="page5" class="page">
-                <p class="page-header-text">Open pipeline coverage and ageing profile for the selected BDMs.</p>
+                <p class="page-header-text">All valid CRM rows split into records with follow-up ageing and records without follow-up, with drill-down by stage and CRM hotness.</p>
 
                 <div class="summary-strip" style="grid-template-columns: 1fr 1.4fr 1.4fr;">
                     <div class="mini-stat">
-                        <div class="label">Open Records</div>
+                        <div class="label">Total Valid Records</div>
                         <div class="value" id="fyFuOpenTotal">0</div>
                     </div>
 
@@ -1005,16 +1005,16 @@
                         <div class="outline-header"><i class="ph ph-check-circle"></i> Has Follow-Up</div>
                         <div class="outline-total" id="fyFuLoggedTotal">0</div>
                         <div class="outline-meta">
-                            <span class="outline-meta-item healthy">Fresh <strong id="fyFuLoggedFresh">0</strong></span>
-                            <span class="outline-meta-item overdue">30+ <strong id="fyFuLoggedOverdue">0</strong></span>
-                            <span class="outline-meta-item critical">60+ <strong id="fyFuLoggedCritical">0</strong></span>
-                            <span class="outline-meta-item dead">90+ <strong id="fyFuLoggedDead">0</strong></span>
+                            <span class="outline-meta-item healthy">Recent <strong id="fyFuLoggedFresh">0</strong></span>
+                            <span class="outline-meta-item overdue">Overdue <strong id="fyFuLoggedOverdue">0</strong></span>
+                            <span class="outline-meta-item critical">Critical <strong id="fyFuLoggedCritical">0</strong></span>
+                            <span class="outline-meta-item dead">Dead <strong id="fyFuLoggedDead">0</strong></span>
                         </div>
                         <div class="progress-bar-container">
-                            <div class="progress-segment healthy" id="bar-logged-fresh" style="width:0%" title="Fresh: 0"></div>
-                            <div class="progress-segment overdue" id="bar-logged-overdue" style="width:0%" title="Overdue 30+: 0"></div>
-                            <div class="progress-segment critical" id="bar-logged-critical" style="width:0%" title="Critical 60+: 0"></div>
-                            <div class="progress-segment dead" id="bar-logged-dead" style="width:0%" title="Dead 90+: 0"></div>
+                            <div class="progress-segment healthy" id="bar-logged-fresh" style="width:0%" title="Recent follow-up: 0"></div>
+                            <div class="progress-segment overdue" id="bar-logged-overdue" style="width:0%" title="Overdue 30-59 days: 0"></div>
+                            <div class="progress-segment critical" id="bar-logged-critical" style="width:0%" title="Critical 60-89 days: 0"></div>
+                            <div class="progress-segment dead" id="bar-logged-dead" style="width:0%" title="Dead 90+ days: 0"></div>
                         </div>
                     </div>
 
@@ -1022,27 +1022,27 @@
                         <div class="outline-header"><i class="ph ph-warning-circle"></i> No Follow-Up</div>
                         <div class="outline-total" id="fyFuNoLogTotal">0</div>
                         <div class="outline-meta">
-                            <span class="outline-meta-item healthy">Fresh <strong id="fyFuNoLogFresh">0</strong></span>
-                            <span class="outline-meta-item overdue">30+ <strong id="fyFuNoLogOverdue">0</strong></span>
-                            <span class="outline-meta-item critical">60+ <strong id="fyFuNoLogCritical">0</strong></span>
-                            <span class="outline-meta-item dead">90+ <strong id="fyFuNoLogDead">0</strong></span>
+                            <span class="outline-meta-item healthy">Lead <strong id="fyFuNoLogLead">0</strong></span>
+                            <span class="outline-meta-item overdue">Opp <strong id="fyFuNoLogOpp">0</strong></span>
+                            <span class="outline-meta-item critical">Proposal <strong id="fyFuNoLogProposal">0</strong></span>
+                            <span class="outline-meta-item dead">Order <strong id="fyFuNoLogOrder">0</strong></span>
                         </div>
                         <div class="progress-bar-container">
-                            <div class="progress-segment healthy" id="bar-nolog-fresh" style="width:0%" title="Fresh: 0"></div>
-                            <div class="progress-segment overdue" id="bar-nolog-overdue" style="width:0%" title="Overdue 30+: 0"></div>
-                            <div class="progress-segment critical" id="bar-nolog-critical" style="width:0%" title="Critical 60+: 0"></div>
-                            <div class="progress-segment dead" id="bar-nolog-dead" style="width:0%" title="Dead 90+: 0"></div>
+                            <div class="progress-segment healthy" id="bar-nolog-lead" style="width:0%" title="Lead: 0"></div>
+                            <div class="progress-segment overdue" id="bar-nolog-opp" style="width:0%" title="Opportunity: 0"></div>
+                            <div class="progress-segment critical" id="bar-nolog-proposal" style="width:0%" title="Proposal: 0"></div>
+                            <div class="progress-segment dead" id="bar-nolog-order" style="width:0%" title="Order: 0"></div>
                         </div>
                     </div>
                 </div>
 
                 <div class="split-2" style="flex:1; min-height:0;">
                     <div class="panel" style="min-height:0;">
-                        <div class="panel-title">Has Follow-Up by Stage | Hot / Warm / Cold</div>
+                        <div class="panel-title">Has Follow-Up by Stage | CRM Hotness</div>
                         <div class="chart-wrapper"><canvas id="followupHasChart"></canvas></div>
                     </div>
                     <div class="panel" style="min-height:0;">
-                        <div class="panel-title">No Follow-Up by Stage | Hot / Warm / Cold</div>
+                        <div class="panel-title">No Follow-Up by Stage | CRM Hotness</div>
                         <div class="chart-wrapper"><canvas id="followupNoChart"></canvas></div>
                     </div>
                 </div>
@@ -2054,9 +2054,14 @@
     function isOpenPipelineRow(row) { return !isOrder(row) && safeCompany(row) !== 'Unknown'; }
 
     function getFollowupDrillMeta(row) {
-        if (!isOpenPipelineRow(row)) return null;
-        const stage = isProposal(row) ? 'Proposal' : isOpportunity(row) ? 'Opportunity' : 'Lead';
-        const ctx = stage === 'Lead' ? { total: toInt(row.lead_followup_count, 0), last: parseSafeDate(row.last_lead_followup_date) } : { total: toInt(row.opp_followup_count, 0), last: parseSafeDate(row.last_opp_followup_date) };
+        const company = safeCompany(row).trim();
+        const bdm = (row.bdm_name_final || 'Unknown').trim() || 'Unknown';
+        if (company === 'Unknown' || ['Unknown', 'Discarded'].includes(bdm)) return null;
+
+        const stage = isOrder(row) ? 'Order' : isProposal(row) ? 'Proposal' : isOpportunity(row) ? 'Opportunity' : 'Lead';
+        const ctx = stage === 'Lead'
+            ? { total: toInt(row.lead_followup_count, 0), last: parseSafeDate(row.last_lead_followup_date) }
+            : { total: toInt(row.opp_followup_count, 0), last: parseSafeDate(row.last_opp_followup_date) };
 
         let daysLast = null;
         if (ctx.last) {
@@ -2066,14 +2071,27 @@
         }
 
         const followupAdded = ctx.total > 0;
-        const noFU = !followupAdded;
-        const overdue30 = daysLast !== null && daysLast > 30;
-        const critical60 = daysLast !== null && daysLast > 60;
-        const dead90 = daysLast !== null && daysLast > 90;
+        const noFU = ctx.total <= 0;
+        const overdue30 = followupAdded && daysLast !== null && daysLast >= 30 && daysLast < 60;
+        const critical60 = followupAdded && daysLast !== null && daysLast >= 60 && daysLast < 90;
+        const dead90 = followupAdded && daysLast !== null && daysLast >= 90;
 
-        let agingGroup = 'fresh', heatGroup = 'hot';
-        if (dead90) agingGroup = 'dead'; else if (critical60) agingGroup = 'critical'; else if (overdue30) agingGroup = 'overdue';
-        if (daysLast !== null && daysLast > 60) heatGroup = 'cold'; else if (daysLast !== null && daysLast > 30) heatGroup = 'warm';
+        let agingGroup = null;
+        if (followupAdded) {
+            if (dead90) agingGroup = 'dead';
+            else if (critical60) agingGroup = 'critical';
+            else if (overdue30) agingGroup = 'overdue';
+            else agingGroup = 'fresh';
+        }
+
+        const rawHotness = stage === 'Lead'
+            ? (row.lead_type_name || '')
+            : (row.opportunity_lead_type_name || row.lead_type_name || '');
+        const hotness = String(rawHotness).trim().toLowerCase();
+        let heatGroup = 'unknown';
+        if (hotness === 'hot') heatGroup = 'hot';
+        else if (hotness === 'warm') heatGroup = 'warm';
+        else if (hotness === 'cold') heatGroup = 'cold';
 
         return { stage, daysLast, followupAdded, noFU, overdue30, critical60, dead90, agingGroup, heatGroup };
     }
@@ -2097,9 +2115,19 @@
     }
 
     function bindFollowupDrills() {
-        bindMetricDrillEl(document.getElementById('fyFuOpenTotal'), { openOnly: true, label: 'All Open Records' });
-        bindMetricDrillEl(document.getElementById('fyFuLoggedTotal'), { followupStatus: 'has', label: 'Open Records with Follow-Up' });
-        bindMetricDrillEl(document.getElementById('fyFuNoLogTotal'), { followupStatus: 'none', label: 'Open Records without Follow-Up' });
+        bindMetricDrillEl(document.getElementById('fyFuOpenTotal'), { label: 'All valid CRM records' });
+        bindMetricDrillEl(document.getElementById('fyFuLoggedTotal'), { followupStatus: 'has', label: 'Records with follow-up' });
+        bindMetricDrillEl(document.getElementById('fyFuNoLogTotal'), { followupStatus: 'none', label: 'Records without follow-up' });
+
+        bindMetricDrillEl(document.getElementById('fyFuLoggedFresh'), { followupStatus: 'has', agingGroup: 'fresh', label: 'Has follow-up | Recent' });
+        bindMetricDrillEl(document.getElementById('fyFuLoggedOverdue'), { followupStatus: 'has', agingGroup: 'overdue', label: 'Has follow-up | Overdue 30-59 days' });
+        bindMetricDrillEl(document.getElementById('fyFuLoggedCritical'), { followupStatus: 'has', agingGroup: 'critical', label: 'Has follow-up | Critical 60-89 days' });
+        bindMetricDrillEl(document.getElementById('fyFuLoggedDead'), { followupStatus: 'has', agingGroup: 'dead', label: 'Has follow-up | Dead 90+ days' });
+
+        bindMetricDrillEl(document.getElementById('fyFuNoLogLead'), { followupStatus: 'none', followupStage: 'Lead', label: 'No follow-up | Lead' });
+        bindMetricDrillEl(document.getElementById('fyFuNoLogOpp'), { followupStatus: 'none', followupStage: 'Opportunity', label: 'No follow-up | Opportunity' });
+        bindMetricDrillEl(document.getElementById('fyFuNoLogProposal'), { followupStatus: 'none', followupStage: 'Proposal', label: 'No follow-up | Proposal' });
+        bindMetricDrillEl(document.getElementById('fyFuNoLogOrder'), { followupStatus: 'none', followupStage: 'Order', label: 'No follow-up | Order' });
     }
 
     function bindPipelineDrills() {
@@ -2208,23 +2236,54 @@
     }
 
     function renderFollowUps(data) {
-        const openRows = data.filter(row => !isOrder(row) && safeCompany(row) !== 'Unknown').map(row => {
-            const stage = isProposal(row) ? 'Proposal' : isOpportunity(row) ? 'Opportunity' : 'Lead';
-            const ctx = stage === 'Lead' ? { total: toInt(row.lead_followup_count, 0), last: parseSafeDate(row.last_lead_followup_date) } : { total: toInt(row.opp_followup_count, 0), last: parseSafeDate(row.last_opp_followup_date) };
-            let daysLast = null;
-            if (ctx.last) { const today = new Date(); today.setHours(0,0,0,0); const lastDate = new Date(ctx.last); lastDate.setHours(0,0,0,0); daysLast = Math.floor((today - lastDate) / 86400000); }
-            return { row, bdm: (row.bdm_name_final || 'Unknown').trim() || 'Unknown', stage, daysLast, followupAdded: ctx.total > 0, noFU: ctx.total === 0, overdue30: daysLast !== null && daysLast > 30, critical60: daysLast !== null && daysLast > 60, dead90: daysLast !== null && daysLast > 90 };
-        });
+        const validRows = data.map(row => {
+            const meta = getFollowupDrillMeta(row);
+            if (!meta) return null;
+            return { row, bdm: (row.bdm_name_final || 'Unknown').trim() || 'Unknown', ...meta };
+        }).filter(Boolean);
 
-        const validOpenRows = openRows.filter(r => !['Unknown', 'Discarded'].includes(r.bdm));
-        const loggedRows = validOpenRows.filter(r => r.followupAdded);
-        const noLogRows = validOpenRows.filter(r => r.noFU);
+        const loggedRows = validRows.filter(r => r.followupAdded);
+        const noLogRows = validRows.filter(r => r.noFU);
 
-        safeSetText('fyFuOpenTotal', validOpenRows.length.toLocaleString());
+        const loggedAging = {
+            fresh: loggedRows.filter(r => r.agingGroup === 'fresh').length,
+            overdue: loggedRows.filter(r => r.agingGroup === 'overdue').length,
+            critical: loggedRows.filter(r => r.agingGroup === 'critical').length,
+            dead: loggedRows.filter(r => r.agingGroup === 'dead').length
+        };
+
+        const noLogStage = {
+            lead: noLogRows.filter(r => r.stage === 'Lead').length,
+            opp: noLogRows.filter(r => r.stage === 'Opportunity').length,
+            proposal: noLogRows.filter(r => r.stage === 'Proposal').length,
+            order: noLogRows.filter(r => r.stage === 'Order').length
+        };
+
+        safeSetText('fyFuOpenTotal', validRows.length.toLocaleString());
         safeSetText('fyFuLoggedTotal', loggedRows.length.toLocaleString());
         safeSetText('fyFuNoLogTotal', noLogRows.length.toLocaleString());
 
-        renderFollowupStageChart(validOpenRows);
+        const setMetric = (textId, barId, count, total, title) => {
+            safeSetText(textId, count.toLocaleString());
+            const el = document.getElementById(barId);
+            if (el) {
+                const pct = total > 0 ? (count / total) * 100 : 0;
+                el.style.width = `${pct}%`;
+                el.title = `${title}: ${count.toLocaleString()}`;
+            }
+        };
+
+        setMetric('fyFuLoggedFresh', 'bar-logged-fresh', loggedAging.fresh, loggedRows.length, 'Recent follow-up');
+        setMetric('fyFuLoggedOverdue', 'bar-logged-overdue', loggedAging.overdue, loggedRows.length, 'Overdue 30-59 days');
+        setMetric('fyFuLoggedCritical', 'bar-logged-critical', loggedAging.critical, loggedRows.length, 'Critical 60-89 days');
+        setMetric('fyFuLoggedDead', 'bar-logged-dead', loggedAging.dead, loggedRows.length, 'Dead 90+ days');
+
+        setMetric('fyFuNoLogLead', 'bar-nolog-lead', noLogStage.lead, noLogRows.length, 'No follow-up | Lead');
+        setMetric('fyFuNoLogOpp', 'bar-nolog-opp', noLogStage.opp, noLogRows.length, 'No follow-up | Opportunity');
+        setMetric('fyFuNoLogProposal', 'bar-nolog-proposal', noLogStage.proposal, noLogRows.length, 'No follow-up | Proposal');
+        setMetric('fyFuNoLogOrder', 'bar-nolog-order', noLogStage.order, noLogRows.length, 'No follow-up | Order');
+
+        renderFollowupStageChart(validRows);
         bindFollowupDrills();
     }
 
@@ -2236,19 +2295,43 @@
         if (followupHasChartInstance) followupHasChartInstance.destroy();
         if (followupNoChartInstance) followupNoChartInstance.destroy();
 
-        function splitHotWarmCold(stageRows) {
-            return {
-                hot: stageRows.filter(r => r.daysLast === null ? !r.overdue30 : r.daysLast <= 30).length,
-                warm: stageRows.filter(r => r.daysLast !== null && r.daysLast > 30 && r.daysLast <= 60).length,
-                cold: stageRows.filter(r => r.daysLast !== null && r.daysLast > 60).length
-            };
-        }
+        const stageLabels = ['Lead', 'Opportunity', 'Proposal', 'Order'];
+        const heatLabels = [
+            { key: 'hot', label: 'Hot', color: '#10B981' },
+            { key: 'warm', label: 'Warm', color: '#F59E0B' },
+            { key: 'cold', label: 'Cold', color: '#EF4444' }
+        ];
 
-        const getRows = (stage, flag) => rows.filter(r => r.stage === stage && (flag ? r.followupAdded : r.noFU));
-        const buildOptions = () => ({ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true } } });
+        const buildOptions = () => ({
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'top' } },
+            scales: {
+                x: { stacked: true, grid: { display: false } },
+                y: { stacked: true, beginAtZero: true }
+            }
+        });
 
-        followupHasChartInstance = new Chart(hasCanvas, { type: 'bar', data: { labels: ['Lead', 'Opportunity', 'Proposal'], datasets: [{ label: 'Hot', data: [splitHotWarmCold(getRows('Lead', true)).hot, splitHotWarmCold(getRows('Opportunity', true)).hot, splitHotWarmCold(getRows('Proposal', true)).hot], backgroundColor: '#10B981' }, { label: 'Warm', data: [splitHotWarmCold(getRows('Lead', true)).warm, splitHotWarmCold(getRows('Opportunity', true)).warm, splitHotWarmCold(getRows('Proposal', true)).warm], backgroundColor: '#F59E0B' }, { label: 'Cold', data: [splitHotWarmCold(getRows('Lead', true)).cold, splitHotWarmCold(getRows('Opportunity', true)).cold, splitHotWarmCold(getRows('Proposal', true)).cold], backgroundColor: '#EF4444' }] }, options: buildOptions() });
-        followupNoChartInstance = new Chart(noCanvas, { type: 'bar', data: { labels: ['Lead', 'Opportunity', 'Proposal'], datasets: [{ label: 'Hot', data: [splitHotWarmCold(getRows('Lead', false)).hot, splitHotWarmCold(getRows('Opportunity', false)).hot, splitHotWarmCold(getRows('Proposal', false)).hot], backgroundColor: '#10B981' }, { label: 'Warm', data: [splitHotWarmCold(getRows('Lead', false)).warm, splitHotWarmCold(getRows('Opportunity', false)).warm, splitHotWarmCold(getRows('Proposal', false)).warm], backgroundColor: '#F59E0B' }, { label: 'Cold', data: [splitHotWarmCold(getRows('Lead', false)).cold, splitHotWarmCold(getRows('Opportunity', false)).cold, splitHotWarmCold(getRows('Proposal', false)).cold], backgroundColor: '#EF4444' }] }, options: buildOptions() });
+        const buildChartData = (subset) => ({
+            labels: stageLabels,
+            datasets: heatLabels.map(heat => ({
+                label: heat.label,
+                data: stageLabels.map(stage => subset.filter(r => r.stage === stage && r.heatGroup === heat.key).length),
+                backgroundColor: heat.color
+            }))
+        });
+
+        followupHasChartInstance = new Chart(hasCanvas, {
+            type: 'bar',
+            data: buildChartData(rows.filter(r => r.followupAdded)),
+            options: buildOptions()
+        });
+
+        followupNoChartInstance = new Chart(noCanvas, {
+            type: 'bar',
+            data: buildChartData(rows.filter(r => r.noFU)),
+            options: buildOptions()
+        });
     }
 
     function renderPipelinePage(data) {
