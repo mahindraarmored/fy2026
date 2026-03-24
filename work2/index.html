@@ -3301,18 +3301,63 @@ function renderTerritoryCountryPanel(countryName, managerName = null) {
     }).addTo(territoryOpsLayer);
 
     marker.bindPopup(`
-        <div style="min-width:180px;">
-            <div style="font-size:10px; color:#64748b; font-weight:700;">${escapeHtml(c.manager)}</div>
-            <div style="font-size:16px; font-weight:700; margin-bottom:8px;">${escapeHtml(c.name)}</div>
-            <div style="background:#F8FAFC; border-radius:8px; padding:10px; font-size:12px;">
-                <div>Leads: <strong>${c.leads}</strong></div>
-                <div>Opps: <strong style="color:#2563eb;">${c.opps}</strong></div>
-                <div>Props: <strong style="color:#f97316;">${c.proposals}</strong></div>
-                <div>Orders: <strong style="color:#10b981;">${c.orders}</strong></div>
+        <div style="min-width: 220px; font-family: var(--font-sans); margin: -2px;">
+            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${colors[c.manager] || '#94A3B8'}; box-shadow: 0 0 0 2px rgba(255,255,255,0.8);"></span>
+                <span style="font-size: 0.65rem; color: var(--muted); font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;">
+                    ${escapeHtml(c.manager)}
+                </span>
+            </div>
+            
+            <div style="font-size: 1.15rem; font-weight: 800; color: var(--charcoal); margin-bottom: 12px; line-height: 1.2; letter-spacing: -0.01em;">
+                ${escapeHtml(c.name)}
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                
+                <div style="background: var(--surface-alt); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px;">
+                    <div style="font-size: 0.65rem; color: var(--slate); font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+                        <i class="ph ph-funnel"></i> Leads
+                    </div>
+                    <div style="font-size: 1.1rem; font-weight: 700; font-family: var(--font-numbers); color: var(--charcoal); line-height: 1;">
+                        ${c.leads}
+                    </div>
+                </div>
+
+                <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 8px; padding: 8px 10px;">
+                    <div style="font-size: 0.65rem; color: #1D4ED8; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+                        <i class="ph ph-briefcase"></i> Opps
+                    </div>
+                    <div style="font-size: 1.1rem; font-weight: 700; font-family: var(--font-numbers); color: #1D4ED8; line-height: 1;">
+                        ${c.opps}
+                    </div>
+                </div>
+
+                <div style="background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; padding: 8px 10px;">
+                    <div style="font-size: 0.65rem; color: #C2410C; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+                        <i class="ph ph-file-text"></i> Props
+                    </div>
+                    <div style="font-size: 1.1rem; font-weight: 700; font-family: var(--font-numbers); color: #C2410C; line-height: 1;">
+                        ${c.proposals}
+                    </div>
+                </div>
+
+                <div style="background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 8px; padding: 8px 10px;">
+                    <div style="font-size: 0.65rem; color: #047857; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+                        <i class="ph ph-seal-check"></i> Orders
+                    </div>
+                    <div style="font-size: 1.1rem; font-weight: 700; font-family: var(--font-numbers); color: #047857; line-height: 1;">
+                        ${c.orders}
+                    </div>
+                </div>
+
+            </div>
+            
+            <div style="margin-top: 12px; font-size: 0.7rem; color: var(--muted); font-weight: 500; text-align: center;">
+                Panel updated on the right <i class="ph ph-arrow-right"></i>
             </div>
         </div>
     `);
-
     marker.on('click', function() {
         territorySelectedCountry = c.name;
         territorySelectedCountryManager = c.manager;
