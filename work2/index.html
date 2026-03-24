@@ -3260,7 +3260,7 @@ function renderTerritoryCountryPanel(countryName, managerName = null) {
             <span style="font-size: 0.7rem; font-weight: 600; color: var(--muted);">${summary.companiesCount} total companies</span>
         </div>
 
-        <div class="territory-country-company-list" style="margin-bottom: 16px;">
+        <div class="territory-country-company-list" style="margin-bottom: 16px; max-height: 320px; overflow-y: auto; padding-right: 6px;">
             ${companyHtml || '<div class="company-empty">No companies found.</div>'}
         </div>
 
