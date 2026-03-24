@@ -3174,7 +3174,7 @@ function hideTerritoryCountryPanel() {
     territorySelectedCountryManager = null;
     const panel = document.getElementById('territoryCountryPanel');
     if (panel) {
-        panel.style.display = 'none';
+panel.classList.remove('show-panel');
         panel.innerHTML = '';
     }
 }
