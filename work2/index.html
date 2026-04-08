@@ -1451,12 +1451,11 @@
             <div id="page4" class="page">
                 <p class="page-header-text">Proposal volume, value, and achieved revenue for the selected BDMs.</p>
 
-                <div class="summary-strip" style="grid-template-columns: repeat(5, 1fr);">
+                <div class="summary-strip" style="grid-template-columns: repeat(4, 1fr);">
                     <div class="mini-stat"><div class="label">Proposals</div><div class="value" id="pipelineProposalCount">0</div></div>
                     <div class="mini-stat"><div class="label">Proposal Value</div><div class="value" id="pipelineProposalValue">0</div></div>
                     <div class="mini-stat"><div class="label">Open Proposals</div><div class="value" id="pipelineOpenProposalCount">0</div></div>
                     <div class="mini-stat"><div class="label">Open Value</div><div class="value" id="pipelineOpenRevenue">0</div></div>
-                    <div class="mini-stat"><div class="label">Win Rate</div><div class="value" id="pipelineOrderConversion">0</div></div>
                 </div>
 
                 <div class="split-2">
@@ -1464,10 +1463,13 @@
                     <div class="panel"><div class="panel-title">Top Countries in Pipeline</div><div class="chart-wrapper"><canvas id="outlineCountryChart"></canvas></div></div>
                 </div>
 
-                <div class="summary-strip" style="grid-template-columns: repeat(3, 1fr); margin-top:16px;">
+                <div class="summary-strip" style="grid-template-columns: repeat(4, 1fr); margin-top:16px;">
                     <div class="mini-stat"><div class="label">Orders Achieved</div><div class="value" id="pipelineOrderCount">0</div></div>
+                                        <div class="mini-stat"><div class="label">Vehicle Count</div><div class="value" id="pipelineVehicleCount" style="display:none;">0</div></div>
+
                     <div class="mini-stat"><div class="label">Achieved Revenue</div><div class="value" id="pipelineAchievedRevenue2">0</div></div>
-                    <div class="mini-stat"><div class="label">Conversion Rate</div><div class="value" id="pipelineOrderConversion2" style="display:none;">0</div></div>
+                                        <div class="mini-stat"><div class="label">Win Rate</div><div class="value" id="pipelineOrderConversion">0</div></div>
+
                 </div>
             </div>
 
@@ -2860,16 +2862,23 @@ let followupHasChartInstance = null;
 
     function renderPipelinePage(data) {
         const proposalRows = data.filter(row => isProposal(row) || isOrder(row));
-        const normalized = proposalRows.map(row => ({ row, bdm: (row.bdm_name_final || 'Unknown').trim() || 'Unknown', proposalAmount: parseMoney(row.final_quotation_total_price_usd), isOrderRow: isOrder(row) }));
-
+const normalized = proposalRows.map(row => ({
+    row,
+    bdm: (row.bdm_name_final || 'Unknown').trim() || 'Unknown',
+    proposalAmount: parseMoney(row.final_quotation_total_price_usd),
+    isOrderRow: isOrder(row),
+    vehicleQty: parseFloat(row.vehicle_qty_total || 0) || 0
+}));
         const totalProposalCount = normalized.length;
         const totalProposalValue = normalized.reduce((s, r) => s + r.proposalAmount, 0);
+        const totalVehicleCount = normalized.reduce((s, r) => s + r.vehicleQty, 0);
         const achievedRows = normalized.filter(r => r.isOrderRow);
         const achievedRevenue = achievedRows.reduce((s, r) => s + r.proposalAmount, 0);
         const openRows = normalized.filter(r => !r.isOrderRow);
         const openRevenue = openRows.reduce((s, r) => s + r.proposalAmount, 0);
 
         safeSetText('pipelineProposalCount', totalProposalCount.toLocaleString());
+        safeSetText('pipelineVehicleCount', totalVehicleCount.toLocaleString());
         safeSetText('pipelineProposalValue', formatMoney(totalProposalValue));
         safeSetText('pipelineOrderCount', achievedRows.length.toLocaleString());
         safeSetText('pipelineOpenRevenue', formatMoney(openRevenue));
@@ -2882,6 +2891,7 @@ let followupHasChartInstance = null;
             if (!byBdm[r.bdm]) byBdm[r.bdm] = { bdm: r.bdm, proposalCount: 0, proposalValue: 0, orderCount: 0, achievedRevenue: 0 };
             byBdm[r.bdm].proposalCount += 1; byBdm[r.bdm].proposalValue += r.proposalAmount;
             if (r.isOrderRow) { byBdm[r.bdm].orderCount += 1; byBdm[r.bdm].achievedRevenue += r.proposalAmount; }
+
         });
 
         renderPipelineOverviewChart(Object.values(byBdm).filter(r => !['Discarded', 'Unknown'].includes(r.bdm)).sort((a, b) => b.proposalValue - a.proposalValue));
