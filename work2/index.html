@@ -1465,10 +1465,13 @@
 
                 <div class="summary-strip" style="grid-template-columns: repeat(4, 1fr); margin-top:16px;">
                     <div class="mini-stat"><div class="label">Orders Achieved</div><div class="value" id="pipelineOrderCount">0</div></div>
-                                        <div class="mini-stat"><div class="label">Vehicle Count</div><div class="value" id="pipelineVehicleCount" style="display:none;">0</div></div>
-
                     <div class="mini-stat"><div class="label">Achieved Revenue</div><div class="value" id="pipelineAchievedRevenue2">0</div></div>
-                                        <div class="mini-stat"><div class="label">Win Rate</div><div class="value" id="pipelineOrderConversion">0</div></div>
+<div class="mini-stat">
+    <div class="label">Confirmed Order Vehicles(Incl. Spares =1)</div>
+    <div class="value" id="pipelineOrderVehicleCount">0</div>
+</div>
+                    
+                    <div class="mini-stat"><div class="label">Win Rate</div><div class="value" id="pipelineOrderConversion">0</div></div>
 
                 </div>
             </div>
@@ -2874,6 +2877,7 @@ const normalized = proposalRows.map(row => ({
         const totalVehicleCount = normalized.reduce((s, r) => s + r.vehicleQty, 0);
         const achievedRows = normalized.filter(r => r.isOrderRow);
         const achievedRevenue = achievedRows.reduce((s, r) => s + r.proposalAmount, 0);
+        const achievedVehicleCount = achievedRows.reduce((s, r) => s + r.vehicleQty, 0);
         const openRows = normalized.filter(r => !r.isOrderRow);
         const openRevenue = openRows.reduce((s, r) => s + r.proposalAmount, 0);
 
@@ -2881,6 +2885,7 @@ const normalized = proposalRows.map(row => ({
         safeSetText('pipelineVehicleCount', totalVehicleCount.toLocaleString());
         safeSetText('pipelineProposalValue', formatMoney(totalProposalValue));
         safeSetText('pipelineOrderCount', achievedRows.length.toLocaleString());
+        safeSetText('pipelineOrderVehicleCount', achievedVehicleCount.toLocaleString());
         safeSetText('pipelineOpenRevenue', formatMoney(openRevenue));
         safeSetText('pipelineAchievedRevenue2', formatMoney(achievedRevenue));
         safeSetText('pipelineOpenProposalCount', openRows.length.toLocaleString());
